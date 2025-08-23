@@ -7,6 +7,7 @@ import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
 export default async function ProtectedPage() {
   const supabase = await createClient();
 
+  // Handle AUthentication, redirecting to login if not logged in
   const { data, error } = await supabase.auth.getClaims();
   if (error || !data?.claims) {
     redirect("/auth/login");
