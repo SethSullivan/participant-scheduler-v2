@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
+import Script from 'next/script'
 
 const defaultUrl = process.env.WEBSITE_URL
   ? `https://${process.env.WEBSITE_URL}`
@@ -27,6 +28,15 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
+          {/* Load Google APIs globally */}
+        <Script 
+          src="https://accounts.google.com/gsi/client" 
+          strategy="beforeInteractive"
+        />
+        <Script 
+          src="https://apis.google.com/js/api.js" 
+          strategy="beforeInteractive"
+        />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
