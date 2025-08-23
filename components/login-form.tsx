@@ -15,7 +15,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
 	const router = useRouter();
 
 	const initializeGoogleServices = async () => {
@@ -102,7 +101,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 			callback: (tokenResponse: any) => {
 				console.log("Sign-in token response:", tokenResponse);
 				if (tokenResponse.access_token) {
-					setAccessToken(tokenResponse.access_token);
+					localStorage.setItem("google_access_token", tokenResponse.access_token)
 					console.log("Successfully signed in and got access token");
 				} else {
 					console.error("No access token received");
