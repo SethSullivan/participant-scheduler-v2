@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import { getEvents } from "@utils/getCalendarEvents";
+import { getEvents } from "@/lib/utils/getCalendarEvents";
 
 interface AvailabilitySlot {
     id: string;
