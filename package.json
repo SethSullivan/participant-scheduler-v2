@@ -13,6 +13,7 @@
     "@radix-ui/react-slot": "^1.2.2",
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@types/google.accounts": "^0.0.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "gapi-script": "^1.2.0",
@@ -26,6 +27,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/gapi": "^0.0.47",
+    "@types/gapi.auth2": "^0.0.61",
+    "@types/gapi.client": "^1.0.8",
     "@types/gapi.client.calendar-v3": "^0.0.4",
     "@types/node": "^20",
     "@types/react": "^19",
