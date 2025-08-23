@@ -15,6 +15,8 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isOAuthLoading, setIsOAuthLoading] = useState(false);
+
 	const router = useRouter();
 
 	const initializeGoogleServices = async () => {
@@ -94,24 +96,37 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 		}
 	};
 
-	const createGoogleClient = async () => {
-		const client = window.google.accounts.oauth2.initTokenClient({
-			client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-			scope: "https://www.googleapis.com/auth/calendar.readonly",
-			callback: (tokenResponse: any) => {
-				console.log("Sign-in token response:", tokenResponse);
-				if (tokenResponse.access_token) {
-					localStorage.setItem("google_access_token", tokenResponse.access_token)
-					console.log("Successfully signed in and got access token");
-				} else {
-					console.error("No access token received");
-				}
-			},
-			error_callback: (error: any) => {
-				console.error("OAuth error:", error);
-			},
+	const requestGoogleOAuth = async (): Promise<boolean> => {
+		return new Promise((resolve, reject) => {
+			const client = window.google.accounts.oauth2.initTokenClient({
+				client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
+				scope: "https://www.googleapis.com/auth/calendar.readonly",
+				callback: (tokenResponse: any) => {
+					console.log("Sign-in token response:", tokenResponse);
+					if (tokenResponse.access_token) {
+						localStorage.setItem("google_access_token", tokenResponse.access_token);
+						console.log("Successfully signed in and got access token");
+						resolve(true);
+					} else if (tokenResponse.error) {
+						console.error("OAuth error:", tokenResponse.error);
+						reject(new Error(`OAuth error: ${tokenResponse.error}`));
+					} else {
+						console.error("No access token received");
+						resolve(false);
+					}
+				},
+				error_callback: (error: any) => {
+					console.error("OAuth error:", error);
+					reject(new Error(`OAuth error: ${error.error || "Unknown error"}`));
+				},
+			});
+			try {
+				// This opens the OAuth popup
+				client.requestAccessToken();
+			} catch (error) {
+				reject(error);
+			}
 		});
-		return client
 	};
 
 	const handleLogin = async (e: React.FormEvent) => {
@@ -128,14 +143,33 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
 			if (error) throw error;
 
-			// Only do this if it's me for now...
-			if (email == "sethsullivan99@gmail.com") {
-				await initializeGoogleServices();
-				const client = await createGoogleClient();
-				client.requestAccessToken();
+			// Only do OAuth for specific user
+			if (email === "sethsullivan99@gmail.com") {
+				setIsOAuthLoading(true);
+
+				try {
+					// Initialize Google services
+					await initializeGoogleServices();
+
+					// Request OAuth and wait for completion
+					const oauthSuccess = await requestGoogleOAuth();
+
+					if (oauthSuccess) {
+						console.log("Google Calendar connected successfully");
+					} else {
+						console.log("Google Calendar connection cancelled or failed");
+						// Still proceed - user can connect later if needed
+					}
+				} catch (oauthError) {
+					console.error("Google OAuth error:", oauthError);
+					setError("Failed to connect Google Calendar. You can try again later.");
+					// Don't prevent login - user can still use the app
+				} finally {
+					setIsOAuthLoading(false);
+				}
 			}
-			// Update this route to redirect to an authenticated route. The user already has an active session.
 			router.push("/protected");
+
 		} catch (error: unknown) {
 			setError(error instanceof Error ? error.message : "An error occurred");
 		} finally {
