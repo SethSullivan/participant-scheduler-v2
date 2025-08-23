@@ -1,17 +1,51 @@
+'use client'
 import { redirect } from "next/navigation";
-
-import { createClient } from "@/lib/supabase/server";
+import type { JwtPayload, JwtHeader } from '@supabase/supabase-js';
+import { createClient } from "@/lib/supabase/client";
 import { InfoIcon } from "lucide-react";
 import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
+import React, { useEffect, useState } from "react";
 
-export default async function ProtectedPage() {
-  const supabase = await createClient();
+interface UserInfo {
+	name: string;
+	email: string;
+	availableSlots: any[];
+}
 
-  // Handle AUthentication, redirecting to login if not logged in
-  const { data, error } = await supabase.auth.getClaims();
-  if (error || !data?.claims) {
-    redirect("/auth/login");
-  }
+interface AvailabilitySlot {
+    id: string;
+    title: string;
+    start: Date;
+    end: Date;
+    backgroundColor?: string;
+    borderColor?: string;
+    textColor?: string;
+}
+type AuthData = {
+  claims: JwtPayload;
+  header: JwtHeader;
+  signature: Uint8Array<ArrayBufferLike>;
+} | null;
+
+export default function ProtectedPage() {
+	const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
+	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+	const [authData, setAuthData] = useState<AuthData|null>(null);
+
+  useEffect(() => {
+    const handleAuth = async () => {
+      const supabase = await createClient();
+      // Handle Authentication, redirecting to login if not logged in
+      const { data:authResponse, error:authError } = await supabase.auth.getClaims();
+      if (authError || !authResponse?.claims) {
+        redirect("/auth/login");
+      } else {
+        setAuthData(authResponse)
+      }
+    }
+    handleAuth()
+  }, [])
+
 
   return (
     <div className="flex-1 w-full flex flex-col gap-12">
@@ -25,7 +59,7 @@ export default async function ProtectedPage() {
       <div className="flex flex-col gap-2 items-start">
         <h2 className="font-bold text-2xl mb-4">Your user details</h2>
         <pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-          {JSON.stringify(data.claims, null, 2)}
+          {JSON.stringify(authData ? authData.claims : "not yet signed in", null, 2)}
         </pre>
       </div>
       <div>
