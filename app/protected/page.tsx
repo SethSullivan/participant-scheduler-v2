@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { InfoIcon } from "lucide-react";
 import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
 import React, { useEffect, useState } from "react";
-import Calendar from "@/components/ui/calendar";
+import Calendar from "@/components/calendar";
 
 interface UserInfo {
 	name: string;
