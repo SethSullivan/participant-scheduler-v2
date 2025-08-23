@@ -10,9 +10,17 @@ interface AvailabilitySlot {
     title: string;
     start: Date;
     end: Date;
+    isGcal:boolean;
     backgroundColor?: string;
     borderColor?: string;
     textColor?: string;
+}
+type CalendarEvent = {
+    start: Date;
+    end: Date;
+    id: string;
+    title:string;
+    isGcal:boolean;
 }
 interface CalendarProps {
     accessToken?: string | undefined;
@@ -32,6 +40,8 @@ export default function Calendar({ accessToken, availableSlots, setAvailableSlot
                     console.log('Calendar component fetching events...');
                     const organizedEvents = await getEvents(6, "07:00", "18:00", true, accessToken);
                     const flatEvents = organizedEvents.flat();
+                    // Add in isGcal to every event in the array
+                    flatEvents.map(v => ({...v, isGcal:true}))
                     setCalendarEvents(flatEvents);
                     console.log('Calendar events loaded:', flatEvents);
                 } catch (error) {
@@ -52,6 +62,7 @@ export default function Calendar({ accessToken, availableSlots, setAvailableSlot
             title: 'Available',
             start: selectInfo.start,
             end: selectInfo.end,
+            isGcal: false,
             backgroundColor: '#47b06cff',
             borderColor: '#0d3f1fff',
             textColor: '#000000ff'
@@ -64,14 +75,15 @@ export default function Calendar({ accessToken, availableSlots, setAvailableSlot
     };
 
     const handleEventClick = (clickInfo: any) => {
-        // Remove availability slot when clicked
-        if (window.confirm('Remove this availability slot?')) {
-            setAvailableSlots(prev => 
-                prev.filter(slot => slot.id !== clickInfo.event.id)
-            );
+        if (!clickInfo.event.isGcal) {
+            // Remove availability slot when clicked
+            if (window.confirm('Remove this availability slot?')) {
+                setAvailableSlots(prev => 
+                    prev.filter(slot => slot.id !== clickInfo.event.id)
+                );
+            }
         }
     };
-
     return (
         <div className="calendar-container">
             <div className="calendar-header">
@@ -95,7 +107,7 @@ export default function Calendar({ accessToken, availableSlots, setAvailableSlot
                 slotMaxTime="19:00:00"
                 slotDuration="00:30:00"
                 height="auto"
-                events={calendarEvents}
+                events={calendarEvents.concat(availableSlots)}
                 select={handleDateSelect}
                 eventClick={handleEventClick}
                 selectConstraint={{
