@@ -1,6 +1,6 @@
 // Types for calendar events
 interface CalendarEvent {
-	id: (string|undefined)[];
+	id: (string | undefined)[];
 	title: string;
 	start: Date;
 	end: Date;
@@ -47,7 +47,21 @@ function formatDate(
 
 	return date.toLocaleString("sv-SE", options).replace(" ", " ");
 }
-
+function waitForGapi(): Promise<void> {
+	return new Promise((resolve, reject) => {
+		const checkGapi = () => {
+			if (window.gapi && window.gapi.client) {
+				resolve();
+			} else if (window.gapi) {
+				// gapi exists but client not ready, wait a bit more
+				setTimeout(checkGapi, 100);
+			} else {
+				reject(new Error("Google API not loaded"));
+			}
+		};
+		checkGapi();
+	});
+}
 
 async function getCalendarEventsFromAPI(
 	calendarIDs: string[],
@@ -57,6 +71,9 @@ async function getCalendarEventsFromAPI(
 ): Promise<CalendarEvent[]> {
 	try {
 		console.log("Fetching calendar events...");
+		
+		await waitForGapi();
+
 		console.log("Access token exists:", !!accessToken);
 
 		// Set the access token for the API client
@@ -66,7 +83,7 @@ async function getCalendarEventsFromAPI(
 		var allEvents: CalendarEvent[] = [];
 
 		for (const calendarID of calendarIDs) {
-			console.log("Calendar: ", calendarID)
+			console.log("Calendar: ", calendarID);
 			const response = await window.gapi.client.calendar.events.list({
 				calendarId: calendarID,
 				timeMin: startDate.toISOString(),
@@ -80,20 +97,25 @@ async function getCalendarEventsFromAPI(
 				return [];
 			}
 			console.log("Calendar API response:", response);
-	
-			const events: CalendarEvent[] = response.result.items.map((item: any, index: number) => {
-				return {
-					id: item.id || `event-${index}`,
-					title: item.summary || "No Title",
-					start: item.start?.dateTime ? new Date(item.start.dateTime) : new Date(item.start?.date + "T00:00:00"),
-					end: item.end?.dateTime ? new Date(item.end.dateTime) : new Date(item.end?.date + "T23:59:59"),
-				}
-			});
-			allEvents.push(...events)
-		};
-		
-		return allEvents
 
+			const events: CalendarEvent[] = response.result.items.map(
+				(item: any, index: number) => {
+					return {
+						id: item.id || `event-${index}`,
+						title: item.summary || "No Title",
+						start: item.start?.dateTime
+							? new Date(item.start.dateTime)
+							: new Date(item.start?.date + "T00:00:00"),
+						end: item.end?.dateTime
+							? new Date(item.end.dateTime)
+							: new Date(item.end?.date + "T23:59:59"),
+					};
+				}
+			);
+			allEvents.push(...events);
+		}
+
+		return allEvents;
 	} catch (error) {
 		console.error("Error fetching calendar events:", error);
 		return [];
@@ -140,10 +162,9 @@ export async function getEvents(
 			accessToken
 		);
 		// Organize events by day
-		const organizedEvents = organizeCalendarEventsByDayIndex(events, allDates);
-		console.log("organizedEvents", organizedEvents)
+		const organizedEvents = organizeCalendarEventsByDayIndex(events, allDates);				
+		console.log("organizedEvents", organizedEvents);
 		return organizedEvents;
-
 	} catch (error) {
 		console.error("Error in getEvents:", error);
 		const totalDays = numDaysAhead + 1;
