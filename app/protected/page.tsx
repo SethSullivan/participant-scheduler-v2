@@ -18,6 +18,7 @@ interface AvailabilitySlot {
 	title: string;
 	start: Date;
 	end: Date;
+	isGcal:boolean;
 	backgroundColor?: string;
 	borderColor?: string;
 	textColor?: string;
@@ -62,8 +63,6 @@ export default function ProtectedPage() {
 						availableSlots={availableSlots}
 						setAvailableSlots={setAvailableSlots}
 					/>
-					<InfoIcon size="16" strokeWidth={2} />
-					This is a protected page that you can only see as an authenticated user
 				</div>
 			</div>
 			<div className="flex flex-col gap-2 items-start">
