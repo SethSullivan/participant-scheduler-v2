@@ -11,11 +11,10 @@ export async function AuthButton() {
 
   const user = data?.claims;
 
-  return user ? (
+  return user?.email ? (
     <div className="flex items-center gap-4">
-      {user.email ? `Hey, ${user.name}` :''
-      }
-      {user.email && <LogoutButton />}
+      Hey, {user.name}!
+      <LogoutButton />
     </div>
   ) : (
     <div className="flex gap-2">
