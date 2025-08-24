@@ -1,5 +1,4 @@
 "use client";
-import { redirect } from "next/navigation";
 import type { JwtPayload, JwtHeader } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { InfoIcon } from "lucide-react";
@@ -34,25 +33,49 @@ export default function ProtectedPage() {
 	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 	const [authData, setAuthData] = useState<AuthData | null>(null);
 	const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState(true); // Add loading state
 
 	useEffect(() => {
 		const handleAuth = async () => {
-			const supabase = await createClient();
-			// Handle Authentication, redirecting to login if not logged in
-			const { data: authResponse, error: authError } = await supabase.auth.getClaims();
-			if (authError || !authResponse?.claims) {
-				redirect("/auth/login");
-			} else {
-				setAuthData(authResponse);
-				// Get Google access token from localStorage
-				const googleToken = localStorage.getItem("google_access_token");
-				if (googleToken) {
-					setAccessToken(googleToken);
-				}
-			}
-		};
-		handleAuth();
+            try {
+                const supabase = createClient(); // Remove await here
+                const { data: authResponse, error: authError } = await supabase.auth.getClaims();
+                
+                console.log("Auth check result:", { authResponse, authError });
+                
+                if (authError || !authResponse?.claims) {
+                    console.log("No authentication found, allowing anonymous access");
+                    // User is not authenticated, but we allow anonymous access
+                    setAuthData(null);
+                } else {
+                    console.log("User authenticated:", authResponse.claims);
+                    setAuthData(authResponse);
+                    
+                    // Get Google access token from localStorage
+                    const googleToken = localStorage.getItem("google_access_token");
+                    if (googleToken) {
+                        setAccessToken(googleToken);
+                    }
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                setAuthData(null);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        
+        handleAuth();
 	}, []);
+
+	// Show loading state while checking auth
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div>Loading...</div>
+            </div>
+        );
+    }
 
 	return (
 		<div className="flex-1 w-full flex flex-col gap-12">
