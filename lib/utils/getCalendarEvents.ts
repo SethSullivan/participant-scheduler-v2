@@ -47,11 +47,15 @@ function formatDate(
 
 	return date.toLocaleString("sv-SE", options).replace(" ", " ");
 }
+
 function waitForGapi(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		const checkGapi = () => {
-			if (window.gapi && window.gapi.client) {
+			if (window.gapi && window.gapi.client && window.gapi.client.calendar) {
 				resolve();
+			} else if (window.gapi && window.gapi.client) {
+				// gapi.client exists but calendar API not loaded yet
+				setTimeout(checkGapi, 100);
 			} else if (window.gapi) {
 				// gapi exists but client not ready, wait a bit more
 				setTimeout(checkGapi, 100);
@@ -71,7 +75,7 @@ async function getCalendarEventsFromAPI(
 ): Promise<CalendarEvent[]> {
 	try {
 		console.log("Fetching calendar events...");
-		
+
 		await waitForGapi();
 
 		console.log("Access token exists:", !!accessToken);
@@ -96,10 +100,14 @@ async function getCalendarEventsFromAPI(
 				console.error("No events found, returning empty array");
 				return [];
 			}
-			console.log("Calendar API response:", response);
+			console.log("Calendar API response:", response.result.items);
 
-			const events: CalendarEvent[] = response.result.items.map(
-				(item: any, index: number) => {
+			const events: CalendarEvent[] = response.result.items
+				.filter((item: any) => {
+					// All-day events only have 'date', timed events have 'dateTime'
+					return item.start?.dateTime && item.end?.dateTime;
+				})
+				.map((item: any, index: number) => {
 					return {
 						id: item.id || `event-${index}`,
 						title: item.summary || "No Title",
@@ -110,8 +118,7 @@ async function getCalendarEventsFromAPI(
 							? new Date(item.end.dateTime)
 							: new Date(item.end?.date + "T23:59:59"),
 					};
-				}
-			);
+				});
 			allEvents.push(...events);
 		}
 
@@ -162,7 +169,7 @@ export async function getEvents(
 			accessToken
 		);
 		// Organize events by day
-		const organizedEvents = organizeCalendarEventsByDayIndex(events, allDates);				
+		const organizedEvents = organizeCalendarEventsByDayIndex(events, allDates);
 		console.log("organizedEvents", organizedEvents);
 		return organizedEvents;
 	} catch (error) {
