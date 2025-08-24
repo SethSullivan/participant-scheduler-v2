@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
+	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
@@ -134,7 +135,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 		const supabase = createClient();
 		setIsLoading(true);
 		setError(null);
-
 		try {
 			const { error } = await supabase.auth.signInWithPassword({
 				email,
@@ -183,18 +183,29 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				<CardHeader>
 					<CardTitle className="text-2xl">Login</CardTitle>
 					<CardDescription>
-						Enter your email below to login to your account
+						Enter your information or continue without an account 
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleLogin}>
 						<div className="flex flex-col gap-6">
 							<div className="grid gap-2">
+								<Label htmlFor="email">Full Name</Label>
+								<Input
+									id="full-name"
+									type="name"
+									placeholder=""
+									required
+									value={name}
+									onChange={(e) => setName(e.target.value)}
+								/>
+							</div>
+							<div className="grid gap-2">
 								<Label htmlFor="email">Email</Label>
 								<Input
 									id="email"
 									type="email"
-									placeholder="m@example.com"
+									placeholder=""
 									required
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -202,7 +213,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 							</div>
 							<div className="grid gap-2">
 								<div className="flex items-center">
-									<Label htmlFor="password">Password</Label>
+									<Label htmlFor="password">Password (Optional)</Label>
 									<Link
 										href="/auth/forgot-password"
 										className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
