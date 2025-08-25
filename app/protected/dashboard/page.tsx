@@ -103,7 +103,7 @@ export default function DashBoard() {
 					{/* Create Event Section */}
 					<div className="flex justify-center items-start">
 						{showPopup ? (
-							<CreateEvent setShowPopup={setShowPopup} />
+							<CreateEvent setShowPopup={setShowPopup} setEventsData={setEventsData}/>
 						) : (
 							<div className="w-full max-w-md">
 								<Button
