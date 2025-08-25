@@ -5,6 +5,7 @@ import { InfoIcon } from "lucide-react";
 import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
 import React, { useEffect, useState } from "react";
 import Calendar from "@/components/calendar";
+import { Button } from "@/components/ui/button";
 
 interface UserInfo {
 	name: string;
@@ -79,13 +80,18 @@ export default function ProtectedPage() {
 
 	return (
 		<div className="flex-1 w-full flex flex-col gap-12">
-			<div className="w-full">
-				<div className="bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+			<div className="flex flex-row w-full">
+				<div className="flex-3 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
 					<Calendar
 						accessToken={accessToken}
 						availableSlots={availableSlots}
 						setAvailableSlots={setAvailableSlots}
 					/>
+				</div>
+				<div className="flex-3 border-solid border-2">
+					<Button>
+						Submit Availability
+					</Button>
 				</div>
 			</div>
 			<div className="flex flex-col gap-2 items-start">
