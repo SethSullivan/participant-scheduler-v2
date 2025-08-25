@@ -168,7 +168,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 					setIsOAuthLoading(false);
 				}
 			}
-			router.push("/protected");
+			router.push("/protected/dashboard");
 
 		} catch (error: unknown) {
 			setError(error instanceof Error ? error.message : "An error occurred");
@@ -189,17 +189,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 				<CardContent>
 					<form onSubmit={handleLogin}>
 						<div className="flex flex-col gap-6">
-							<div className="grid gap-2">
-								<Label htmlFor="email">Full Name</Label>
-								<Input
-									id="full-name"
-									type="name"
-									placeholder=""
-									required
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-								/>
-							</div>
 							<div className="grid gap-2">
 								<Label htmlFor="email">Email</Label>
 								<Input
