@@ -10,7 +10,7 @@ type EventsData = {
     end_time: Date;
     name: string;
     created_at: Date;
-    id?: string;
+    id: string;
 };
 
 interface EventCardProps {
