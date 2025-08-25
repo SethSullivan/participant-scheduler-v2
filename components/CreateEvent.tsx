@@ -11,10 +11,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
+interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
+    setShowPopup: (show: boolean) => void;
+}
+
 export default function CreateEvent({
-	className,
+	className, 
+    setShowPopup,
 	...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: CreateEventProps) {
 	const router = useRouter();
 	const [eventName, setEventName] = useState("");
 	const [startTime, setStartTime] = useState("");
@@ -62,6 +67,8 @@ export default function CreateEvent({
 			setEventName("");
 			setStartTime("");
 			setEndTime("");
+            setShowPopup(false);
+
 		} catch (error: any) {
 			console.error("Error creating event:", error);
 			setError(error.message || "Failed to create event");
@@ -73,7 +80,7 @@ export default function CreateEvent({
 		<div className={cn("flex flex-col gap-6", className)} {...props}>
 			<Card>
 				<CardHeader>
-					<CardTitle className="text-2xl">Login</CardTitle>
+					<CardTitle className="text-2xl">Event</CardTitle>
 					<CardDescription>Enter event information</CardDescription>
 				</CardHeader>
 
@@ -114,8 +121,16 @@ export default function CreateEvent({
 								/>
 								{error && <p className="text-sm text-red-500">{error}</p>}
 								<Button type="submit" className="w-full" disabled={isLoading}>
-									{isLoading ? "Logging in..." : "Login"}
+									{isLoading ? "Creating event..." : "Create Event"}
 								</Button>
+<Button 
+                                type="button" 
+                                variant="outline" 
+                                className="w-full" 
+                                onClick={() => setShowPopup(false)}
+                            >
+                                Cancel
+                            </Button>
 							</div>
 						</div>
 					</form>
