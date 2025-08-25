@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import React, { useEffect, useState } from "react";
-import CreateEvent from "@/components/CreateEvent";
+import CreateEvent from "@/components/create-event";
 import EventCard from "@/components/event-card";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
