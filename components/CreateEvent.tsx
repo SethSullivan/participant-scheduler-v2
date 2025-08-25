@@ -37,24 +37,29 @@ export default function CreateEvent({
 			const user = data?.claims;
 
 			console.log(user);
-            if (!user) {
+			if (!user) {
 				setError("You must have an account to create an event");
-                router.push("/auth/sign-up")
-                return;
-            }
+				router.push("/auth/sign-up");
+				return;
+			}
 			if (user?.is_anonymous) {
 				setError("You must have an account to create an event");
 				router.push("/auth/sign-up"); // 5. Fix router path (add leading slash)
 				return;
 			}
 
+			// Convert time inputs to full datetime objects in user's timezone
+			const today = new Date();
+			const startDateTime = new Date(`${today.toISOString().split("T")[0]}T${startTime}:00`);
+			const endDateTime = new Date(`${today.toISOString().split("T")[0]}T${endTime}:00`);
+
 			const { error: eventsError, data: eventsData } = await supabase
 				.from("events")
 				.insert({
 					name: eventName,
 					organizer: user.sub,
-					start_time: startTime,
-					end_time: endTime, // 6. Fix column name consistency
+					start_time: startDateTime.toISOString(), // Store as full datetime
+					end_time: endDateTime.toISOString(), // Store as full datetime
 				})
 				.select();
 
@@ -67,8 +72,7 @@ export default function CreateEvent({
 			setEventName("");
 			setStartTime("");
 			setEndTime("");
-            setShowPopup(false);
-
+			setShowPopup(false);
 		} catch (error: any) {
 			console.error("Error creating event:", error);
 			setError(error.message || "Failed to create event");
