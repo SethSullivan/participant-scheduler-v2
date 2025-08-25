@@ -56,8 +56,7 @@ export default function DashBoard() {
 	const handleEventClick = (event: EventsData) => {
 		console.log("Event clicked:", event);
 		// Add your event click logic here
-		// For example: router.push(`/events/${event.id}`);
-		alert(`Event: ${event.name}\nTime: ${event.start_time} - ${event.end_time}`);
+		router.push(`/protected/${event.id}`);
 	};
 	return (
 		<div className="min-h-screen p-6">
