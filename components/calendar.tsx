@@ -86,8 +86,7 @@ export default function Calendar({
 	};
 	return (
 		<div className="calendar-container">
-			<div className="calendar-header">
-				<h2>Select Your Availability</h2>
+			<div className="calendar-header pb-3">
 				<p>Drag to select time ranges when you're available</p>
 			</div>
 
