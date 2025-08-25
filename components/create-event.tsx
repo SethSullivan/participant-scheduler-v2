@@ -11,13 +11,24 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
+type EventsData = {
+    organizer: string;
+    start_time: Date;
+    end_time: Date;
+    name: string;
+    created_at: Date;
+    id: string;
+}
+
 interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
     setShowPopup: (show: boolean) => void;
+    setEventsData: React.Dispatch<React.SetStateAction<EventsData[]|null>>; 
 }
 
 export default function CreateEvent({
 	className, 
     setShowPopup,
+	setEventsData,
 	...props
 }: CreateEventProps) {
 	const router = useRouter();
@@ -61,13 +72,15 @@ export default function CreateEvent({
 					start_time: startDateTime.toISOString(), // Store as full datetime
 					end_time: endDateTime.toISOString(), // Store as full datetime
 				})
-				.select();
+				.select()
 
 			if (eventsError) {
 				throw eventsError;
 			}
 
 			console.log("Event created successfully:", eventsData);
+			const newEvent:EventsData = eventsData[0];
+        	setEventsData((prev: EventsData[]|null) => (prev ? [...prev, newEvent] : [newEvent]));
 			// Clear form on success
 			setEventName("");
 			setStartTime("");
