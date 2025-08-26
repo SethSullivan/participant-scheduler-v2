@@ -36,7 +36,7 @@ export default function ProtectedPage({
 	// TODO allow routing back to dashboard if user is organizer
 	
 	const {authData, accessToken, isLoading} = useAuth();
-	const {eventData} = useEventData(eventID);
+	const eventData = useEventData(eventID);
 	console.log(eventData);
 	// Show loading state while checking auth
     if (isLoading) {

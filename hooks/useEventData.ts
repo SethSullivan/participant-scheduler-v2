@@ -37,5 +37,5 @@ export default function useEventData(eventID: string) {
 		getEventData();
 	}, [eventID]);
 
-	return { eventData };
+	return eventData;
 }
