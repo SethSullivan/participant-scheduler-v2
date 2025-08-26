@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, use } from "react";
+import React, { useState, use, useEffect } from "react";
 import Calendar from "@/components/calendar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -29,14 +29,22 @@ export default function ProtectedPage({
   }) {
 		const { pageID: eventID } = use(params);
 		const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
+		const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+
 		// const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 		// TODO Pull event information from the eventID that's sent along with params
 		// TODO Put info on UI.
 		// TODO If the current user is organizer, show everyone's availability. If not, allow someone to submit availability with Name and Email
 		// TODO allow routing back to dashboard if user is organizer
-
-		const { authData, accessToken, isLoading } = useAuth();
-		const eventData = useEventData(eventID);
+		useEffect(()=>{
+			// Get Google access token from localStorage
+			const googleToken = localStorage.getItem("google_access_token");
+			if (googleToken) {
+				setAccessToken(googleToken);
+			}
+		})
+		// const { authData, isLoading } = useAuth();
+		const {eventData, isLoading} = useEventData(eventID);
 		
 		// Show loading state while checking auth
 		if (isLoading) {
@@ -77,12 +85,12 @@ export default function ProtectedPage({
 						<Button>Submit Availability</Button>
 					</div>
 				</div>
-				<div className="flex flex-col gap-2 items-start">
+				{/* <div className="flex flex-col gap-2 items-start">
 					<h2 className="font-bold text-2xl mb-4">Your user details</h2>
 					<pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
 						{JSON.stringify(authData ? authData.claims : "not yet signed in", null, 2)}
 					</pre>
-				</div>
+				</div> */}
 			</div>
 		);
   }
