@@ -12,6 +12,8 @@ type EventData = {
 
 export default function useEventData(eventID: string) {
 	const [eventData, setEventData] = useState<EventData | null>(null);
+	const [isLoading, setIsLoading] = useState(true); // Add loading state
+
 	useEffect(() => {
 		const getEventData = async () => {
 			const supabase = createClient();
@@ -32,10 +34,12 @@ export default function useEventData(eventID: string) {
 				}
 			} catch (error) {
 				throw error;
+			} finally {
+				setIsLoading(false)
 			}
 		};
 		getEventData();
 	}, [eventID]);
 
-	return eventData;
+	return {eventData, isLoading};
 }
