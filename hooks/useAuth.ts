@@ -12,8 +12,6 @@ type AuthData = {
 
 export const useAuth = () => {
 	const [authData, setAuthData] = useState<AuthData | null>(null);
-	const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState(true); // Add loading state
 
 	useEffect(() => {
 		const handleAuth = async () => {
@@ -31,25 +29,16 @@ export const useAuth = () => {
 					console.log("User authenticated:", authResponse.claims);
 					setAuthData(authResponse);
 
-					// Get Google access token from localStorage
-					const googleToken = localStorage.getItem("google_access_token");
-					if (googleToken) {
-						setAccessToken(googleToken);
-					}
+
 				}
 			} catch (error) {
 				console.error("Auth error:", error);
 				setAuthData(null);
-			} finally {
-				setIsLoading(false);
-			}
+			} 
 		};
 
 		handleAuth();
 	}, []);
-    return {
-        authData,
-        accessToken,
-        isLoading,
-    }
+    return authData
+
 }
