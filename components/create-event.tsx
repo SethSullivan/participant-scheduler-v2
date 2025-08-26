@@ -6,28 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { routerServerGlobal } from "next/dist/server/lib/router-utils/router-server-context";
 
 type EventsData = {
-    organizer: string;
-    start_time: Date;
-    end_time: Date;
-    name: string;
-    created_at: Date;
-    id: string;
-}
+	organizer: string;
+	start_time: Date;
+	end_time: Date;
+	name: string;
+	created_at: Date;
+	id: string;
+};
 
 interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
-    setShowPopup: (show: boolean) => void;
-    setEventsData: React.Dispatch<React.SetStateAction<EventsData[]|null>>; 
+	setShowPopup: (show: boolean) => void;
+	setEventsData: React.Dispatch<React.SetStateAction<EventsData[] | null>>;
 }
 
 export default function CreateEvent({
-	className, 
-    setShowPopup,
+	className,
+	setShowPopup,
 	setEventsData,
 	...props
 }: CreateEventProps) {
@@ -72,23 +70,23 @@ export default function CreateEvent({
 					start_time: startDateTime.toISOString(), // Store as full datetime
 					end_time: endDateTime.toISOString(), // Store as full datetime
 				})
-				.select()
+				.select();
 
 			if (eventsError) {
 				throw eventsError;
 			}
 
 			console.log("Event created successfully:", eventsData);
-			const newEvent:EventsData = eventsData[0];
-        	setEventsData((prev: EventsData[]|null) => (prev ? [...prev, newEvent] : [newEvent]));
+			const newEvent: EventsData = eventsData[0];
+			setEventsData((prev: EventsData[] | null) => (prev ? [...prev, newEvent] : [newEvent]));
 			// Clear form on success
 			setEventName("");
 			setStartTime("");
 			setEndTime("");
 			setShowPopup(false);
-		} catch (error: any) {
+		} catch (error) {
 			console.error("Error creating event:", error);
-			setError(error.message || "Failed to create event");
+			setError((error as Error).message || "Failed to create event");
 		} finally {
 			setIsLoading(false);
 		}
@@ -140,14 +138,14 @@ export default function CreateEvent({
 								<Button type="submit" className="w-full" disabled={isLoading}>
 									{isLoading ? "Creating event..." : "Create Event"}
 								</Button>
-<Button 
-                                type="button" 
-                                variant="outline" 
-                                className="w-full" 
-                                onClick={() => setShowPopup(false)}
-                            >
-                                Cancel
-                            </Button>
+								<Button
+									type="button"
+									variant="outline"
+									className="w-full"
+									onClick={() => setShowPopup(false)}
+								>
+									Cancel
+								</Button>
 							</div>
 						</div>
 					</form>

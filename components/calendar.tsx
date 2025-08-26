@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import { getEvents } from "@/lib/utils/getCalendarEvents";
 import DeleteSlotPopup from "./ui/delete-slot-popup";
 import { useDeleteSlot } from "@/hooks/useDeleteSlot";
@@ -37,7 +38,7 @@ type EventData = {
 interface CalendarProps {
 	accessToken?: string | undefined;
 	availableSlots: AvailabilitySlot[];
-	setAvailableSlots: React.Dispatch<React.SetStateAction<any[]>>;
+	setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>;
 	eventData: EventData;
 }
 
@@ -47,7 +48,7 @@ export default function Calendar({
 	setAvailableSlots,
 	eventData,
 }: CalendarProps) {
-	const [calendarEvents, setCalendarEvents] = useState<any[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
+	const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
 	const [isLoading, setIsLoading] = useState(true);
 	const { eventToDelete, initiateDelete, confirmDelete, cancelDelete } =
 		useDeleteSlot(setAvailableSlots);
@@ -57,7 +58,7 @@ export default function Calendar({
 				try {
 					setIsLoading(true);
 					console.log("Calendar component fetching events...");
-					const organizedEvents = await getEvents(6, "07:00", "18:00", true, accessToken);
+					const organizedEvents = await getEvents(6, true, accessToken);
 					const flatEvents = organizedEvents.flat();
 					// Add in isGcal to every event in the array
 					flatEvents.map((v) => ({ ...v, isGcal: true }));
@@ -73,7 +74,7 @@ export default function Calendar({
 		fetchEvents();
 	}, [accessToken]); // Re-fetch when access token changes
 
-	const handleDateSelect = (selectInfo: any) => {
+	const handleDateSelect = (selectInfo: DateSelectArg) => {
 		// Create a new availability slot
 		const newSlot: AvailabilitySlot = {
 			id: Date.now().toString(),
@@ -91,7 +92,7 @@ export default function Calendar({
 		// Clear the selection
 		selectInfo.view.calendar.unselect();
 	};
-	const handleEventClick = (clickInfo: any) => {
+	const handleEventClick = (clickInfo: EventClickArg) => {
 		if (!clickInfo.event.extendedProps.isGcal) {
 			initiateDelete(clickInfo.event.id);
 		}
@@ -104,10 +105,24 @@ export default function Calendar({
 		// Format as HH:MM:SS for FullCalendar
 		return date.toTimeString().slice(0, 8);
 	};
+	
+	// Add loading return early in the component
+	if (isLoading) {
+		return (
+			<div className="calendar-container">
+				<div className="flex items-center justify-center h-96">
+					<div className="text-center">
+						<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+						<p className="text-gray-600">Loading calendar events...</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
 	return (
 		<div className="calendar-container">
 			<div className="calendar-header pb-3">
-				<p>Drag to select time ranges when you're available</p>
+				<p>Drag to select time ranges when you&apos;re available</p>
 			</div>
 
 			<FullCalendar
@@ -131,7 +146,7 @@ export default function Calendar({
 				eventClick={handleEventClick}
 				selectConstraint={{
 					start: formatTimeForCalendar(eventData.start_time),
-					end: formatTimeForCalendar(eventData.end_time)
+					end: formatTimeForCalendar(eventData.end_time),
 				}}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday

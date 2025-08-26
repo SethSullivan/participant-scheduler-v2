@@ -1,7 +1,6 @@
 'use client'
 import { LoginForm } from "@/components/login-form";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
@@ -10,7 +9,7 @@ export default function Page() {
 
 	const handleAnonymousAccess = async () => {
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signInAnonymously()
+    const { error } = await supabase.auth.signInAnonymously()
     if (error) throw error;
 		console.log("Navigating to /protected");
 		router.push("/protected");

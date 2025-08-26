@@ -1,15 +1,15 @@
 "use client";
-import React, { useEffect, useState, use } from "react";
+import React, { useState, use } from "react";
 import Calendar from "@/components/calendar";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import useEventData from "@/hooks/useEventData";
 
-interface UserInfo {
+/* interface UserInfo {
 	name: string;
 	email: string;
 	availableSlots: any[];
-}
+} */
 
 interface AvailabilitySlot {
 	id: string;
@@ -29,7 +29,7 @@ export default function ProtectedPage({
   }) {
 		const { pageID: eventID } = use(params);
 		const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
-		const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+		// const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 		// TODO Pull event information from the eventID that's sent along with params
 		// TODO Put info on UI.
 		// TODO If the current user is organizer, show everyone's availability. If not, allow someone to submit availability with Name and Email
@@ -53,7 +53,7 @@ export default function ProtectedPage({
 					<div className="text-center">
 						<h1 className="text-2xl font-bold text-red-600 mb-4">Event Not Found</h1>
 						<p className="text-gray-600 mb-4">
-							The event you're looking for doesn't exist or has been deleted.
+							The event you&apos;re looking for doesn&apos;t exist or has been deleted.
 						</p>
 						<Button onClick={() => window.history.back()}>Go Back</Button>
 					</div>

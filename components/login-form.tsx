@@ -11,12 +11,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<"div">) {
-	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [isOAuthLoading, setIsOAuthLoading] = useState(false);
 
 	const router = useRouter();
 
@@ -102,7 +100,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 			const client = window.google.accounts.oauth2.initTokenClient({
 				client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
 				scope: "https://www.googleapis.com/auth/calendar.readonly",
-				callback: (tokenResponse: any) => {
+				callback: (tokenResponse: google.accounts.oauth2.TokenResponse) => {
 					console.log("Sign-in token response:", tokenResponse);
 					if (tokenResponse.access_token) {
 						localStorage.setItem("google_access_token", tokenResponse.access_token);
@@ -116,9 +114,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 						resolve(false);
 					}
 				},
-				error_callback: (error: any) => {
+				error_callback: (error: google.accounts.oauth2.ClientConfigError) => {
 					console.error("OAuth error:", error);
-					reject(new Error(`OAuth error: ${error.error || "Unknown error"}`));
+					reject(new Error(`OAuth error: ${error.message || "Unknown error"}`));
 				},
 			});
 			try {
@@ -145,7 +143,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 
 			// Only do OAuth for specific user
 			if (email === "sethsullivan99@gmail.com") {
-				setIsOAuthLoading(true);
 
 				try {
 					// Initialize Google services
@@ -164,9 +161,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 					console.error("Google OAuth error:", oauthError);
 					setError("Failed to connect Google Calendar. You can try again later.");
 					// Don't prevent login - user can still use the app
-				} finally {
-					setIsOAuthLoading(false);
-				}
+				} 
 			}
 			router.push("/protected/dashboard");
 
@@ -202,7 +197,7 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
 							</div>
 							<div className="grid gap-2">
 								<div className="flex items-center">
-									<Label htmlFor="password">Password (Optional)</Label>
+									<Label htmlFor="password">Password</Label>
 									<Link
 										href="/auth/forgot-password"
 										className="ml-auto inline-block text-sm underline-offset-4 hover:underline"

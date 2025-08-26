@@ -42,9 +42,9 @@ export default function DashBoard() {
 				if (eventsData) {
 					setEventsData(eventsData);
 				}
-			} catch (error: any) {
+			} catch (error) {
 				console.error("Error loading events:", error);
-				setError(error.message);
+				setError((error as Error).message || "An unexpected error occurred");
 			} finally {
 				setIsLoading(false);
 			}
@@ -102,7 +102,10 @@ export default function DashBoard() {
 					{/* Create Event Section */}
 					<div className="flex justify-center items-start">
 						{showPopup ? (
-							<CreateEvent setShowPopup={setShowPopup} setEventsData={setEventsData}/>
+							<CreateEvent
+								setShowPopup={setShowPopup}
+								setEventsData={setEventsData}
+							/>
 						) : (
 							<div className="w-full max-w-md">
 								<Button

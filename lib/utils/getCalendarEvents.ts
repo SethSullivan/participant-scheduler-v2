@@ -1,15 +1,14 @@
-// Types for calendar events
+// Types for calendarevents
 interface CalendarEvent {
-	id: (string | undefined)[];
+	id: string;
 	title: string;
 	start: Date;
 	end: Date;
-	allDay?: boolean;
 }
 
 function getDatesBetween(startDate: Date, endDate: Date): Date[] {
 	const dateArray: Date[] = [];
-	let currentDate = new Date(startDate);
+	const currentDate = new Date(startDate);
 
 	while (currentDate <= endDate) {
 		dateArray.push(new Date(currentDate));
@@ -20,33 +19,33 @@ function getDatesBetween(startDate: Date, endDate: Date): Date[] {
 }
 
 // Format date function to replace Utilities.formatDate
-function formatDate(
-	date: Date,
-	timeZone: string = "UTC",
-	format: string = "yyyy-MM-dd HH:mm:ss"
-): string {
-	const options: Intl.DateTimeFormatOptions = {
-		timeZone,
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		second: "2-digit",
-		hour12: false,
-	};
+// function formatDate(
+// 	date: Date,
+// 	timeZone: string = "UTC",
+// 	format: string = "yyyy-MM-dd HH:mm:ss"
+// ): string {
+// 	const options: Intl.DateTimeFormatOptions = {
+// 		timeZone,
+// 		year: "numeric",
+// 		month: "2-digit",
+// 		day: "2-digit",
+// 		hour: "2-digit",
+// 		minute: "2-digit",
+// 		second: "2-digit",
+// 		hour12: false,
+// 	};
 
-	if (format.includes("hh:mm")) {
-		return date.toLocaleTimeString("en-US", {
-			hour: "2-digit",
-			minute: "2-digit",
-			hour12: true,
-			timeZone,
-		});
-	}
+// 	if (format.includes("hh:mm")) {
+// 		return date.toLocaleTimeString("en-US", {
+// 			hour: "2-digit",
+// 			minute: "2-digit",
+// 			hour12: true,
+// 			timeZone,
+// 		});
+// 	}
 
-	return date.toLocaleString("sv-SE", options).replace(" ", " ");
-}
+// 	return date.toLocaleString("sv-SE", options).replace(" ", " ");
+// }
 
 function waitForGapi(): Promise<void> {
 	return new Promise((resolve, reject) => {
@@ -75,11 +74,11 @@ async function getCalendarEventsFromAPI(
 ): Promise<CalendarEvent[]> {
 	try {
 		console.log("Fetching calendar events...");
-
-		await waitForGapi();
-
 		console.log("Access token exists:", !!accessToken);
 
+		
+		await waitForGapi();
+		
 		// Set the access token for the API client
 		if (accessToken) {
 			window.gapi.client.setToken({ access_token: accessToken });
@@ -103,11 +102,11 @@ async function getCalendarEventsFromAPI(
 			console.log("Calendar API response:", response.result.items);
 
 			const events: CalendarEvent[] = response.result.items
-				.filter((item: any) => {
+				.filter((item: gapi.client.calendar.Event) => {
 					// All-day events only have 'date', timed events have 'dateTime'
 					return item.start?.dateTime && item.end?.dateTime;
 				})
-				.map((item: any, index: number) => {
+				.map((item:  gapi.client.calendar.Event, index: number) => {
 					return {
 						id: item.id || `event-${index}`,
 						title: item.summary || "No Title",
@@ -121,7 +120,7 @@ async function getCalendarEventsFromAPI(
 				});
 			allEvents.push(...events);
 		}
-
+		console.log(allEvents)
 		return allEvents;
 	} catch (error) {
 		console.error("Error fetching calendar events:", error);
@@ -132,13 +131,10 @@ async function getCalendarEventsFromAPI(
 // Update your main getEvents function to accept accessToken
 export async function getEvents(
 	numDaysAhead = 6,
-	startTime = "07:00",
-	endTime = "18:00",
 	includeToday = true,
 	accessToken?: string
 ) {
 	try {
-		const totalDays = numDaysAhead + 1;
 		const tempStartDate = new Date();
 		const startDate = includeToday
 			? tempStartDate
@@ -146,14 +142,6 @@ export async function getEvents(
 		const tempEndDate = new Date(startDate.getTime() + 1000 * numDaysAhead * 60 * 60 * 24);
 		const endDate = new Date(tempEndDate.setHours(17, 30, 0));
 		const allDates = getDatesBetween(startDate, endDate);
-
-		// Sample date formatting (replacing Google Apps Script APIs)
-		const date = new Date(2023, 2, 15, 14, 30, 45);
-		const formattedDate = formatDate(
-			date,
-			Intl.DateTimeFormat().resolvedOptions().timeZone,
-			"yyyy-MM-dd HH:mm:ss"
-		);
 
 		const calendarIDs = [
 			"primary",
