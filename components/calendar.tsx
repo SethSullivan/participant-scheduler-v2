@@ -24,16 +24,28 @@ type CalendarEvent = {
 	title: string;
 	isGcal: boolean;
 };
+
+type EventData = {
+	id: string;
+	organizer: string;
+	name: string;
+	start_time: Date;
+	end_time: Date;
+	created_at: Date;
+};
+
 interface CalendarProps {
 	accessToken?: string | undefined;
 	availableSlots: AvailabilitySlot[];
 	setAvailableSlots: React.Dispatch<React.SetStateAction<any[]>>;
+	eventData: EventData;
 }
 
 export default function Calendar({
 	accessToken,
 	availableSlots,
 	setAvailableSlots,
+	eventData,
 }: CalendarProps) {
 	const [calendarEvents, setCalendarEvents] = useState<any[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
 	const [isLoading, setIsLoading] = useState(true);
@@ -84,6 +96,14 @@ export default function Calendar({
 			initiateDelete(clickInfo.event.id);
 		}
 	};
+	const formatTimeForCalendar = (dateTime: Date | string): string => {
+		const date = new Date(dateTime);
+		if (isNaN(date.getTime())) {
+			return "07:00:00"; // fallback time
+		}
+		// Format as HH:MM:SS for FullCalendar
+		return date.toTimeString().slice(0, 8);
+	};
 	return (
 		<div className="calendar-container">
 			<div className="calendar-header pb-3">
@@ -102,21 +122,21 @@ export default function Calendar({
 				selectable={true}
 				selectMirror={true}
 				dayMaxEvents={true}
-				slotMinTime="07:00:00"
-				slotMaxTime="19:00:00"
-				slotDuration="00:30:00"
+				slotMinTime={formatTimeForCalendar(eventData.start_time)}
+				slotMaxTime={formatTimeForCalendar(eventData.end_time)}
+				slotDuration="00:15:00"
 				height="auto"
 				events={calendarEvents.concat(availableSlots)}
 				select={handleDateSelect}
 				eventClick={handleEventClick}
 				selectConstraint={{
-					start: "07:00",
-					end: "19:00",
+					start: formatTimeForCalendar(eventData.start_time),
+					end: formatTimeForCalendar(eventData.end_time)
 				}}
 				businessHours={{
 					daysOfWeek: [1, 2, 3, 4, 5], // Monday - Friday
-					startTime: "07:00",
-					endTime: "19:00",
+					startTime: "08:00",
+					endTime: "18:00",
 				}}
 				eventOverlap={false}
 				selectOverlap={false}
