@@ -1,11 +1,9 @@
 "use client";
-import type { JwtPayload, JwtHeader } from "@supabase/supabase-js";
-import { createClient } from "@/lib/supabase/client";
-import { InfoIcon } from "lucide-react";
-import { FetchDataSteps } from "@/components/tutorial/fetch-data-steps";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, use } from "react";
 import Calendar from "@/components/calendar";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
+import useEventData from "@/hooks/useEventData";
 
 interface UserInfo {
 	name: string;
@@ -23,83 +21,68 @@ interface AvailabilitySlot {
 	borderColor?: string;
 	textColor?: string;
 }
-type AuthData = {
-	claims: JwtPayload;
-	header: JwtHeader;
-	signature: Uint8Array<ArrayBufferLike>;
-} | null;
 
-export default function ProtectedPage() {
-	const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
-	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-	const [authData, setAuthData] = useState<AuthData | null>(null);
-	const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-    const [isLoading, setIsLoading] = useState(true); // Add loading state
+export default function ProtectedPage({
+	params,
+  }: {
+	params: Promise<{ pageID: string }>
+  }) {
+		const { pageID: eventID } = use(params);
+		const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
+		const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+		// TODO Pull event information from the eventID that's sent along with params
+		// TODO Put info on UI.
+		// TODO If the current user is organizer, show everyone's availability. If not, allow someone to submit availability with Name and Email
+		// TODO allow routing back to dashboard if user is organizer
 
-	useEffect(() => {
-		const handleAuth = async () => {
-            try {
-                const supabase = createClient(); // Remove await here
-                const { data: authResponse, error: authError } = await supabase.auth.getClaims();
-                
-                console.log("Auth check result:", { authResponse, authError });
-                
-                if (authError || !authResponse?.claims) {
-                    console.log("No authentication found, allowing anonymous access");
-                    // User is not authenticated, but we allow anonymous access
-                    setAuthData(null);
-                } else {
-                    console.log("User authenticated:", authResponse.claims);
-                    setAuthData(authResponse);
-                    
-                    // Get Google access token from localStorage
-                    const googleToken = localStorage.getItem("google_access_token");
-                    if (googleToken) {
-                        setAccessToken(googleToken);
-                    }
-                }
-            } catch (error) {
-                console.error("Auth error:", error);
-                setAuthData(null);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        
-        handleAuth();
-	}, []);
-
-	// Show loading state while checking auth
-    if (isLoading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div>Loading...</div>
-            </div>
-        );
-    }
-
-	return (
-		<div className="flex-1 w-full flex flex-col gap-12">
-			<div className="flex flex-row w-full">
-				<div className="flex-3 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
-					<Calendar
-						accessToken={accessToken}
-						availableSlots={availableSlots}
-						setAvailableSlots={setAvailableSlots}
-					/>
+		const { authData, accessToken, isLoading } = useAuth();
+		const eventData = useEventData(eventID);
+		
+		// Show loading state while checking auth
+		if (isLoading) {
+			return (
+				<div className="flex items-center justify-center min-h-screen">
+					<div>Loading...</div>
 				</div>
-				<div className="flex-3 border-solid border-2">
-					<Button>
-						Submit Availability
-					</Button>
+			);
+		}
+		// Handle case when event is not found
+		if (!eventData) {
+			return (
+				<div className="flex items-center justify-center min-h-screen">
+					<div className="text-center">
+						<h1 className="text-2xl font-bold text-red-600 mb-4">Event Not Found</h1>
+						<p className="text-gray-600 mb-4">
+							The event you're looking for doesn't exist or has been deleted.
+						</p>
+						<Button onClick={() => window.history.back()}>Go Back</Button>
+					</div>
+				</div>
+			);
+		}
+
+		return (
+			<div className="flex-1 w-full flex flex-col gap-2">
+				<h1 className="text-3xl font-semibold">{eventData ? eventData.name : ""}</h1>
+				<div className="flex flex-row w-full">
+					<div className="flex-3 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+						<Calendar
+							accessToken={accessToken}
+							availableSlots={availableSlots}
+							setAvailableSlots={setAvailableSlots}
+							eventData={eventData}
+						/>
+					</div>
+					<div className="flex-3 border-solid border-2">
+						<Button>Submit Availability</Button>
+					</div>
+				</div>
+				<div className="flex flex-col gap-2 items-start">
+					<h2 className="font-bold text-2xl mb-4">Your user details</h2>
+					<pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
+						{JSON.stringify(authData ? authData.claims : "not yet signed in", null, 2)}
+					</pre>
 				</div>
 			</div>
-			<div className="flex flex-col gap-2 items-start">
-				<h2 className="font-bold text-2xl mb-4">Your user details</h2>
-				<pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-					{JSON.stringify(authData ? authData.claims : "not yet signed in", null, 2)}
-				</pre>
-			</div>
-		</div>
-	);
-}
+		);
+  }
