@@ -48,12 +48,12 @@ export default function CreateEvent({
 			console.log(user);
 			if (!user) {
 				setError("You must have an account to create an event");
-				router.push("/auth/sign-up");
+				router.push("/sign-up");
 				return;
 			}
 			if (user?.is_anonymous) {
 				setError("You must have an account to create an event");
-				router.push("/auth/sign-up"); // 5. Fix router path (add leading slash)
+				router.push("/sign-up"); // 5. Fix router path (add leading slash)
 				return;
 			}
 

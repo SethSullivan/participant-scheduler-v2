@@ -11,7 +11,7 @@ export function LogoutButton() {
     localStorage.removeItem("google_access_token");
     const supabase = createClient();
     await supabase.auth.signOut();
-    router.push("/auth/login");
+    router.push("/login");
   };
 
   return <Button onClick={logout}>Logout</Button>;
