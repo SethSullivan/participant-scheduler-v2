@@ -1,3 +1,5 @@
+import { initializeGoogleServices } from "./gapiUtils";
+
 // Types for calendarevents
 interface CalendarEvent {
 	id: string;
@@ -67,7 +69,6 @@ function waitForGapi(): Promise<void> {
 }
 
 async function getCalendarEventsFromAPI(
-	calendarIDs: string[],
 	startDate: Date,
 	endDate: Date,
 	accessToken?: string
@@ -76,7 +77,8 @@ async function getCalendarEventsFromAPI(
 		console.log("Fetching calendar events...");
 		console.log("Access token exists:", !!accessToken);
 
-		
+		// Must reinitialize google services
+		await initializeGoogleServices();
 		await waitForGapi();
 		
 		// Set the access token for the API client
