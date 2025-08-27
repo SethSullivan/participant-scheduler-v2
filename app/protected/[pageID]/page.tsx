@@ -42,7 +42,7 @@ export default function ProtectedPage({
 			if (googleToken) {
 				setAccessToken(googleToken);
 			}
-		})
+		}, [])
 		// const { authData, isLoading } = useAuth();
 		const {eventData, isLoading} = useEventData(eventID);
 		
