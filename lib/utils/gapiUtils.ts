@@ -102,7 +102,7 @@ export const requestGoogleOAuth = async (): Promise<boolean> => {
         try {
             // This opens the OAuth popup
             if (window.gapi.client.getToken() == null) {
-                client.requestAccessToken({prompt:'consent'});
+                client.requestAccessToken({ prompt: 'consent' });
             } else {
                 // Skip display of account chooser and consent dialog for an existing session.
                 client.requestAccessToken({prompt: ''});

@@ -93,7 +93,7 @@ async function getCalendarEventsFromAPI(
 		if (calendarIDs) {
 			for (const calendarID of calendarIDs) {
 				if (!calendarID) {
-					continue
+					continue;
 				}
 				console.log("Calendar: ", calendarID);
 				const response = await window.gapi.client.calendar.events.list({
