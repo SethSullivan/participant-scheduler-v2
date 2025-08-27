@@ -89,7 +89,7 @@ async function getCalendarEventsFromAPI(
 		const calendarsResponse = await window.gapi.client.calendar.calendarList.list();
 		console.log("calendars", calendarsResponse.result.items);
 		const calendarIDs = calendarsResponse.result.items?.map((e)=>e.id);
-		var allEvents: CalendarEvent[] = [];
+		const allEvents: CalendarEvent[] = [];
 		if (calendarIDs) {
 			for (const calendarID of calendarIDs) {
 				if (!calendarID) {

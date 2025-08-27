@@ -2,7 +2,6 @@
 import React, { useState, use, useEffect } from "react";
 import Calendar from "@/components/calendar";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import useEventData from "@/hooks/useEventData";
 
 /* interface UserInfo {

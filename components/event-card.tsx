@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, User } from "lucide-react";
+import { Clock, User } from "lucide-react";
 
 type EventsData = {
     organizer: string;
