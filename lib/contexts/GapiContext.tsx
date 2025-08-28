@@ -13,3 +13,4 @@ export function GapiProvider({ children }: { children: ReactNode }) {
 const [isReady, setIsReady] = useState(false);
 const [isLoading, setIsLoading] = useState(true); // Start as loading
 const [error, setError] = useState<string | null>(null);
+}
