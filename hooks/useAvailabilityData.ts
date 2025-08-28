@@ -20,13 +20,11 @@ export default function useAvailabilityData(userID:string|undefined, organizerID
     const [availabilityData, setAvailabilityData] = useState<AvailabilityData[]|null>(null);
     useEffect(() => {
         const getParticipantAvailability = async () => {
-            console.log("userID", userID) 
-            console.log("organizerID",organizerID)
             // If there's no userID, this user shouldn't be able to see others availability
             if (!userID) {
                 return 
             }
-
+            
             // If the current user is not the organizer, then they shouldn't be able to see others availability
             if (userID != organizerID) {
                 return
