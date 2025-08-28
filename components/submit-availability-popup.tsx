@@ -1,39 +1,44 @@
-import React, { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
+import React, { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 type UserInfo = {
-    name: string;
-    email: string;
-    availableSlots: any[];
-}
+	name: string;
+	email: string;
+	availableSlots: any[];
+};
 type AvailabilitySlot = {
 	id: string;
 	title: string;
 	start: Date;
 	end: Date;
-	isGcal:boolean;
+	isGcal: boolean;
 	backgroundColor?: string;
 	borderColor?: string;
 	textColor?: string;
-}
+};
 
 type Props = {
-    setShowPopUp: React.Dispatch<React.SetStateAction<boolean>> ;
-    availableSlots: AvailabilitySlot[]; // Change from userInfo to availableSlots
-}
+	setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
+	availableSlots: AvailabilitySlot[]; // Change from userInfo to availableSlots
+    eventID:string;
+};
 
-export default function  SubmitAvailabilityPopup({ setShowPopUp, availableSlots }:Props) {
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, eventID }: Props) {
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+	const validateEmail = (email: string) => {
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		return emailRegex.test(email);
+	};
 
-    // Implicitly uses onSubmit
-    const uploadAvailability = async (name: string, email: string, availableSlots: AvailabilitySlot[]) => {
+	// Implicitly uses onSubmit
+	const uploadAvailability = async (
+		name: string,
+		email: string,
+		availableSlots: AvailabilitySlot[]
+	) => {
 		console.log("User submitted info:", { name, email, availableSlots });
 		try {
 			// Create client-side Supabase instance
@@ -58,6 +63,7 @@ export default function  SubmitAvailabilityPopup({ setShowPopUp, availableSlots 
 				.insert({
 					user_id: participantData.id, // Use the returned ID directly
 					availability: availableSlots,
+                    eventID:eventID,
 				});
 
 			if (participantAvailabilityError) {
@@ -75,101 +81,134 @@ export default function  SubmitAvailabilityPopup({ setShowPopUp, availableSlots 
 		}
 	};
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        
-        const newErrors: { name?: string; email?: string, availableSlots?:string } = {};
-        
-        if (!name.trim()) {
-            newErrors.name = 'Name is required';
-        }
-        
-        if (!email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!validateEmail(email)) {
-            newErrors.email = 'Please enter a valid email address';
-        }
-        
-        if (!availableSlots) {
-            newErrors.availableSlots = "Error: No availability selected"
-        }
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
+	const handleSubmit = (e: React.FormEvent) => {
+		e.preventDefault();
 
-        // Sanitize inputs
+		const newErrors: { name?: string; email?: string; availableSlots?: string } = {};
+
+		if (!name.trim()) {
+			newErrors.name = "Name is required";
+		}
+
+		if (!email.trim()) {
+			newErrors.email = "Email is required";
+		} else if (!validateEmail(email)) {
+			newErrors.email = "Please enter a valid email address";
+		}
+
+		if (!availableSlots) {
+			newErrors.availableSlots = "Error: No availability selected";
+		}
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			return;
+		}
+
+		// Sanitize inputs
 		const sanitizedName = name.trim();
 		const sanitizedEmail = email.trim().toLowerCase();
 
-        // Update availability slots with user info
-        const updatedSlots = availableSlots.map(slot => ({
-            ...slot,
-            title: `Available: ${sanitizedName} (${sanitizedEmail})` // Set title to name and email
-        }));
-        
-        // Clear form and submit
-        uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
-        setName('');
-        setEmail('');
-        setErrors({});
-    };
+		// Update availability slots with user info
+		const updatedSlots = availableSlots.map((slot) => ({
+			...slot,
+			title: `Available: ${sanitizedName} (${sanitizedEmail})`, // Set title to name and email
+		}));
 
-    const handleCancel = () => {
-        setName('');
-        setEmail('');
-        setErrors({});
+		// Clear form and submit
+		uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
+		setName("");
+		setEmail("");
+		setErrors({});
+	};
+
+	const handleCancel = () => {
+		setName("");
+		setEmail("");
+		setErrors({});
 		setShowPopUp(false);
-    };
+	};
 
-    return (
-        <div className="popup-overlay" onClick={handleCancel}>
-            <div className="popup-container" onClick={(e) => e.stopPropagation()}>
-                <div className="popup-header">
-                    <h2>Submit Your Availability</h2>
-                    <button className="close-button" onClick={handleCancel}>
-                        ×
-                    </button>
-                </div>
-                
-                <form onSubmit={handleSubmit} className="popup-form">
-                    <div className="form-group">
-                        <label htmlFor="name">Full Name</label>
-                        <input
-                            type="text"
-                            id="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            className={errors.name ? 'error' : ''}
-                            placeholder="Enter your full name"
-                            autoFocus
-                        />
-                        {errors.name && <span className="error-message">{errors.name}</span>}
-                    </div>
+	return (
+		<div
+			className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+			onClick={handleCancel}
+		>
+			<div
+				className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-screen overflow-y-auto"
+				onClick={(e) => e.stopPropagation()}
+			>
+				<div className="flex items-center justify-between p-6 border-b border-gray-200">
+					<h2 className="text-xl font-semibold text-gray-900">
+						Submit Your Availability
+					</h2>
+					<button
+						className="text-gray-400 hover:text-gray-600 text-2xl leading-none"
+						onClick={handleCancel}
+						type="button"
+					>
+						×
+					</button>
+				</div>
 
-                    <div className="form-group">
-                        <label htmlFor="email">Email Address</label>
-                        <input
-                            type="email"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className={errors.email ? 'error' : ''}
-                            placeholder="Enter your email address"
-                        />
-                        {errors.email && <span className="error-message">{errors.email}</span>}
-                    </div>
+				<form onSubmit={handleSubmit} className="p-6 space-y-4">
+					<div className="space-y-2">
+						<label htmlFor="name" className="block text-sm font-medium text-gray-700">
+							Full Name
+						</label>
+						<input
+							type="text"
+							id="name"
+							value={name}
+							onChange={(e) => setName(e.target.value)}
+							className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+								errors.name
+									? "border-red-300 focus:ring-red-500 focus:border-red-500"
+									: "border-gray-300"
+							}`}
+							placeholder="Enter your full name"
+							autoFocus
+						/>
+						{errors.name && <span className="text-sm text-red-600">{errors.name}</span>}
+					</div>
 
-                    <div className="popup-actions">
-                        <button type="button" className="cancel-button" onClick={handleCancel}>
-                            Cancel
-                        </button>
-                        <button type="submit" className="submit-button">
-                            Submit
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    );
-};
+					<div className="space-y-2">
+						<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+							Email Address
+						</label>
+						<input
+							type="email"
+							id="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							className={`w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+								errors.email
+									? "border-red-300 focus:ring-red-500 focus:border-red-500"
+									: "border-gray-300"
+							}`}
+							placeholder="Enter your email address"
+						/>
+						{errors.email && (
+							<span className="text-sm text-red-600">{errors.email}</span>
+						)}
+					</div>
+
+					<div className="flex gap-3 pt-4">
+						<button
+							type="button"
+							className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+							onClick={handleCancel}
+						>
+							Cancel
+						</button>
+						<button
+							type="submit"
+							className="flex-1 px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+						>
+							Submit
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	);
+}

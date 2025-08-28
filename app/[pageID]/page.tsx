@@ -71,7 +71,7 @@ export default function ProtectedPage({
 			);
 		}
 		const handleSubmitAvailability = () => {
-			console.log(availableSlots);
+			console.log("selected availability", availableSlots);
 			if (availableSlots.length==0) {
 				alert("Please select availability");
 			} else {
@@ -92,13 +92,14 @@ export default function ProtectedPage({
 						/>
 					</div>
 					<div className="flex-3 border-solid border-2">
-						<Button onClick={()=>handleSubmitAvailability()}>Submit Availability</Button>
+						<Button onClick={handleSubmitAvailability}>Submit Availability</Button>
 					</div>
 				</div>
 				{showPopUp &&
 					<SubmitAvailabilityPopup
 					setShowPopUp={setShowPopUp}
 					availableSlots={availableSlots} // Pass slots to popup
+					eventID={eventID}
 					/>
 				}
 			</div>
