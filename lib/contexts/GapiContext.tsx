@@ -1,16 +1,16 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+// import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 
-interface GapiContextType {
-    isReady: boolean;
-    isLoading: boolean;
-    error: string | null;
-}
+// interface GapiContextType {
+//     isReady: boolean;
+//     isLoading: boolean;
+//     error: string | null;
+// }
 
-const GapiContext = createContext<GapiContextType | undefined>(undefined);
+// const GapiContext = createContext<GapiContextType | undefined>(undefined);
 
-export function GapiProvider({ children }: { children: ReactNode }) {
-const [isReady, setIsReady] = useState(false);
-const [isLoading, setIsLoading] = useState(true); // Start as loading
-const [error, setError] = useState<string | null>(null);
-}
+// export function GapiProvider({ children }: { children: ReactNode }) {
+// const [isReady, setIsReady] = useState(false);
+// const [isLoading, setIsLoading] = useState(true); // Start as loading
+// const [error, setError] = useState<string | null>(null);
+// }
