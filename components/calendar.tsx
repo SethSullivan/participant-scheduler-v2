@@ -72,6 +72,8 @@ export default function Calendar({
 				} finally {
 					setIsLoading(false);
 				}
+			} else {
+				setIsLoading(false);
 			}
 		};
 		fetchEvents();
