@@ -17,7 +17,8 @@ interface AvailabilitySlot {
 	backgroundColor?: string;
 	borderColor?: string;
 	textColor?: string;
-}
+};
+
 type CalendarEvent = {
 	start: Date;
 	end: Date;
@@ -40,13 +41,15 @@ interface CalendarProps {
 	availableSlots: AvailabilitySlot[];
 	setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>;
 	eventData: EventData;
-}
+	availabilityData:AvailabilitySlot[][] | undefined;
+};
 
 export default function Calendar({
 	accessToken,
 	availableSlots,
 	setAvailableSlots,
 	eventData,
+	availabilityData,
 }: CalendarProps) {
 	const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
 	const [isLoading, setIsLoading] = useState(true);
@@ -105,6 +108,16 @@ export default function Calendar({
 		// Format as HH:MM:SS for FullCalendar
 		return date.toTimeString().slice(0, 8);
 	};
+	console.log("participant availability", availabilityData);
+	const getAllEvents = () => {
+		let events = calendarEvents.concat(availableSlots)
+		// flatten participant availability
+		if (availabilityData){
+			const flattened = availabilityData.flat();
+			events = events.concat(flattened)
+		} 
+		return events
+	}
 	
 	// Add loading return early in the component
 	if (isLoading) {
@@ -141,7 +154,7 @@ export default function Calendar({
 				slotMaxTime={formatTimeForCalendar(eventData.end_time)}
 				slotDuration="00:15:00"
 				height="auto"
-				events={calendarEvents.concat(availableSlots)}
+				events={getAllEvents()}
 				select={handleDateSelect}
 				eventClick={handleEventClick}
 				selectConstraint={{
