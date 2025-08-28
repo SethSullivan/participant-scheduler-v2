@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { createClient } from "@/lib/supabase/client";
-import { useAuth } from './useAuth';
 type AvailabilitySlot = {
 	id: string;
 	title: string;
@@ -17,10 +16,8 @@ type AvailabilityData = {
     availability:AvailabilitySlot[];
     eventID:string;
 }
-export default function useAvailabilityData(organizerID:string|undefined, eventID:string|undefined){
+export default function useAvailabilityData(userID:string|undefined, organizerID:string|undefined, eventID:string|undefined){
     const [availabilityData, setAvailabilityData] = useState<AvailabilityData[]|null>(null);
-    const authData = useAuth();
-    const userID = authData?.claims.sub
     useEffect(() => {
         const getParticipantAvailability = async () => {
             console.log("userID", userID) 
