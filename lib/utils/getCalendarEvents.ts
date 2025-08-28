@@ -51,7 +51,24 @@ function getDatesBetween(startDate: Date, endDate: Date): Date[] {
 
 function waitForGapi(): Promise<void> {
 	return new Promise((resolve, reject) => {
+		let attempts = 0;
+        const maxAttempts = 50; // 5 seconds max (50 * 100ms)
+        
 		const checkGapi = () => {
+            attempts++;
+            
+            // Timeout check
+            if (attempts > maxAttempts) {
+                reject(new Error("Timeout: Google API failed to load after 10 seconds"));
+                return;
+            }
+            
+            // Check if running in browser
+            if (typeof window === 'undefined') {
+                reject(new Error("Not running in browser environment"));
+                return;
+            }
+
 			if (window.gapi && window.gapi.client && window.gapi.client.calendar) {
 				resolve();
 			} else if (window.gapi && window.gapi.client) {
@@ -84,6 +101,8 @@ async function getCalendarEventsFromAPI(
 		// Set the access token for the API client
 		if (accessToken) {
 			window.gapi.client.setToken({ access_token: accessToken });
+		} else {
+			throw Error("no access token, cannot ")
 		}
 
 		const calendarsResponse = await window.gapi.client.calendar.calendarList.list();
