@@ -3,6 +3,8 @@ import React, { useState, use, useEffect } from "react";
 import Calendar from "@/components/calendar";
 import { Button } from "@/components/ui/button";
 import useEventData from "@/hooks/useEventData";
+import { useAuth } from "@/hooks/useAuth";
+import useAvailabilityData from "@/hooks/useAvailabilityData";
 
 /* interface UserInfo {
 	name: string;
@@ -29,10 +31,7 @@ export default function ProtectedPage({
 		const { pageID: eventID } = use(params);
 		const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
 		const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-
 		// const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-		// TODO Pull event information from the eventID that's sent along with params
-		// TODO Put info on UI.
 		// TODO If the current user is organizer, show everyone's availability. If not, allow someone to submit availability with Name and Email
 		// TODO allow routing back to dashboard if user is organizer
 		useEffect(()=>{
@@ -42,9 +41,10 @@ export default function ProtectedPage({
 				setAccessToken(googleToken);
 			}
 		}, [])
-		// const { authData, isLoading } = useAuth();
+		const authData  = useAuth();
 		const {eventData, isLoading} = useEventData(eventID);
-		
+		const participantAvailabilityData = useAvailabilityData(authData?.claims.sub, eventData?.organizer, eventID)
+
 		// Show loading state while checking auth
 		if (isLoading) {
 			return (
@@ -78,6 +78,7 @@ export default function ProtectedPage({
 							availableSlots={availableSlots}
 							setAvailableSlots={setAvailableSlots}
 							eventData={eventData}
+							availabilityData={participantAvailabilityData?.map((e) => e.availability)}
 						/>
 					</div>
 					<div className="flex-3 border-solid border-2">

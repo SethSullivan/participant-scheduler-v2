@@ -19,8 +19,6 @@ export const useAuth = () => {
 				const supabase = createClient();
 				const { data: authResponse, error: authError } = await supabase.auth.getClaims();
 
-				console.log("Auth check result:", { authResponse, authError });
-
 				if (authError || !authResponse?.claims) {
 					console.log("No authentication found, allowing anonymous access");
 					// User is not authenticated, but we allow anonymous access

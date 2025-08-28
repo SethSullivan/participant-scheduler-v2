@@ -18,7 +18,7 @@ type EventsData = {
 export default function DashBoard() {
 	const [showPopup, setShowPopup] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 	const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
 	const router = useRouter();
 
@@ -29,7 +29,7 @@ export default function DashBoard() {
 				const { data } = await supabase.auth.getClaims();
 				const user = data?.claims;
 				if (!user) {
-					router.push("/auth/login");
+					router.replace("/login");
 					return;
 				}
 				const { error: eventsError, data: eventsData } = await supabase
@@ -49,7 +49,6 @@ export default function DashBoard() {
 				setIsLoading(false);
 			}
 		};
-		setIsLoading(true);
 		getUsersEvents();
 	}, []);
 
@@ -58,6 +57,12 @@ export default function DashBoard() {
 		// Add your event click logic here
 		router.push(`/${event.id}`);
 	};
+	// TODO Add isLoading Screen
+	if (isLoading){
+		return (
+			<div>Loading...</div>
+		)
+	}
 	return (
 		<div className="min-h-screen p-6">
 			<div className="max-w-6xl mx-auto">
