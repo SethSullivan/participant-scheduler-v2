@@ -64,7 +64,7 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			const { error: participantAvailabilityError } = await supabase
 				.from("participant_availability")
 				.upsert({
-					user_id: participantData.id, // Use the returned ID directly
+					user_id: participantData.id, 
 					availability: availableSlots,
                     eventID:eventID,
 				}, 
