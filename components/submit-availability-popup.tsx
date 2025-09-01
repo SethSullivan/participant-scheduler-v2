@@ -47,7 +47,10 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			// Insert participant
 			const { error: participantsError, data: participantData } = await supabase
 				.from("participants")
-				.insert({ name: name, email: email })
+				.upsert(
+					{ name: name, email: email },
+					{ onConflict: "email" }
+				)
 				.select("id") // Get the ID in the same query
 				.single();
 
@@ -60,11 +63,13 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			// Insert availability using the returned ID
 			const { error: participantAvailabilityError } = await supabase
 				.from("participant_availability")
-				.insert({
+				.upsert({
 					user_id: participantData.id, // Use the returned ID directly
 					availability: availableSlots,
                     eventID:eventID,
-				});
+				}, 
+				{onConflict: "user_id" } 
+			);
 
 			if (participantAvailabilityError) {
 				console.error("Error inserting availability:", participantAvailabilityError);
