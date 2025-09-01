@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
+import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
 
 /* interface UserInfo {
 	name: string;
@@ -12,7 +13,7 @@ import useAvailabilityData from "@/hooks/useAvailabilityData";
 	availableSlots: any[];
 } */
 
-interface AvailabilitySlot {
+type AvailabilitySlot = {
 	id: string;
 	title: string;
 	start: Date;
@@ -31,6 +32,8 @@ export default function ProtectedPage({
 		const { pageID: eventID } = use(params);
 		const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
 		const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
+		const [showPopUp, setShowPopUp] = useState(false);
+
 		// const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 		// TODO If the current user is organizer, show everyone's availability. If not, allow someone to submit availability with Name and Email
 		// TODO allow routing back to dashboard if user is organizer
@@ -67,7 +70,14 @@ export default function ProtectedPage({
 				</div>
 			);
 		}
-
+		const handleSubmitAvailability = () => {
+			console.log("selected availability", availableSlots);
+			if (availableSlots.length==0) {
+				alert("Please select availability");
+			} else {
+				setShowPopUp(true);
+			}
+		};	
 		return (
 			<div className="flex-1 w-full flex flex-col gap-2">
 				<h1 className="text-3xl font-semibold">{eventData ? eventData.name : ""}</h1>
@@ -82,15 +92,16 @@ export default function ProtectedPage({
 						/>
 					</div>
 					<div className="flex-3 border-solid border-2">
-						<Button>Submit Availability</Button>
+						<Button onClick={handleSubmitAvailability}>Submit Availability</Button>
 					</div>
 				</div>
-				{/* <div className="flex flex-col gap-2 items-start">
-					<h2 className="font-bold text-2xl mb-4">Your user details</h2>
-					<pre className="text-xs font-mono p-3 rounded border max-h-32 overflow-auto">
-						{JSON.stringify(authData ? authData.claims : "not yet signed in", null, 2)}
-					</pre>
-				</div> */}
+				{showPopUp &&
+					<SubmitAvailabilityPopup
+					setShowPopUp={setShowPopUp}
+					availableSlots={availableSlots} // Pass slots to popup
+					eventID={eventID}
+					/>
+				}
 			</div>
 		);
   }
