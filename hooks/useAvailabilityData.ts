@@ -35,7 +35,7 @@ export default function useAvailabilityData(userID:string|undefined, organizerID
 				const { error: availabilityError, data: availabilityResponse } = await supabase
 					.from("participant_availability")
 					.select("*")
-					.eq("eventID", eventID);
+					.eq("event_id", eventID);
                 console.log("availability Response", availabilityResponse)
 				if (availabilityError) {
 					throw availabilityError;
