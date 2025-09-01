@@ -41,40 +41,14 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 	) => {
 		console.log("User submitted info:", { name, email, availableSlots });
 		try {
-			// Create client-side Supabase instance
-			const supabase = createClient();
-
-			// Insert participant
-			const { error: participantsError, data: participantData } = await supabase
-				.from("participants")
-				.upsert(
-					{ name: name, email: email },
-					{ onConflict: "email" }
-				)
-				.select("id") // Get the ID in the same query
-				.single();
-
-			if (participantsError) {
-				console.error("Error inserting participant:", participantsError);
-				alert("Failed to submit. Please try again.");
-				return;
-			}
-			console.log("participant id", participantData.id);
-			// Insert availability using the returned ID
-			const { error: participantAvailabilityError } = await supabase
-				.from("participant_availability")
-				.upsert({
-					user_id: participantData.id, 
-					availability: availableSlots,
-                    eventID:eventID,
-				}, 
-				{onConflict: "user_id" } 
-			);
-
-			if (participantAvailabilityError) {
-				console.error("Error inserting availability:", participantAvailabilityError);
-				alert("Failed to submit availability. Please try again.");
-				return;
+			const response = await fetch('/api/submit-availability', {
+				method:'POST',
+				body: JSON.stringify({name, email, availableSlots, eventID})
+			})
+			const result = await response.json();
+			console.log(result);
+			if (!response.ok) {
+				throw new Error(result.error || "Failed to submit");
 			}
 
 			setShowPopUp(false);
