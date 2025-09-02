@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
-type UserInfo = {
-	name: string;
-	email: string;
-	availableSlots: any[];
-};
+// type UserInfo = {
+// 	name: string;
+// 	email: string;
+// 	availableSlots: any[];
+// };
 type AvailabilitySlot = {
 	id: string;
 	title: string;
@@ -33,7 +32,6 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 		return emailRegex.test(email);
 	};
 
-	// Implicitly uses onSubmit
 	const uploadAvailability = async (
 		name: string,
 		email: string,
@@ -93,6 +91,11 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			title: `Available: ${sanitizedName} (${sanitizedEmail})`, // Set title to name and email
 		}));
 
+		// Save to localStorage
+		localStorage.setItem("availability", JSON.stringify(
+			{"name":sanitizedName, "email":sanitizedEmail, "availabilitySlots":updatedSlots}
+		))
+		
 		// Clear form and submit
 		uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
 		setName("");
