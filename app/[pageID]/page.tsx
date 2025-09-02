@@ -34,19 +34,28 @@ export default function ProtectedPage({
 		const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
 		const [showPopUp, setShowPopUp] = useState(false);
 
+		// Get authData, eventData, and participantAvailabilityData
+		const authData  = useAuth();
+		const {eventData, isLoading} = useEventData(eventID);
+		const participantAvailabilityData = useAvailabilityData(authData?.claims.sub, eventData?.organizer, eventID)
+
 		// const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
-		// TODO If the current user is organizer, show everyone's availability. If not, allow someone to submit availability with Name and Email
 		// TODO allow routing back to dashboard if user is organizer
+		// Use localStorage to get google access token and previous availability
 		useEffect(()=>{
 			// Get Google access token from localStorage
 			const googleToken = localStorage.getItem("google_access_token");
 			if (googleToken) {
 				setAccessToken(googleToken);
 			}
+			
+			const localAvailability = localStorage.getItem(`availability-${eventID}`)
+			if (localAvailability) {
+				const availabilityInfo = JSON.parse(localAvailability)
+				setAvailableSlots(availabilityInfo.availabilitySlots)
+			}
+			console.log(availableSlots);
 		}, [])
-		const authData  = useAuth();
-		const {eventData, isLoading} = useEventData(eventID);
-		const participantAvailabilityData = useAvailabilityData(authData?.claims.sub, eventData?.organizer, eventID)
 
 		// Show loading state while checking auth
 		if (isLoading) {

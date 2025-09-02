@@ -163,7 +163,7 @@ async function getCalendarEventsFromAPI(
 export async function getEvents(
 	numDaysAhead = 6,
 	includeToday = true,
-	accessToken?: string
+	accessToken: string
 ) {
 	try {
 		const tempStartDate = new Date();
@@ -185,8 +185,7 @@ export async function getEvents(
 		return organizedEvents;
 	} catch (error) {
 		console.error("Error in getEvents:", error);
-		const totalDays = numDaysAhead + 1;
-		return Array(totalDays).fill([]);
+		return Array(numDaysAhead + 1).fill([]);
 	}
 }
 

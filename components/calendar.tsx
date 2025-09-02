@@ -55,6 +55,8 @@ export default function Calendar({
 	const [isLoading, setIsLoading] = useState(true);
 	const { eventToDelete, initiateDelete, confirmDelete, cancelDelete } =
 		useDeleteSlot(setAvailableSlots);
+	
+	// Get gCal events
 	useEffect(() => {
 		const fetchEvents = async () => {
 			if (accessToken) {
@@ -110,7 +112,7 @@ export default function Calendar({
 		// Format as HH:MM:SS for FullCalendar
 		return date.toTimeString().slice(0, 8);
 	};
-	console.log("participant availability", availabilityData);
+	
 	const getAllEvents = () => {
 		let events = calendarEvents.concat(availableSlots)
 		// flatten participant availability

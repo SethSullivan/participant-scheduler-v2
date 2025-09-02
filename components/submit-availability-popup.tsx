@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import React, { useEffect, useState } from "react";
 
-type UserInfo = {
-	name: string;
-	email: string;
-	availableSlots: any[];
-};
+// type UserInfo = {
+// 	name: string;
+// 	email: string;
+// 	availableSlots: any[];
+// };
 type AvailabilitySlot = {
 	id: string;
 	title: string;
@@ -27,13 +26,24 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+	useEffect(() => {
+		const setNameAndEmailFromLocal = () =>
+		{
+			const localAvailability = localStorage.getItem(`availability-${eventID}`)
+			if (localAvailability) {
+				const localAvailabilityInfo = JSON.parse(localAvailability);
+				setName(localAvailabilityInfo.name ?? "")
+				setEmail(localAvailabilityInfo.email ?? "")
+			}
 
+		}
+		setNameAndEmailFromLocal()
+	}, []);
 	const validateEmail = (email: string) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
 	};
 
-	// Implicitly uses onSubmit
 	const uploadAvailability = async (
 		name: string,
 		email: string,
@@ -92,6 +102,11 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			...slot,
 			title: `Available: ${sanitizedName} (${sanitizedEmail})`, // Set title to name and email
 		}));
+
+		// Save to localStorage, this will overwrite previous data when user comes back to make changes
+		localStorage.setItem(`availability-${eventID}`, JSON.stringify(
+			{"name":sanitizedName, "email":sanitizedEmail, "availabilitySlots":updatedSlots}
+		))
 
 		// Clear form and submit
 		uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
