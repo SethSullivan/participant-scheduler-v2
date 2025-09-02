@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // type UserInfo = {
 // 	name: string;
@@ -26,7 +26,19 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+	useEffect(() => {
+		const setNameAndEmailFromLocal = () =>
+		{
+			const localAvailability = localStorage.getItem(`availability-${eventID}`)
+			if (localAvailability) {
+				const localAvailabilityInfo = JSON.parse(localAvailability);
+				setName(localAvailabilityInfo.name ?? "")
+				setEmail(localAvailabilityInfo.email ?? "")
+			}
 
+		}
+		setNameAndEmailFromLocal()
+	}, []);
 	const validateEmail = (email: string) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
@@ -92,10 +104,10 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 		}));
 
 		// Save to localStorage
-		localStorage.setItem("availability", JSON.stringify(
+		localStorage.setItem(`availability-${eventID}`, JSON.stringify(
 			{"name":sanitizedName, "email":sanitizedEmail, "availabilitySlots":updatedSlots}
 		))
-		
+
 		// Clear form and submit
 		uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
 		setName("");
