@@ -38,7 +38,7 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 
 		}
 		setNameAndEmailFromLocal()
-	}, []);
+	}, [eventID]);
 	const validateEmail = (email: string) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);

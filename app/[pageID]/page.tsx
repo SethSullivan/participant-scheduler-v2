@@ -54,8 +54,7 @@ export default function ProtectedPage({
 				const availabilityInfo = JSON.parse(localAvailability)
 				setAvailableSlots(availabilityInfo.availabilitySlots)
 			}
-			console.log(availableSlots);
-		}, [])
+		}, [eventID])
 
 		// Show loading state while checking auth
 		if (isLoading) {
