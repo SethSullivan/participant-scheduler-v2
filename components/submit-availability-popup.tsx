@@ -103,7 +103,7 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			title: `Available: ${sanitizedName} (${sanitizedEmail})`, // Set title to name and email
 		}));
 
-		// Save to localStorage
+		// Save to localStorage, this will overwrite previous data when user comes back to make changes
 		localStorage.setItem(`availability-${eventID}`, JSON.stringify(
 			{"name":sanitizedName, "email":sanitizedEmail, "availabilitySlots":updatedSlots}
 		))
