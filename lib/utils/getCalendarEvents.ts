@@ -2,22 +2,22 @@ import { initializeGoogleServices } from "./gapiUtils";
 
 // Types for calendarevents
 interface CalendarEvent {
-	id: string;
-	title: string;
-	start: Date;
-	end: Date;
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
 }
 
 function getDatesBetween(startDate: Date, endDate: Date): Date[] {
-	const dateArray: Date[] = [];
-	const currentDate = new Date(startDate);
+  const dateArray: Date[] = [];
+  const currentDate = new Date(startDate);
 
-	while (currentDate <= endDate) {
-		dateArray.push(new Date(currentDate));
-		currentDate.setDate(currentDate.getDate() + 1);
-	}
+  while (currentDate <= endDate) {
+    dateArray.push(new Date(currentDate));
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
-	return dateArray;
+  return dateArray;
 }
 
 // Format date function to replace Utilities.formatDate
@@ -50,152 +50,151 @@ function getDatesBetween(startDate: Date, endDate: Date): Date[] {
 // }
 
 function waitForGapi(): Promise<void> {
-	return new Promise((resolve, reject) => {
-		let attempts = 0;
-        const maxAttempts = 50; // 5 seconds max (50 * 100ms)
-        
-		const checkGapi = () => {
-            attempts++;
-            
-            // Timeout check
-            if (attempts > maxAttempts) {
-                reject(new Error("Timeout: Google API failed to load after 10 seconds"));
-                return;
-            }
-            
-            // Check if running in browser
-            if (typeof window === 'undefined') {
-                reject(new Error("Not running in browser environment"));
-                return;
-            }
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds max (50 * 100ms)
 
-			if (window.gapi && window.gapi.client && window.gapi.client.calendar) {
-				resolve();
-			} else if (window.gapi && window.gapi.client) {
-				// gapi.client exists but calendar API not loaded yet
-				setTimeout(checkGapi, 100);
-			} else if (window.gapi) {
-				// gapi exists but client not ready, wait a bit more
-				setTimeout(checkGapi, 100);
-			} else {
-				reject(new Error("Google API not loaded"));
-			}
-		};
-		checkGapi();
-	});
+    const checkGapi = () => {
+      attempts++;
+
+      // Timeout check
+      if (attempts > maxAttempts) {
+        reject(
+          new Error("Timeout: Google API failed to load after 10 seconds")
+        );
+        return;
+      }
+
+      // Check if running in browser
+      if (typeof window === "undefined") {
+        reject(new Error("Not running in browser environment"));
+        return;
+      }
+
+      if (window.gapi && window.gapi.client && window.gapi.client.calendar) {
+        resolve();
+      } else if (window.gapi && window.gapi.client) {
+        // gapi.client exists but calendar API not loaded yet
+        setTimeout(checkGapi, 100);
+      } else if (window.gapi) {
+        // gapi exists but client not ready, wait a bit more
+        setTimeout(checkGapi, 100);
+      } else {
+        reject(new Error("Google API not loaded"));
+      }
+    };
+    checkGapi();
+  });
 }
 
 async function getCalendarEventsFromAPI(
-	startDate: Date,
-	endDate: Date,
-	accessToken?: string
+  startDate: Date,
+  endDate: Date,
+  accessToken?: string
 ): Promise<CalendarEvent[]> {
-	try {
-		console.log("Fetching calendar events...");
-		console.log("Access token exists:", !!accessToken);
+  try {
+    // Must reinitialize google services
+    await initializeGoogleServices();
+    await waitForGapi();
 
-		// Must reinitialize google services
-		await initializeGoogleServices();
-		await waitForGapi();
-		
-		// Set the access token for the API client
-		if (accessToken) {
-			window.gapi.client.setToken({ access_token: accessToken });
-		} else {
-			throw Error("no access token, cannot ")
-		}
+    // Set the access token for the API client
+    if (accessToken) {
+      window.gapi.client.setToken({ access_token: accessToken });
+    } else {
+      throw Error("no access token, cannot ");
+    }
 
-		const calendarsResponse = await window.gapi.client.calendar.calendarList.list();
-		console.log("calendars", calendarsResponse.result.items);
-		const calendarIDs = calendarsResponse.result.items?.map((e)=>e.id);
-		const allEvents: CalendarEvent[] = [];
-		if (calendarIDs) {
-			for (const calendarID of calendarIDs) {
-				if (!calendarID) {
-					continue;
-				}
-				console.log("Calendar: ", calendarID);
-				const response = await window.gapi.client.calendar.events.list({
-					calendarId: calendarID,
-					timeMin: startDate.toISOString(),
-					timeMax: endDate.toISOString(),
-					singleEvents: true,
-					orderBy: "startTime",
-					maxResults: 250,
-				});
-				if (!response.result || !response.result.items) {
-					console.error("No events found, returning empty array");
-					return [];
-				}
-				// console.log("Calendar API response:", response.result.items);
-	
-				const events: CalendarEvent[] = response.result.items
-					.filter((item: gapi.client.calendar.Event) => {
-						// All-day events only have 'date', timed events have 'dateTime'
-						return item.start?.dateTime && item.end?.dateTime;
-					})
-					.map((item:  gapi.client.calendar.Event, index: number) => {
-						return {
-							id: item.id || `event-${index}`,
-							title: item.summary || "No Title",
-							start: item.start?.dateTime
-								? new Date(item.start.dateTime)
-								: new Date(item.start?.date + "T00:00:00"),
-							end: item.end?.dateTime
-								? new Date(item.end.dateTime)
-								: new Date(item.end?.date + "T23:59:59"),
-						};
-					});
-				allEvents.push(...events);
-			}
-			console.log(allEvents)
-			return allEvents;
-		} else {
-			return [];
-		}
-	} catch (error) {
-		console.error("Error fetching calendar events:", error);
-		return [];
-	}
+    const calendarsResponse =
+      await window.gapi.client.calendar.calendarList.list();
+    const calendarIDs = calendarsResponse.result.items?.map((e) => e.id);
+    const allEvents: CalendarEvent[] = [];
+    if (calendarIDs) {
+      for (const calendarID of calendarIDs) {
+        if (!calendarID) {
+          continue;
+        }
+        const response = await window.gapi.client.calendar.events.list({
+          calendarId: calendarID,
+          timeMin: startDate.toISOString(),
+          timeMax: endDate.toISOString(),
+          singleEvents: true,
+          orderBy: "startTime",
+          maxResults: 250,
+        });
+        if (!response.result || !response.result.items) {
+          console.error("No events found, returning empty array");
+          return [];
+        }
+
+        const events: CalendarEvent[] = response.result.items
+          .filter((item: gapi.client.calendar.Event) => {
+            // All-day events only have 'date', timed events have 'dateTime'
+            return item.start?.dateTime && item.end?.dateTime;
+          })
+          .map((item: gapi.client.calendar.Event, index: number) => {
+            return {
+              id: item.id || `event-${index}`,
+              title: item.summary || "No Title",
+              start: item.start?.dateTime
+                ? new Date(item.start.dateTime)
+                : new Date(item.start?.date + "T00:00:00"),
+              end: item.end?.dateTime
+                ? new Date(item.end.dateTime)
+                : new Date(item.end?.date + "T23:59:59"),
+            };
+          });
+        allEvents.push(...events);
+      }
+      return allEvents;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching calendar events:", error);
+    return [];
+  }
 }
 
 // Update your main getEvents function to accept accessToken
 export async function getEvents(
-	numDaysAhead = 6,
-	includeToday = true,
-	accessToken: string
+  numDaysAhead = 6,
+  includeToday = true,
+  accessToken: string
 ) {
-	try {
-		const tempStartDate = new Date();
-		const startDate = includeToday
-			? tempStartDate
-			: new Date(tempStartDate.getTime() + 1000 * 60 * 60 * 24);
-		const tempEndDate = new Date(startDate.getTime() + 1000 * numDaysAhead * 60 * 60 * 24);
-		const endDate = new Date(tempEndDate.setHours(17, 30, 0));
-		const allDates = getDatesBetween(startDate, endDate);
+  try {
+    const tempStartDate = new Date();
+    const startDate = includeToday
+      ? tempStartDate
+      : new Date(tempStartDate.getTime() + 1000 * 60 * 60 * 24);
+    const tempEndDate = new Date(
+      startDate.getTime() + 1000 * numDaysAhead * 60 * 60 * 24
+    );
+    const endDate = new Date(tempEndDate.setHours(17, 30, 0));
+    const allDates = getDatesBetween(startDate, endDate);
 
-		const events: CalendarEvent[] = await getCalendarEventsFromAPI(
-			startDate,
-			endDate,
-			accessToken
-		);
-		// Organize events by day
-		const organizedEvents = organizeCalendarEventsByDayIndex(events, allDates);
-		console.log("organizedEvents", organizedEvents);
-		return organizedEvents;
-	} catch (error) {
-		console.error("Error in getEvents:", error);
-		return Array(numDaysAhead + 1).fill([]);
-	}
+    const events: CalendarEvent[] = await getCalendarEventsFromAPI(
+      startDate,
+      endDate,
+      accessToken
+    );
+    // Organize events by day
+    const organizedEvents = organizeCalendarEventsByDayIndex(events, allDates);
+    return organizedEvents;
+  } catch (error) {
+    console.error("Error in getEvents:", error);
+    return Array(numDaysAhead + 1).fill([]);
+  }
 }
 
 function organizeCalendarEventsByDayIndex(
-	events: CalendarEvent[],
-	dates: Date[]
+  events: CalendarEvent[],
+  dates: Date[]
 ): CalendarEvent[][] {
-	const eventsByDate: CalendarEvent[][] = [];
-	for (let i = 0; i < dates.length; i++) {
-		eventsByDate.push(events.filter((e) => e.start.getDate() === dates[i].getDate()));
-	}
-	return eventsByDate;
+  const eventsByDate: CalendarEvent[][] = [];
+  for (let i = 0; i < dates.length; i++) {
+    eventsByDate.push(
+      events.filter((e) => e.start.getDate() === dates[i].getDate())
+    );
+  }
+  return eventsByDate;
 }
