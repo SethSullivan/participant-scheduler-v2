@@ -1,40 +1,42 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 interface AvailabilitySlot {
-    id: string;
-    title: string;
-    start: Date;
-    end: Date;
-    isGcal:boolean;
-    backgroundColor?: string;
-    borderColor?: string;
-    textColor?: string;
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  isGcal: boolean;
+  backgroundColor?: string;
+  borderColor?: string;
+  textColor?: string;
 }
 
 export const useDeleteSlot = (
-    setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>
+  setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>
 ) => {
-    const [eventToDelete, setEventToDelete] = useState<string | null>(null);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
-    const initiateDelete = (eventId: string) => {
-        setEventToDelete(eventId);
-    };
+  const initiateDelete = (eventId: string) => {
+    setEventToDelete(eventId);
+  };
 
-    const confirmDelete = () => {
-        if (eventToDelete) {
-            setAvailableSlots(prev => prev.filter(slot => slot.id !== eventToDelete));
-            setEventToDelete(null);
-        }
-    };
+  const confirmDelete = () => {
+    if (eventToDelete) {
+      setAvailableSlots((prev) =>
+        prev.filter((slot) => slot.id !== eventToDelete)
+      );
+      setEventToDelete(null);
+    }
+  };
 
-    const cancelDelete = () => {
-        setEventToDelete(null);
-    };
+  const cancelDelete = () => {
+    setEventToDelete(null);
+  };
 
-    return {
-        eventToDelete,
-        initiateDelete,
-        confirmDelete,
-        cancelDelete
-    };
+  return {
+    eventToDelete,
+    initiateDelete,
+    confirmDelete,
+    cancelDelete,
+  };
 };

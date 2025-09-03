@@ -50,7 +50,7 @@ export function SignUpUserSteps() {
               <span className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-xs font-medium text-secondary-foreground border">
                 {`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL?.replace(
                   ".vercel.app",
-                  "",
+                  ""
                 )}-*-[vercel-team-url].vercel.app/**`}
               </span>{" "}
               (Vercel Team URL can be found in{" "}
