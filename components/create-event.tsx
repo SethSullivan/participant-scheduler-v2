@@ -45,7 +45,6 @@ export default function CreateEvent({
 			const { data } = await supabase.auth.getClaims();
 			const user = data?.claims;
 
-			console.log(user);
 			if (!user) {
 				setError("You must have an account to create an event");
 				router.push("/sign-up");
@@ -53,7 +52,7 @@ export default function CreateEvent({
 			}
 			if (user?.is_anonymous) {
 				setError("You must have an account to create an event");
-				router.push("/sign-up"); // 5. Fix router path (add leading slash)
+				router.push("/sign-up");
 				return;
 			}
 

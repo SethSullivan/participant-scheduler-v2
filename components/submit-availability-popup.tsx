@@ -19,7 +19,7 @@ type AvailabilitySlot = {
 type Props = {
 	setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
 	availableSlots: AvailabilitySlot[]; // Change from userInfo to availableSlots
-    eventID:string;
+	eventID: string;
 };
 
 export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, eventID }: Props) {
@@ -27,17 +27,15 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 	const [email, setEmail] = useState("");
 	const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
 	useEffect(() => {
-		const setNameAndEmailFromLocal = () =>
-		{
-			const localAvailability = localStorage.getItem(`availability-${eventID}`)
+		const setNameAndEmailFromLocal = () => {
+			const localAvailability = localStorage.getItem(`availability-${eventID}`);
 			if (localAvailability) {
 				const localAvailabilityInfo = JSON.parse(localAvailability);
-				setName(localAvailabilityInfo.name ?? "")
-				setEmail(localAvailabilityInfo.email ?? "")
+				setName(localAvailabilityInfo.name ?? "");
+				setEmail(localAvailabilityInfo.email ?? "");
 			}
-
-		}
-		setNameAndEmailFromLocal()
+		};
+		setNameAndEmailFromLocal();
 	}, [eventID]);
 	const validateEmail = (email: string) => {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,12 +49,11 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 	) => {
 		console.log("User submitted info:", { name, email, availableSlots });
 		try {
-			const response = await fetch('/api/submit-availability', {
-				method:'POST',
-				body: JSON.stringify({name, email, availableSlots, eventID})
-			})
+			const response = await fetch("/api/submit-availability", {
+				method: "POST",
+				body: JSON.stringify({ name, email, availableSlots, eventID }),
+			});
 			const result = await response.json();
-			console.log(result);
 			if (!response.ok) {
 				throw new Error(result.error || "Failed to submit");
 			}
@@ -64,7 +61,6 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 			setShowPopUp(false);
 			alert(`Thank you ${name}! Your availability has been submitted.`);
 		} catch (error) {
-			console.log(error);
 			console.error("Unexpected error:", error);
 			alert("An unexpected error occurred. Please try again.");
 		}
@@ -104,9 +100,14 @@ export default function SubmitAvailabilityPopup({ setShowPopUp, availableSlots, 
 		}));
 
 		// Save to localStorage, this will overwrite previous data when user comes back to make changes
-		localStorage.setItem(`availability-${eventID}`, JSON.stringify(
-			{"name":sanitizedName, "email":sanitizedEmail, "availabilitySlots":updatedSlots}
-		))
+		localStorage.setItem(
+			`availability-${eventID}`,
+			JSON.stringify({
+				name: sanitizedName,
+				email: sanitizedEmail,
+				availabilitySlots: updatedSlots,
+			})
+		);
 
 		// Clear form and submit
 		uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);

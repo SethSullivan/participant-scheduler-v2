@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 			.select("id") // Get the ID in the same query
 			.single();
 
-            if (participantsError) {
+		if (participantsError) {
 			console.error("Error inserting participant:", participantsError);
 			return NextResponse.json(
 				{ error: "Failed to process participant data" },

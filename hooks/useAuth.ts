@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 import type { JwtPayload, JwtHeader } from "@supabase/supabase-js";
@@ -8,7 +8,6 @@ type AuthData = {
 	header: JwtHeader;
 	signature: Uint8Array<ArrayBufferLike>;
 } | null;
-
 
 export const useAuth = () => {
 	const [authData, setAuthData] = useState<AuthData | null>(null);
@@ -24,19 +23,15 @@ export const useAuth = () => {
 					// User is not authenticated, but we allow anonymous access
 					setAuthData(null);
 				} else {
-					console.log("User authenticated:", authResponse.claims);
 					setAuthData(authResponse);
-
-
 				}
 			} catch (error) {
 				console.error("Auth error:", error);
 				setAuthData(null);
-			} 
+			}
 		};
 
 		handleAuth();
 	}, []);
-    return authData
-
-}
+	return authData;
+};
