@@ -53,8 +53,6 @@ export default function DashBoard() {
   }, []);
 
   const handleEventClick = (event: EventsData) => {
-    console.log("Event clicked:", event);
-    // Add your event click logic here
     router.push(`/${event.id}`);
   };
   // TODO Add isLoading Screen
