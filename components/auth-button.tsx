@@ -15,14 +15,15 @@ export async function AuthButton() {
       Hey, {user.first_name ? user.first_name : user.email}!
       <LogoutButton />
     </div>
-  ) : (
-    <div className="flex gap-2">
-      <Button asChild size="sm" variant={"outline"}>
-        <Link href="/login">Sign in</Link>
-      </Button>
-      <Button asChild size="sm" variant={"default"}>
-        <Link href="/sign-up">Sign up</Link>
-      </Button>
-    </div>
-  );
+  ) : (<div></div>);
+  // : (
+  //   <div className="flex gap-2">
+  //     <Button asChild size="sm" variant={"outline"}>
+  //       <Link href="/login">Sign in</Link>
+  //     </Button>
+  //     <Button asChild size="sm" variant={"default"}>
+  //       <Link href="/sign-up">Sign up</Link>
+  //     </Button>
+  //   </div>
+  // );
 }
