@@ -1,12 +1,5 @@
 import { initializeGoogleServices } from "./gapiUtils";
-
-// Types for calendarevents
-interface CalendarEvent {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-}
+import { CalendarEvent } from "@/types/types";
 
 function getDatesBetween(startDate: Date, endDate: Date): Date[] {
   const dateArray: Date[] = [];
