@@ -5,15 +5,7 @@ import CreateEvent from "@/components/create-event";
 import EventCard from "@/components/event-card";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-
-type EventsData = {
-  organizer: string;
-  start_time: Date;
-  end_time: Date;
-  name: string;
-  created_at: Date;
-  id: string;
-};
+import { EventsData } from "@/types/types";
 
 export default function DashBoard() {
   const [showPopup, setShowPopup] = useState(false);

@@ -1,20 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-// type UserInfo = {
-// 	name: string;
-// 	email: string;
-// 	availableSlots: any[];
-// };
-type AvailabilitySlot = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isGcal: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
-};
+import { AvailabilitySlot } from "@/types/types";
 
 type Props = {
   setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
