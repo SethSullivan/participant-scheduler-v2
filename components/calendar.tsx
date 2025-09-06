@@ -146,6 +146,14 @@ export default function Calendar({
         eventOverlap={false}
         selectOverlap={false}
         allDaySlot={false}
+        slotLabelFormat={{
+          hour:'numeric',
+          minute:'2-digit',
+          omitZeroMinute: false,
+        }}
+        slotLabelInterval={{hours:1}}
+        eventDurationEditable={true}
+        eventResizableFromStart={true}
       />
       {eventToDelete && DeleteSlotPopup({ confirmDelete, cancelDelete })}
       {availableSlots.length > 0 && (
