@@ -1,15 +1,5 @@
 import { useState } from "react";
-
-interface AvailabilitySlot {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isGcal: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
-}
+import { AvailabilitySlot } from "@/types/types";
 
 export const useDeleteSlot = (
   setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>
