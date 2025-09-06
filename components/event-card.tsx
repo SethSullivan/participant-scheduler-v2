@@ -9,15 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, User } from "lucide-react";
-
-type EventsData = {
-  organizer: string;
-  start_time: Date;
-  end_time: Date;
-  name: string;
-  created_at: Date;
-  id: string;
-};
+import { EventsData } from "@/types/types";
 
 interface EventCardProps {
   event: EventsData;

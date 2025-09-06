@@ -22,3 +22,12 @@ export type AvailabilityData = {
   availability: AvailabilitySlot[];
   eventID: string;
 };
+
+export type EventsData = {
+    organizer: string;
+    start_time: Date;
+    end_time: Date;
+    name: string;
+    created_at: Date;
+    id: string;
+};
