@@ -1,21 +1,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-type AvailabilitySlot = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isGcal: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
-};
-type AvailabilityData = {
-  id: string;
-  created_at: Date;
-  availability: AvailabilitySlot[];
-  eventID: string;
-};
+import { AvailabilityData, AvailabilitySlot } from "@/types/types";
+
 export default function useAvailabilityData(
   userID: string | undefined,
   organizerID: string | undefined,
