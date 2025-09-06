@@ -75,6 +75,16 @@
   box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 } */
 
+/* Spacing between calendar and header */
+.fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 1em !important;
+}
+
+/* Turn off bottom border on calendar header */
+.fc-toolbar {
+  border-bottom: 0px solid hsl(var(--border)) !important;
+}
+
 /* All time slots */
 .fc-timegrid-slot {
   border-top: 1px solid hsl(var(--border)) !important;
@@ -85,15 +95,34 @@
   border-top: 1.5px solid hsl(var(--primary) / 0.3) !important;
   position: relative;
 }
-/* 15-minute slots, need all of them */
-.fc-timegrid-slot[data-time$=":15:00"],
-.fc-timegrid-slot[data-time$=":30:00"],
-.fc-timegrid-slot[data-time$=":45:00"] {
+/* 30-minute slots, -lane only apply to calendar grid, NOT time axis */
+.fc-timegrid-slots .fc-timegrid-slot-lane[data-time$=":30:00"] {
+  border-top: 1px solid hsl(var(--primary) / 0.2) !important;
+  position: relative;
+}
+
+/* 15-minute slots, -lane only applies to calendar grid, NOT time axis */
+.fc-timegrid-slots .fc-timegrid-slot-lane[data-time$=":15:00"],
+.fc-timegrid-slots .fc-timegrid-slot-lane[data-time$=":45:00"] {
   border-bottom: 1px dotted hsl(var(--border) / 0.5) !important;
 }
 
+.fc-timegrid-slot-label {
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  border-top: none !important; /* Get's rid of the lines in the left time label column */
+  border-bottom: none !important;
+}
+
+.fc-timegrid-slot .fc-timegrid-slot-label .fc-timegrid-slot-minor {
+  border-bottom: none !important;
+  border-top:none !important;
+}
+
 .fc-toolbar {
-  padding: 1rem;
+  padding-left: 0rem;
+  padding-right: 0rem;
   background-color: hsl(var(--muted));
   border-bottom: 1px solid hsl(var(--border));
 }
@@ -128,9 +157,19 @@
   margin-right: 0 !important;
 }
 
+/* This is the top left empty box */
+.fc-timegrid-axis {
+  background-color: hsl(var(--accent));
+  border-bottom: 1.5px solid hsl(var(--primary) / 0.3) !important;
+}
+
+.fc-timegrid-axis-frame {
+  border-top: none !important;
+}
+
 .fc-col-header-cell {
   background-color: hsl(var(--muted)) !important;
-  border-bottom: 1px solid hsl(var(--border)) !important;
+  border-bottom: 1.5px solid hsl(var(--primary) / 0.3) !important;
   padding: 0.75rem 0.5rem !important;
 }
 
@@ -146,11 +185,6 @@
   height: 60px !important;
 } */
 
-.fc-timegrid-slot-label {
-  color: hsl(var(--muted-foreground)) !important;
-  font-size: 0.875rem !important;
-  font-weight: 500 !important;
-}
 
 .fc-highlight {
   background-color: hsl(var(--primary) / 0.1) !important;
