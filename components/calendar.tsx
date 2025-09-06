@@ -7,40 +7,13 @@ import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import { getEvents } from "@/lib/utils/getCalendarEvents";
 import DeleteSlotPopup from "./ui/delete-slot-popup";
 import { useDeleteSlot } from "@/hooks/useDeleteSlot";
-
-interface AvailabilitySlot {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isGcal: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
-}
-
-type CalendarEvent = {
-  start: Date;
-  end: Date;
-  id: string;
-  title: string;
-  isGcal: boolean;
-};
-
-type EventData = {
-  id: string;
-  organizer: string;
-  name: string;
-  start_time: Date;
-  end_time: Date;
-  created_at: Date;
-};
+import { CalendarEvent, AvailabilitySlot, EventsData } from "@/types/types";
 
 interface CalendarProps {
   accessToken?: string | undefined;
   availableSlots: AvailabilitySlot[];
   setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>;
-  eventData: EventData;
+  eventData: EventsData;
   availabilityData: AvailabilitySlot[][] | undefined;
 }
 
