@@ -124,6 +124,7 @@ export default function Calendar({
           right: "timeGridWeek,timeGridDay",
         }}
         titleFormat={{year:'numeric', month:'long'}}
+        dayHeaderFormat={{weekday:"long", month:"numeric", day:"numeric", omitCommas:true}}
         buttonText={{
           today:'Today',
           month:'Month',
