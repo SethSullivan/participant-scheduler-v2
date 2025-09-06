@@ -123,6 +123,14 @@ export default function Calendar({
           center: "title",
           right: "timeGridWeek,timeGridDay",
         }}
+        titleFormat={{year:'numeric', month:'long'}}
+        buttonText={{
+          today:'Today',
+          month:'Month',
+          week: 'Week',
+          day:  'Day',
+          list: 'List'
+        }}  
         weekends={false}
         selectable={true}
         selectMirror={true}
