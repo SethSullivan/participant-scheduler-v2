@@ -6,23 +6,13 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
+import { AvailabilitySlot } from "@/types/types";
 
 /* interface UserInfo {
 	name: string;
 	email: string;
 	availableSlots: any[];
 } */
-
-type AvailabilitySlot = {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isGcal: boolean;
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
-};
 
 export default function ProtectedPage({
   params,
