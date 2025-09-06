@@ -6,6 +6,7 @@ import EventCard from "@/components/event-card";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { EventsData } from "@/types/types";
+import LoadingSpinner from "@/components/ui/loading-screen";
 
 export default function DashBoard() {
   const [showPopup, setShowPopup] = useState(false);
@@ -47,10 +48,11 @@ export default function DashBoard() {
   const handleEventClick = (event: EventsData) => {
     router.push(`/${event.id}`);
   };
-  // TODO Add isLoading Screen
+  
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner specificText = {"Getting your events"} />;
   }
+  
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto">
@@ -60,12 +62,6 @@ export default function DashBoard() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Your Events
             </h2>
-
-            {isLoading && (
-              <div className="text-center py-8">
-                <p className="text-gray-500">Loading events...</p>
-              </div>
-            )}
 
             {error && (
               <div className="text-center py-8">
