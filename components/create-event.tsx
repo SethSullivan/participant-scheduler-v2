@@ -14,15 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-
-type EventsData = {
-  organizer: string;
-  start_time: Date;
-  end_time: Date;
-  name: string;
-  created_at: Date;
-  id: string;
-};
+import { EventsData } from "@/types/types";
 
 interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
   setShowPopup: (show: boolean) => void;
