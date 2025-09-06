@@ -161,6 +161,8 @@
 .fc-timegrid-axis {
   background-color: hsl(var(--accent));
   border-bottom: 1.5px solid hsl(var(--primary) / 0.3) !important;
+  border-right: 1.25px solid hsl(var(--primary) / 0.3) !important;
+  
 }
 
 .fc-timegrid-axis-frame {
@@ -171,6 +173,7 @@
   background-color: hsl(var(--muted)) !important;
   border-bottom: 1.5px solid hsl(var(--primary) / 0.3) !important;
   padding: 0.75rem 0.5rem !important;
+  border-right: 1px solid hsl(var(--primary)/0.3) !important;
 }
 
 .fc-col-header-cell-cushion {
@@ -181,6 +184,9 @@
   letter-spacing: 0.05em !important;
 }
 
+td{
+  border-right:1px solid hsl(var(--primary) / 0.2) !important;
+}
 /* .fc-timegrid-slot {
   height: 60px !important;
 } */
