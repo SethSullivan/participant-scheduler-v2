@@ -16,6 +16,7 @@ export type AvailabilitySlot = {
   borderColor?: string;
   textColor?: string;
 };
+
 export type AvailabilityData = {
   id: string;
   created_at: Date;

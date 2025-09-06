@@ -8,12 +8,6 @@ import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
 import { AvailabilitySlot } from "@/types/types";
 
-/* interface UserInfo {
-	name: string;
-	email: string;
-	availableSlots: any[];
-} */
-
 export default function ProtectedPage({
   params,
 }: {
