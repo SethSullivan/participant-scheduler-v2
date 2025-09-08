@@ -163,6 +163,7 @@ export default function Calendar({
         slotLabelInterval={{hours:1}}
         eventDurationEditable={true}
         eventResizableFromStart={true}
+        nowIndicator={true}
       />
       {eventToDelete && DeleteSlotPopup({ confirmDelete, cancelDelete })}
       {availableSlots.length > 0 && (
