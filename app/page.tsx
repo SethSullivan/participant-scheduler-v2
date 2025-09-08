@@ -1,5 +1,5 @@
 import { AuthButton } from "@/components/auth-button";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+// import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
