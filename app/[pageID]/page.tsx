@@ -76,19 +76,19 @@ export default function ProtectedPage({
     }
   };
   return (
-    <div className="flex flex-col gap-2 w-full h-screen pb-10">
+    <div className="flex flex-col w-full h-screen pb-10">
       {/* Header Container */}
-      <div className="flex flex-[1] w-full items-end justify-between">
+      <div className="flex w-full items-center justify-between pb-1 pt-3">
           <h1 className="text-3xl font-semibold">
             {eventData ? eventData.name : ""}
           </h1>
-          <Button onClick={handleSubmitAvailability} className="hover:bg-lime-800">
+          <Button onClick={handleSubmitAvailability} className="hover:bg-lime-800 ">
             Submit Availability
           </Button>
       </div>
 
       {/* Calendar Container */}
-      <div className="flex flex-[10] w-full">
+      <div className="flex w-full">
         {/* Calendar Background style */}
         <div className="flex w-full bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center justify-items-center">
           <Calendar
