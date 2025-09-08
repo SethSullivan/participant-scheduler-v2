@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 // Simple inline spinner component
 function ButtonSpinner() {
@@ -17,9 +18,21 @@ export function GetStartedButton() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   
-  const handleClick = () => {
+  const handleClick = async () => {
     setIsLoading(true);
-    router.push("/dashboard");
+    try {
+        const supabase = createClient();
+        const { data } = await supabase.auth.getClaims();
+        const user = data?.claims;
+        if (!user) {
+          router.replace("/login");
+        } else {
+          router.push("/dashboard");
+        }
+    } catch (error) {
+        console.error("Error checking auth:", error);
+        router.replace("/login");
+    }
   };
   
   return (
