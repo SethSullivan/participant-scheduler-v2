@@ -1,7 +1,7 @@
+// app/page.tsx
 import { AuthButton } from "@/components/auth-button";
-// import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { GetStartedButton } from "@/components/get-started-button";
 
 export default function Home() {
   return (
@@ -20,9 +20,7 @@ export default function Home() {
             <h2 className="font-medium text-xl">
               Scheduling participants with ease.
             </h2>
-            <Button>
-              <Link href={"/dashboard"}>Get Started</Link>
-            </Button>
+            <GetStartedButton />
           </main>
         </div>
 
