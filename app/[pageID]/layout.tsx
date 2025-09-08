@@ -8,10 +8,10 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen flex flex-col items-center">
+    <main className="min-h-screen min-w-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col items-center">
-        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-          <div className="w-full max-w-5xl flex justify-between items-center p-3 px-1 text-sm">
+        <nav className="w-full flex justify-center border-b border-b-foreground/10 h-14">
+          <div className="w-full max-w-5xl flex justify-between items-center px-1 text-sm">
             <div className="flex items-center font-semibold">
               <Link href={"/"}>Participant Scheduler</Link>
             </div>
@@ -19,7 +19,11 @@ export default function ProtectedLayout({
           </div>
         </nav>
 
-        <div className="flex-1 flex flex-col gap-10 max-w-5xl pt-2">
+        {/* NOTE: w-full makes it so that the child containers on the screen always take up the width of the screen
+        (bc i have main as min-w-screen), whether it's loading or showing a calendar. 
+        NOrmally this would push content off the screen to  the right, but max-w-5xl 
+        makes it so that it sits nicely with padding  */}
+        <div className="flex-1 flex flex-col max-w-5xl w-full">
           {children}
         </div>
 

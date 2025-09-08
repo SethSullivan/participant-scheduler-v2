@@ -99,11 +99,11 @@ export default function Calendar({
   // Add loading return early in the component
   if (isLoading) {
     return (
-      <div className="calendar-container">
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading calendar events...</p>
+      <div className="flex flex-col w-full text-center items-center justify-center">
+        <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
+        <div>
+              <p className="text-gray-600">Loading calendar events...</p>
           </div>
         </div>
       </div>
