@@ -15,12 +15,12 @@ export default function ProtectedPage({
 }) {
   const { pageID: eventID } = use(params);
   const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
-  const [accessToken, setAccessToken] = useState<string | undefined>(undefined);
-  const [showPopUp, setShowPopUp] = useState(false);
+  const [accessToken, setAccessToken]       = useState<string | undefined>(undefined);
+  const [showPopUp, setShowPopUp]           = useState(false);
 
   // Get authData, eventData, and participantAvailabilityData
-  const authData = useAuth();
-  const { eventData, isLoading } = useEventData(eventID);
+  const authData                    = useAuth();
+  const { eventData, isLoading }    = useEventData(eventID);
   const participantAvailabilityData = useAvailabilityData(
     authData?.claims.sub,
     eventData?.organizer,
