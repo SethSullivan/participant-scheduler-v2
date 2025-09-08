@@ -12,6 +12,7 @@ export default function DashBoard() {
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingText, setLoadingText] = useState("Loading your events ...");
   const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
   const router = useRouter();
 
@@ -46,11 +47,13 @@ export default function DashBoard() {
   }, []);
 
   const handleEventClick = (event: EventsData) => {
+    setIsLoading(true);
+    setLoadingText(`Loading ${event.name}...`);
     router.push(`/${event.id}`);
   };
   
   if (isLoading) {
-    return <LoadingSpinner specificText = {"Getting your events"} />;
+    return <LoadingSpinner specificText={loadingText} />;
   }
   
   return (
