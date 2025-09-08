@@ -27,7 +27,6 @@ export default function ProtectedPage({
     eventID
   );
 
-  // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   // TODO allow routing back to dashboard if user is organizer
   // Use localStorage to get google access token and previous availability
   useEffect(() => {
@@ -77,12 +76,21 @@ export default function ProtectedPage({
     }
   };
   return (
-    <div className="flex-1 w-full flex flex-col gap-2">
-      <h1 className="text-3xl font-semibold">
-        {eventData ? eventData.name : ""}
-      </h1>
-      <div className="flex flex-row w-full">
-        <div className="flex-3 bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center">
+    <div className="flex flex-col gap-2 w-full h-screen pb-10">
+      {/* Header Container */}
+      <div className="flex flex-[1] w-full items-end justify-between">
+          <h1 className="text-3xl font-semibold">
+            {eventData ? eventData.name : ""}
+          </h1>
+          <Button onClick={handleSubmitAvailability} className="hover:bg-lime-800">
+            Submit Availability
+          </Button>
+      </div>
+
+      {/* Calendar Container */}
+      <div className="flex flex-[10] w-full">
+        {/* Calendar Background style */}
+        <div className="flex w-full bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center justify-items-center">
           <Calendar
             accessToken={accessToken}
             availableSlots={availableSlots}
@@ -92,11 +100,6 @@ export default function ProtectedPage({
               (e) => e.availability
             )}
           />
-        </div>
-        <div className="flex-3 border-solid border-2">
-          <Button onClick={handleSubmitAvailability}>
-            Submit Availability
-          </Button>
         </div>
       </div>
       {showPopUp && (

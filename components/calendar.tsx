@@ -99,11 +99,11 @@ export default function Calendar({
   // Add loading return early in the component
   if (isLoading) {
     return (
-      <div className="calendar-container">
-        <div className="flex items-center justify-center h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading calendar events...</p>
+      <div className="flex flex-col w-full text-center items-center justify-center">
+        <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
+        <div>
+              <p className="text-gray-600">Loading calendar events...</p>
           </div>
         </div>
       </div>
@@ -123,6 +123,15 @@ export default function Calendar({
           center: "title",
           right: "timeGridWeek,timeGridDay",
         }}
+        titleFormat={{year:'numeric', month:'long'}}
+        dayHeaderFormat={{weekday:"long", month:"numeric", day:"numeric", omitCommas:true}}
+        buttonText={{
+          today:'Today',
+          month:'Month',
+          week: 'Week',
+          day:  'Day',
+          list: 'List'
+        }}  
         weekends={false}
         selectable={true}
         selectMirror={true}
@@ -146,6 +155,14 @@ export default function Calendar({
         eventOverlap={false}
         selectOverlap={false}
         allDaySlot={false}
+        slotLabelFormat={{
+          hour:'numeric',
+          minute:'2-digit',
+          omitZeroMinute: false,
+        }}
+        slotLabelInterval={{hours:1}}
+        eventDurationEditable={true}
+        eventResizableFromStart={true}
       />
       {eventToDelete && DeleteSlotPopup({ confirmDelete, cancelDelete })}
       {availableSlots.length > 0 && (
