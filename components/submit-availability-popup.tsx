@@ -15,6 +15,9 @@ export default function SubmitAvailabilityPopup({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  // On component mount, check localStorage for name and email
   useEffect(() => {
     const setNameAndEmailFromLocal = () => {
       const localAvailability = localStorage.getItem(`availability-${eventID}`);
@@ -26,6 +29,7 @@ export default function SubmitAvailabilityPopup({
     };
     setNameAndEmailFromLocal();
   }, [eventID]);
+
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
@@ -55,9 +59,11 @@ export default function SubmitAvailabilityPopup({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    setIsLoading(true);
+    
+    // Validate inputs
     const newErrors: {
       name?: string;
       email?: string;
@@ -79,6 +85,7 @@ export default function SubmitAvailabilityPopup({
     }
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      setIsLoading(false);
       return;
     }
 
@@ -103,10 +110,11 @@ export default function SubmitAvailabilityPopup({
     );
 
     // Clear form and submit
-    uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
+    await uploadAvailability(sanitizedName, sanitizedEmail, updatedSlots);
     setName("");
     setEmail("");
     setErrors({});
+    setIsLoading(false);
   };
 
   const handleCancel = () => {
@@ -198,9 +206,14 @@ export default function SubmitAvailabilityPopup({
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              disabled={isLoading}
+              className={`flex-1 px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ${
+                isLoading 
+                  ? "bg-blue-400 opacity-60 cursor-not-allowed" 
+                  : "bg-blue-600 hover:bg-blue-700"
+              }`}            
             >
-              Submit
+              {isLoading ? "Submitting..." : "Submit"}
             </button>
           </div>
         </form>
