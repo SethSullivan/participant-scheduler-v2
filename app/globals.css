@@ -197,5 +197,5 @@ td{
 }
 
 .fc-day-today {
-  background-color: hsl(var(--accent)) !important;
+  background-color:rgba(163, 226, 232, 0.278) !important;
 }
