@@ -11,7 +11,7 @@ const defaultUrl = process.env.WEBSITE_URL
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: "Participant Scheduler",
-  description: "Schedule participants for data collections with ease",
+  description: "Schedule experiments with ease",
 };
 
 const geistSans = Geist({
