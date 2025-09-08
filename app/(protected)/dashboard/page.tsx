@@ -102,6 +102,7 @@ export default function DashBoard() {
                 <Button
                   onClick={() => setShowPopup(true)}
                   className="w-full h-12 text-lg"
+                  variant={"default"}
                 >
                   Create New Event
                 </Button>
