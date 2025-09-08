@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AvailabilityData, AvailabilitySlot } from "@/types/types";
+import { colors } from "@/lib/utils/utils";
 
 export default function useAvailabilityData(
   userID: string | undefined,
@@ -32,7 +33,18 @@ export default function useAvailabilityData(
         if (availabilityError) {
           throw availabilityError;
         }
-        setAvailabilityData(availabilityResponse);
+        // Modify color of each persons availability
+        if (availabilityResponse && availabilityResponse.length > 0) {
+          const modifiedAvailability = availabilityResponse.map((participant, index) => ({
+            ...participant,
+            availability: participant.availability.map((slot:AvailabilitySlot) => ({
+              ...slot,
+              backgroundColor: colors[index % colors.length],
+            })),
+          }));
+          
+          setAvailabilityData(modifiedAvailability);
+        }
       } catch (error) {
         console.error("Error fetching participant_availability", error);
       }
