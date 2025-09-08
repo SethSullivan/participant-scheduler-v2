@@ -36,7 +36,7 @@ export default function Calendar({
         try {
           setIsLoading(true);
           console.log("Calendar component fetching events...");
-          const organizedEvents = await getEvents(6, true, accessToken);
+          const organizedEvents = await getEvents(30, true, accessToken);
           const flatEvents = organizedEvents.flat();
           // Add in isGcal to every event in the array
           flatEvents.map((v) => ({ ...v, isGcal: true }));
