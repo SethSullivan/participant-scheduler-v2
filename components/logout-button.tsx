@@ -9,7 +9,7 @@ export function LogoutButton() {
   const router = useRouter();
   useEffect(() => {
     const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         localStorage.removeItem('google_access_token');
         localStorage.removeItem('google_refresh_token');
