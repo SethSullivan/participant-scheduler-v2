@@ -1,4 +1,4 @@
-import { initializeGoogleServices, waitForGapi } from "./gapiUtils";
+import { initializeGoogleServices } from "./gapiUtils";
 import { CalendarEvent } from "@/types/types";
 
 function getDatesBetween(startDate: Date, endDate: Date): Date[] {
@@ -50,7 +50,6 @@ async function getCalendarEventsFromAPI(
   try {
     // Must reinitialize google services
     await initializeGoogleServices();
-    await waitForGapi();
 
     // Set the access token for the API client
     if (accessToken) {
