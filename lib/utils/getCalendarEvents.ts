@@ -1,4 +1,4 @@
-import { initializeGoogleServices } from "./gapiUtils";
+import { initializeGoogleServices, waitForGapi } from "./gapiUtils";
 import { CalendarEvent } from "@/types/types";
 
 function getDatesBetween(startDate: Date, endDate: Date): Date[] {

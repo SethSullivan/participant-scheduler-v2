@@ -55,7 +55,7 @@ export const initializeGoogleServices = async () => {
   }
 };
 
-function waitForGapi(): Promise<void> {
+export function waitForGapi(): Promise<void> {
   return new Promise((resolve, reject) => {
     let attempts = 0;
     const maxAttempts = 50; // 5 seconds max (50 * 100ms)
