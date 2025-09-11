@@ -15,17 +15,7 @@ export const initializeGoogleServices = async () => {
       );
       return;
     }
-    // Load Google Identity Services script
-    if (!window.google) {
-      await new Promise<void>((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://accounts.google.com/gsi/client";
-        script.onload = () => resolve();
-        script.onerror = () =>
-          reject(new Error("Failed to load Google Identity Services script"));
-        document.head.appendChild(script);
-      });
-    }
+
     // Load Google API script
     if (!window.gapi) {
       await new Promise<void>((resolve, reject) => {
