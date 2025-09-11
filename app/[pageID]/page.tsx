@@ -30,10 +30,12 @@ export default function ProtectedPage({
   // TODO allow routing back to dashboard if user is organizer
   // Use localStorage to get google access token and previous availability
   useEffect(() => {
+    const googleAccessToken = localStorage.getItem('google_access_token');
+    const googleRefreshToken = localStorage.getItem('google_refresh_token');
+    console.log(googleAccessToken)
     // Get Google access token from localStorage
-    const googleToken = localStorage.getItem("google_access_token");
-    if (googleToken) {
-      setAccessToken(googleToken);
+    if (googleAccessToken) {
+      setAccessToken(googleAccessToken);
     }
 
     const localAvailability = localStorage.getItem(`availability-${eventID}`);
