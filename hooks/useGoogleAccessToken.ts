@@ -37,12 +37,10 @@ export default function useGoogleAccessToken(eventID:string): string | undefined
 
       const googleAccessToken = localStorage.getItem('google_access_token');
       const googleRefreshToken = localStorage.getItem('google_refresh_token');
-      console.log(googleAccessToken)
       if (googleAccessToken) {
         // Check if token is still valid by making a test request
         try {
           const testResponse = await fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + googleAccessToken);
-          console.log(testResponse)
           if (testResponse.ok) {
             // Token is still valid
             setAccessToken(googleAccessToken);
