@@ -93,6 +93,9 @@ importers:
       '@types/gapi.client.calendar-v3':
         specifier: ^0.0.4
         version: 0.0.4
+      '@types/google-one-tap':
+        specifier: ^1.2.6
+        version: 1.2.6
       '@types/node':
         specifier: ^20
         version: 20.19.11
@@ -1483,6 +1486,9 @@ packages:
 
   '@types/gapi@0.0.47':
     resolution: {integrity: sha512-/ZsLuq6BffMgbKMtZyDZ8vwQvTyKhKQ1G2K6VyWCgtHHhfSSXbk4+4JwImZiTjWNXfI2q1ZStAwFFHSkNoTkHA==}
+
+  '@types/google-one-tap@1.2.6':
+    resolution: {integrity: sha512-REmJsXVHvKb/sgI8DF+7IesMbDbcsEokHBqxU01ENZ8d98UPWdRLhUCtxEm9bhNFFg6PJGy7PNFdvovp0hK3jA==}
 
   '@types/google.accounts@0.0.17':
     resolution: {integrity: sha512-ZDOmep4Zslca9pFJ7oXgg/DdirGU+tPuWlXRGfIFNqMtBvkEgzktY292O3V03Ul6AA7ye4CDVZlMnd9m1FeIeg==}
@@ -7008,6 +7014,8 @@ snapshots:
   '@types/gapi.client@1.0.8': {}
 
   '@types/gapi@0.0.47': {}
+
+  '@types/google-one-tap@1.2.6': {}
 
   '@types/google.accounts@0.0.17': {}
 

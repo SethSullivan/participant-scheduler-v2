@@ -38,6 +38,7 @@
     "@types/gapi.auth2": "^0.0.61",
     "@types/gapi.client": "^1.0.8",
     "@types/gapi.client.calendar-v3": "^0.0.4",
+    "@types/google-one-tap": "^1.2.6",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
