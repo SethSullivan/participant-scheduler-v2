@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Script from "next/script";
+import { AuthProvider } from "@/components/auth-provider";
 
 const defaultUrl = process.env.WEBSITE_URL
   ? `https://${process.env.WEBSITE_URL}`
@@ -37,14 +38,17 @@ export default function RootLayout({
           src="https://apis.google.com/js/api.js"
           strategy="beforeInteractive"
         />
+        <AuthProvider>
+
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
-        >
+          >
           {children}
         </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
