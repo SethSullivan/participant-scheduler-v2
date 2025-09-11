@@ -15,10 +15,6 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  initializeGoogleServices,
-  requestGoogleOAuth,
-} from "@/lib/utils/gapiUtils";
 
 export function LoginForm({
   className,
@@ -43,30 +39,6 @@ export function LoginForm({
       });
 
       if (error) throw error;
-
-      // Only do OAuth for specific user
-      if (email === "sethsullivan99@gmail.com") {
-        try {
-          // Initialize Google services
-          await initializeGoogleServices();
-
-          // Request OAuth and wait for completion
-          const oauthSuccess = await requestGoogleOAuth();
-
-          if (oauthSuccess) {
-            console.log("Google Calendar connected successfully");
-          } else {
-            console.log("Google Calendar connection cancelled or failed");
-            // Still proceed - user can connect later if needed
-          }
-        } catch (oauthError) {
-          console.error("Google OAuth error:", oauthError);
-          setError(
-            "Failed to connect Google Calendar. You can try again later."
-          );
-          // Don't prevent login - user can still use the app
-        }
-      }
       router.push("/dashboard");
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");

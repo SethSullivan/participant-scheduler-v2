@@ -15,17 +15,7 @@ export const initializeGoogleServices = async () => {
       );
       return;
     }
-    // Load Google Identity Services script
-    if (!window.google) {
-      await new Promise<void>((resolve, reject) => {
-        const script = document.createElement("script");
-        script.src = "https://accounts.google.com/gsi/client";
-        script.onload = () => resolve();
-        script.onerror = () =>
-          reject(new Error("Failed to load Google Identity Services script"));
-        document.head.appendChild(script);
-      });
-    }
+
     // Load Google API script
     if (!window.gapi) {
       await new Promise<void>((resolve, reject) => {
@@ -38,20 +28,7 @@ export const initializeGoogleServices = async () => {
       });
     }
 
-    // Wait for both to be available
-    const waitForGoogleServices = () => {
-      return new Promise<void>((resolve) => {
-        const checkInterval = setInterval(() => {
-          if (window.google && window.google.accounts && window.gapi) {
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 100);
-      });
-    };
-
-    await waitForGoogleServices();
-
+    
     // Initialize Google API client
     await new Promise<void>((resolve, reject) => {
       window.gapi.load("client", async () => {
@@ -69,50 +46,46 @@ export const initializeGoogleServices = async () => {
         }
       });
     });
-
     console.log("Google Services initialized successfully");
   } catch (error) {
     console.error("Error initializing Google Services:", error);
   }
 };
 
-export const requestGoogleOAuth = async (): Promise<boolean> => {
+export function waitForGapi(): Promise<void> {
   return new Promise((resolve, reject) => {
-    const client = window.google.accounts.oauth2.initTokenClient({
-      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
-      scope: "https://www.googleapis.com/auth/calendar.readonly",
-      callback: (tokenResponse: google.accounts.oauth2.TokenResponse) => {
-        console.log("Sign-in token response:", tokenResponse);
-        if (tokenResponse.access_token) {
-          localStorage.setItem(
-            "google_access_token",
-            tokenResponse.access_token
-          );
-          console.log("Successfully signed in and got access token");
-          resolve(true);
-        } else if (tokenResponse.error) {
-          console.error("OAuth error:", tokenResponse.error);
-          reject(new Error(`OAuth error: ${tokenResponse.error}`));
-        } else {
-          console.error("No access token received");
-          resolve(false);
-        }
-      },
-      error_callback: (error: google.accounts.oauth2.ClientConfigError) => {
-        console.error("OAuth error:", error);
-        reject(new Error(`OAuth error: ${error.message || "Unknown error"}`));
-      },
-    });
-    try {
-      // This opens the OAuth popup
-      if (window.gapi.client.getToken() == null) {
-        client.requestAccessToken({ prompt: "consent" });
-      } else {
-        // Skip display of account chooser and consent dialog for an existing session.
-        client.requestAccessToken({ prompt: "" });
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds max (50 * 100ms)
+
+    const checkGapi = () => {
+      attempts++;
+
+      // Timeout check
+      if (attempts > maxAttempts) {
+        reject(
+          new Error("Timeout: Google API failed to load after 5 seconds")
+        );
+        return;
       }
-    } catch (error) {
-      reject(error);
-    }
+
+      // Check if running in browser
+      if (typeof window === "undefined") {
+        reject(new Error("Not running in browser environment"));
+        return;
+      }
+
+      if (window.gapi && window.gapi.client && window.gapi.client.calendar) {
+        resolve();
+      } else if (window.gapi && window.gapi.client) {
+        // gapi.client exists but calendar API not loaded yet
+        setTimeout(checkGapi, 100);
+      } else if (window.gapi) {
+        // gapi exists but client not ready, wait a bit more
+        setTimeout(checkGapi, 100);
+      } else {
+        reject(new Error("Google API not loaded"));
+      }
+    };
+    checkGapi();
   });
-};
+}

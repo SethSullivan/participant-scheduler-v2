@@ -42,53 +42,14 @@ function getDatesBetween(startDate: Date, endDate: Date): Date[] {
 // 	return date.toLocaleString("sv-SE", options).replace(" ", " ");
 // }
 
-function waitForGapi(): Promise<void> {
-  return new Promise((resolve, reject) => {
-    let attempts = 0;
-    const maxAttempts = 50; // 5 seconds max (50 * 100ms)
-
-    const checkGapi = () => {
-      attempts++;
-
-      // Timeout check
-      if (attempts > maxAttempts) {
-        reject(
-          new Error("Timeout: Google API failed to load after 10 seconds")
-        );
-        return;
-      }
-
-      // Check if running in browser
-      if (typeof window === "undefined") {
-        reject(new Error("Not running in browser environment"));
-        return;
-      }
-
-      if (window.gapi && window.gapi.client && window.gapi.client.calendar) {
-        resolve();
-      } else if (window.gapi && window.gapi.client) {
-        // gapi.client exists but calendar API not loaded yet
-        setTimeout(checkGapi, 100);
-      } else if (window.gapi) {
-        // gapi exists but client not ready, wait a bit more
-        setTimeout(checkGapi, 100);
-      } else {
-        reject(new Error("Google API not loaded"));
-      }
-    };
-    checkGapi();
-  });
-}
-
 async function getCalendarEventsFromAPI(
   startDate: Date,
   endDate: Date,
-  accessToken?: string
+  accessToken: string
 ): Promise<CalendarEvent[]> {
   try {
     // Must reinitialize google services
     await initializeGoogleServices();
-    await waitForGapi();
 
     // Set the access token for the API client
     if (accessToken) {
