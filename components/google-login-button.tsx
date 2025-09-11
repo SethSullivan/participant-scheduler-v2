@@ -1,4 +1,3 @@
-// components/google-login-button.tsx
 "use client";
 
 import { cn } from "@/lib/utils/utils";
@@ -25,7 +24,7 @@ export function GoogleLoginButton({
       : "https://participantscheduler.com/dashboard";
     
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectURL,
