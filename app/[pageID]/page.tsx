@@ -28,10 +28,11 @@ export default function ProtectedPage({
   );
 
   // TODO allow routing back to dashboard if user is organizer
+
   // Use localStorage to get google access token and previous availability
   const refreshGoogleAccessToken = async (refreshToken: string): Promise<string | null> => {
     try {
-      const response = await fetch('/api/auth/refresh-token', {
+      const response = await fetch('/api/refresh-google-access-token', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ export default function ProtectedPage({
   
       return data.access_token;
     } catch (error) {
-      console.error('Error refreshing access token:', error);
+      console.error(error);
       return null;
     }
   };
