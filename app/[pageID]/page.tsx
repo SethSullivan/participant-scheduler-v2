@@ -77,7 +77,7 @@ export default function ProtectedPage({
             throw new Error('Token expired');
           }
         } catch (error) {
-          console.log('Access token expired or invalid, attempting refresh...');
+          console.log(error);
           
           // Try to refresh the token
           if (googleRefreshToken) {
