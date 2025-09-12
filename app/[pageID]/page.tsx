@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, use, useEffect } from "react";
 import Calendar from "@/components/calendar";
+import CalendarSideBar from "@/components/calendar-sidebar";
 import { Button } from "@/components/ui/button";
 import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,10 +20,11 @@ export default function ProtectedPage({
   const [showPopUp, setShowPopUp]           = useState(false);
 
   // Get authData, eventData, and participantAvailabilityData
-  const authData                    = useAuth();
+  const authData = useAuth();
+  const userID = authData?.claims.sub;
   const { eventData, isLoading }    = useEventData(eventID);
   const participantAvailabilityData = useAvailabilityData(
-    authData?.claims.sub,
+    userID,
     eventData?.organizer,
     eventID
   );
@@ -38,6 +40,17 @@ export default function ProtectedPage({
     }
   })
 
+  // Get list of participant names and colors
+  let uniqueParticipants: {name:string, color:string}[]|undefined = undefined
+  if (participantAvailabilityData) {
+    uniqueParticipants = [...new Set(participantAvailabilityData
+      .flatMap(item=> item.availability)
+      .map(subitem => JSON.stringify({
+        name: subitem.title.replace("Available: ", ""), color:subitem.backgroundColor
+      }))
+    )].map(item => JSON.parse(item) as {name:string, color:string});
+    console.log(uniqueParticipants);
+  }
 
   // Show loading state while checking auth
   if (isLoading) {
@@ -78,9 +91,11 @@ export default function ProtectedPage({
           <h1 className="text-3xl font-semibold">
             {eventData ? eventData.name : ""}
           </h1>
-          <Button onClick={handleSubmitAvailability} className="hover:bg-lime-800 ">
-            Submit Availability
-          </Button>
+          {!userID &&
+            <Button onClick={handleSubmitAvailability} className="hover:bg-lime-800 ">
+              Submit Availability
+            </Button>
+          }
       </div>
 
       {/* Calendar Container */}
@@ -97,11 +112,16 @@ export default function ProtectedPage({
             )}
           />
         </div>
+        {uniqueParticipants &&
+          <div className="flex">
+            <CalendarSideBar participantAvailability={uniqueParticipants}/>
+          </div>
+        }
       </div>
       {showPopUp && (
         <SubmitAvailabilityPopup
           setShowPopUp={setShowPopUp}
-          availableSlots={availableSlots} // Pass slots to popup
+          availableSlots={availableSlots}
           eventID={eventID}
         />
       )}
