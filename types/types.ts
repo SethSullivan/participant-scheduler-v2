@@ -1,12 +1,6 @@
 // Types for calendarevents
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-}
 
-export type AvailabilitySlot = {
+export type CalendarSlot = {
   id: string;
   title: string;
   start: Date;
@@ -20,7 +14,7 @@ export type AvailabilitySlot = {
 export type AvailabilityData = {
   id: string;
   created_at: Date;
-  availability: AvailabilitySlot[];
+  availability: CalendarSlot[];
   eventID: string;
 };
 
