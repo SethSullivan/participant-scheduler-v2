@@ -32,13 +32,22 @@ export default function ProtectedPage({
 
   // TODO allow routing back to dashboard if user is organizer
 
-  useState(() => {
-    const localAvailability = localStorage.getItem(`availability-${eventID}`);
-    if (localAvailability) {
-      const availabilityInfo = JSON.parse(localAvailability);
-      setAvailableSlots(availabilityInfo.availabilitySlots);
+  useEffect(() => {
+    function getLocalAvailability() {
+      const localAvailability = localStorage.getItem(`availability-${eventID}`);
+      if (localAvailability) {
+        const availabilityInfo = JSON.parse(localAvailability);
+        setAvailableSlots(availabilityInfo.availabilitySlots);
+      }
+    };
+
+    window.addEventListener("storage", getLocalAvailability)
+
+    return () => {
+      window.removeEventListener("storage", getLocalAvailability)
     }
-  })
+
+  }, [])
 
   // Get list of participant names and colors
   let uniqueParticipants: {name:string, color:string}[]|undefined = undefined
