@@ -9,7 +9,7 @@ export default function Page() {
           <LoginForm />
         </div>
       </div>
-      <div className="flex items-center justify-center border-2 border-black">
+      <div className="flex items-center justify-center">
         <div className="w-full max-w-sm">
           <GoogleLoginButton/>
         </div>
