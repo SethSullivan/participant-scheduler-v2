@@ -24,11 +24,20 @@ export function GoogleLoginButton({
       : "https://participantscheduler.com/dashboard";
     
     try {
+      const scopes = ['openid', 'email', 'profile', 
+        'https://www.googleapis.com/auth/calendar.readonly', 
+        'https://www.googleapis.com/auth/calendar.freebusy',
+        'https://www.googleapis.com/auth/calendar.calendarlist',
+        'https://www.googleapis.com/auth/calendar.events.freebusy',
+        'https://www.googleapis.com/auth/calendar.calendarlist.readonly',
+        'https://www.googleapis.com/auth/calendar.calendars.readonly',
+        'https://www.googleapis.com/auth/calendar.events.public.readonly',
+      ]
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectURL,
-          scopes: 'openid email profile https://www.googleapis.com/auth/calendar.readonly',
+          scopes: scopes.join(" "),
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
