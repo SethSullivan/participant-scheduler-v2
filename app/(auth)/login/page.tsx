@@ -19,7 +19,7 @@ export default function Page() {
         }
         {!showEmailLogin &&
         <div className="flex w-full max-w-sm pt-6 items-center justify-center">
-           <Button onClick={() => setShowEmailLogin(true)}>
+           <Button variant="outline" onClick={() => setShowEmailLogin(true)}>
               Login with Email
            </Button>
         </div>
