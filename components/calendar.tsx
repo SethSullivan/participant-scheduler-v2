@@ -7,14 +7,14 @@ import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import { getEvents } from "@/lib/utils/getCalendarEvents";
 import DeleteSlotPopup from "./ui/delete-slot-popup";
 import { useDeleteSlot } from "@/hooks/useDeleteSlot";
-import { CalendarEvent, AvailabilitySlot, EventsData } from "@/types/types";
+import { CalendarSlot, EventsData } from "@/types/types";
 
 interface CalendarProps {
   accessToken?: string | undefined;
-  availableSlots: AvailabilitySlot[];
-  setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>;
+  availableSlots: CalendarSlot[];
+  setAvailableSlots: React.Dispatch<React.SetStateAction<CalendarSlot[]>>;
   eventData: EventsData;
-  availabilityData: AvailabilitySlot[][] | undefined;
+  availabilityData: CalendarSlot[][] | undefined;
 }
 
 export default function Calendar({
@@ -24,7 +24,7 @@ export default function Calendar({
   eventData,
   availabilityData,
 }: CalendarProps) {
-  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
+  const [calendarEvents, setCalendarEvents] = useState<CalendarSlot[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
   const [isLoading, setIsLoading] = useState(true);
   const { eventToDelete, initiateDelete, confirmDelete, cancelDelete } =
     useDeleteSlot(setAvailableSlots);
@@ -39,9 +39,14 @@ export default function Calendar({
           const organizedEvents = await getEvents(30, true, accessToken);
           const flatEvents = organizedEvents.flat();
           // Add in isGcal to every event in the array
-          flatEvents.map((v) => ({ ...v, isGcal: true }));
-          setCalendarEvents(flatEvents);
-          console.log("Calendar events loaded:", flatEvents);
+          const fullFlatEvents = flatEvents.map((v) => ({ ...v, 
+            isGcal: true, 
+            backgroundColor:"#3d3c3cff", 
+            textColor:"#ffffffff", 
+            borderColor:"#3d3c3cff" 
+          }));
+          setCalendarEvents(fullFlatEvents);
+          console.log("Calendar events loaded:", fullFlatEvents);
         } catch (error) {
           console.error("Error loading calendar events:", error);
         } finally {
@@ -52,11 +57,11 @@ export default function Calendar({
       }
     };
     fetchEvents();
-  }, [accessToken]); // Re-fetch when access token changes
+  }, [accessToken]);
 
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     // Create a new availability slot
-    const newSlot: AvailabilitySlot = {
+    const newSlot: CalendarSlot = {
       id: Date.now().toString(),
       title: "Available",
       start: selectInfo.start,
