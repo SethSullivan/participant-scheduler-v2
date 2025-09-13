@@ -13,12 +13,12 @@ export default function Page() {
           <GoogleLoginButton/>
         </div>
         {!showEmailLogin &&
-        <div className="w-full max-w-sm pt-3 text-center">
+        <div className="w-full max-w-sm pt-6 text-center">
            - or -
         </div>
         }
         {!showEmailLogin &&
-        <div className="flex w-full max-w-sm pt-3 items-center justify-center">
+        <div className="flex w-full max-w-sm pt-6 items-center justify-center">
            <Button onClick={() => setShowEmailLogin(true)}>
               Login with Email
            </Button>
