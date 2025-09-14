@@ -47,7 +47,7 @@ export default function ProtectedPage({
       window.removeEventListener("storage", getLocalAvailability)
     }
 
-  }, [])
+  }, [eventID])
 
   // Get list of participant names and colors
   let uniqueParticipants: {name:string, color:string}[]|undefined = undefined
