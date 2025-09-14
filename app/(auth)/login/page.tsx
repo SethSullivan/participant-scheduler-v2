@@ -10,28 +10,26 @@ export default function Page() {
       <div className="flex-col w-full flex items-center justify-center">
         <div className="w-full max-w-sm text-center text-md">
           For Google Calendar integration (recommended)
-          <GoogleLoginButton/>
+          <GoogleLoginButton />
         </div>
-        {!showEmailLogin &&
-        <div className="w-full max-w-sm pt-6 text-center">
-           - or -
-        </div>
-        }
-        {!showEmailLogin &&
-        <div className="flex w-full max-w-sm pt-6 items-center justify-center">
-           <Button variant="outline" onClick={() => setShowEmailLogin(true)}>
+        {!showEmailLogin && (
+          <div className="w-full max-w-sm pt-6 text-center">- or -</div>
+        )}
+        {!showEmailLogin && (
+          <div className="flex w-full max-w-sm pt-6 items-center justify-center">
+            <Button variant="outline" onClick={() => setShowEmailLogin(true)}>
               Login with Email
-           </Button>
-        </div>
-        }
+            </Button>
+          </div>
+        )}
       </div>
-      {showEmailLogin  &&
-      <div className="flex pt-6">
-        <div className="flex w-full max-w-sm">
-          <LoginForm />
+      {showEmailLogin && (
+        <div className="flex pt-6">
+          <div className="flex w-full max-w-sm">
+            <LoginForm />
+          </div>
         </div>
-      </div>
-      }
+      )}
     </div>
   );
 }

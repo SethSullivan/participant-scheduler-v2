@@ -38,15 +38,8 @@ export default function Calendar({
           console.log("Calendar component fetching events...");
           const organizedEvents = await getEvents(30, true, accessToken);
           const flatEvents = organizedEvents.flat();
-          // Add in isGcal to every event in the array
-          const fullFlatEvents = flatEvents.map((v) => ({ ...v, 
-            isGcal: true, 
-            backgroundColor:"#3d3c3cff", 
-            textColor:"#ffffffff", 
-            borderColor:"#3d3c3cff" 
-          }));
-          setCalendarEvents(fullFlatEvents);
-          console.log("Calendar events loaded:", fullFlatEvents);
+          setCalendarEvents(flatEvents);
+          console.log("Calendar events loaded:", flatEvents);
         } catch (error) {
           console.error("Error loading calendar events:", error);
         } finally {
@@ -106,9 +99,9 @@ export default function Calendar({
     return (
       <div className="flex flex-col w-full text-center items-center justify-center">
         <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
-        <div>
-              <p className="text-gray-600">Loading calendar events...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-2 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
+          <div>
+            <p className="text-gray-600">Loading calendar events...</p>
           </div>
         </div>
       </div>
@@ -128,15 +121,20 @@ export default function Calendar({
           center: "title",
           right: "timeGridWeek,timeGridDay",
         }}
-        titleFormat={{year:'numeric', month:'long'}}
-        dayHeaderFormat={{weekday:"long", month:"numeric", day:"numeric", omitCommas:true}}
+        titleFormat={{ year: "numeric", month: "long" }}
+        dayHeaderFormat={{
+          weekday: "long",
+          month: "numeric",
+          day: "numeric",
+          omitCommas: true,
+        }}
         buttonText={{
-          today:'Today',
-          month:'Month',
-          week: 'Week',
-          day:  'Day',
-          list: 'List'
-        }}  
+          today: "Today",
+          month: "Month",
+          week: "Week",
+          day: "Day",
+          list: "List",
+        }}
         weekends={false}
         selectable={true}
         selectMirror={true}
@@ -161,11 +159,11 @@ export default function Calendar({
         selectOverlap={false}
         allDaySlot={false}
         slotLabelFormat={{
-          hour:'numeric',
-          minute:'2-digit',
+          hour: "numeric",
+          minute: "2-digit",
           omitZeroMinute: false,
         }}
-        slotLabelInterval={{hours:1}}
+        slotLabelInterval={{ hours: 1 }}
         eventDurationEditable={true}
         eventResizableFromStart={true}
         nowIndicator={true}

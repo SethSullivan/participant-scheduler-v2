@@ -7,7 +7,7 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
-import { AvailabilitySlot } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 
 export default function ProtectedPage({
@@ -16,13 +16,13 @@ export default function ProtectedPage({
   params: Promise<{ pageID: string }>;
 }) {
   const { pageID: eventID } = use(params);
-  const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
-  const [showPopUp, setShowPopUp]           = useState(false);
+  const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
+  const [showPopUp, setShowPopUp] = useState(false);
 
   // Get authData, eventData, and participantAvailabilityData
   const authData = useAuth();
   const userID = authData?.claims.sub;
-  const { eventData, isLoading }    = useEventData(eventID);
+  const { eventData, isLoading } = useEventData(eventID);
   const participantAvailabilityData = useAvailabilityData(
     userID,
     eventData?.organizer,
@@ -39,25 +39,31 @@ export default function ProtectedPage({
         const availabilityInfo = JSON.parse(localAvailability);
         setAvailableSlots(availabilityInfo.availabilitySlots);
       }
-    };
-
-    window.addEventListener("storage", getLocalAvailability)
-
-    return () => {
-      window.removeEventListener("storage", getLocalAvailability)
     }
 
-  }, [])
+    window.addEventListener("storage", getLocalAvailability);
+
+    return () => {
+      window.removeEventListener("storage", getLocalAvailability);
+    };
+  }, [eventID]);
 
   // Get list of participant names and colors
-  let uniqueParticipants: {name:string, color:string}[]|undefined = undefined
+  let uniqueParticipants: { name: string; color: string }[] | undefined =
+    undefined;
   if (participantAvailabilityData) {
-    uniqueParticipants = [...new Set(participantAvailabilityData
-      .flatMap(item=> item.availability)
-      .map(subitem => JSON.stringify({
-        name: subitem.title.replace("Available: ", ""), color:subitem.backgroundColor
-      }))
-    )].map(item => JSON.parse(item) as {name:string, color:string});
+    uniqueParticipants = [
+      ...new Set(
+        participantAvailabilityData
+          .flatMap((item) => item.availability)
+          .map((subitem) =>
+            JSON.stringify({
+              name: subitem.title.replace("Available: ", ""),
+              color: subitem.backgroundColor,
+            })
+          )
+      ),
+    ].map((item) => JSON.parse(item) as { name: string; color: string });
     console.log(uniqueParticipants);
   }
 
@@ -97,14 +103,17 @@ export default function ProtectedPage({
     <div className="flex flex-col w-full h-screen pb-10">
       {/* Header Container */}
       <div className="flex flex-[1] w-full items-center justify-between pb-1 pt-3">
-          <h1 className="text-3xl font-semibold">
-            {eventData ? eventData.name : ""}
-          </h1>
-          {!userID &&
-            <Button onClick={handleSubmitAvailability} className="hover:bg-lime-800 ">
-              Submit Availability
-            </Button>
-          }
+        <h1 className="text-3xl font-semibold">
+          {eventData ? eventData.name : ""}
+        </h1>
+        {!userID && (
+          <Button
+            onClick={handleSubmitAvailability}
+            className="hover:bg-lime-800 "
+          >
+            Submit Availability
+          </Button>
+        )}
       </div>
 
       {/* Calendar Container */}
@@ -121,11 +130,11 @@ export default function ProtectedPage({
             )}
           />
         </div>
-        {uniqueParticipants &&
+        {uniqueParticipants && (
           <div className="flex">
-            <CalendarSideBar participantAvailability={uniqueParticipants}/>
+            <CalendarSideBar participantAvailability={uniqueParticipants} />
           </div>
-        }
+        )}
       </div>
       {showPopUp && (
         <SubmitAvailabilityPopup

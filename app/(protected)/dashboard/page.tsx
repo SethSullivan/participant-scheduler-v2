@@ -1,61 +1,32 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CreateEvent from "@/components/create-event";
 import EventCard from "@/components/event-card";
-import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { EventsData } from "@/types/types";
 import LoadingSpinner from "@/components/ui/loading-screen";
+import useUsersEvents from "@/hooks/useUsersEvents";
 
 export default function DashBoard() {
   const [showPopup, setShowPopup] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingText, setLoadingText] = useState("Loading your events ...");
   const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
+
+  const [loadingText, setLoadingText] = useState("Loading your events ...");
   const router = useRouter();
-
-  useEffect(() => {
-    const getUsersEvents = async () => {
-      try {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getClaims();
-        const user = data?.claims;
-        if (!user) {
-          router.replace("/login");
-          return;
-        }
-        const { error: eventsError, data: eventsData } = await supabase
-          .from("events")
-          .select("*")
-          .eq("organizer", user.sub);
-
-        if (eventsError) throw eventsError;
-        console.log("Events data", eventsData);
-        if (eventsData) {
-          setEventsData(eventsData);
-        }
-      } catch (error) {
-        console.error("Error loading events:", error);
-        setError((error as Error).message || "An unexpected error occurred");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    getUsersEvents();
-  }, []);
+  const { error } = useUsersEvents(router, setIsLoading, setEventsData);
 
   const handleEventClick = (event: EventsData) => {
     setIsLoading(true);
     setLoadingText(`Loading ${event.name}...`);
     router.push(`/${event.id}`);
   };
-  
+
   if (isLoading) {
     return <LoadingSpinner specificText={loadingText} />;
   }
-  
+
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto">
@@ -98,7 +69,7 @@ export default function DashBoard() {
             {showPopup ? (
               <CreateEvent
                 setShowPopup={setShowPopup}
-                setEventsData={setEventsData}
+                setEventsData={setEventsData} // Will just add the new event to the list
               />
             ) : (
               <div className="w-full max-w-md">

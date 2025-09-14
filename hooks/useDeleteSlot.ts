@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { AvailabilitySlot } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 
 export const useDeleteSlot = (
-  setAvailableSlots: React.Dispatch<React.SetStateAction<AvailabilitySlot[]>>
+  setAvailableSlots: React.Dispatch<React.SetStateAction<CalendarSlot[]>>
 ) => {
   const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 

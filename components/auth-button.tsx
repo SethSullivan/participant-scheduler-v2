@@ -15,7 +15,9 @@ export async function AuthButton() {
       Hey, {user.first_name ? user.first_name : user.email}!
       <LogoutButton />
     </div>
-  ) : (<div></div>);
+  ) : (
+    <div></div>
+  );
   // : (
   //   <div className="flex gap-2">
   //     <Button asChild size="sm" variant={"outline"}>

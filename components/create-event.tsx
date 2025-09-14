@@ -38,7 +38,6 @@ export default function CreateEvent({
     setIsLoading(true);
     setError(null);
     try {
-      // 4. Add proper error handling
       const supabase = createClient();
       const { data } = await supabase.auth.getClaims();
       const user = data?.claims;
