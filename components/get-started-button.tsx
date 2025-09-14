@@ -1,5 +1,5 @@
 // components/get-started-button.tsx
-'use client';
+"use client";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -17,24 +17,24 @@ function ButtonSpinner() {
 export function GetStartedButton() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  
+
   const handleClick = async () => {
     setIsLoading(true);
     try {
-        const supabase = createClient();
-        const { data } = await supabase.auth.getClaims();
-        const user = data?.claims;
-        if (!user) {
-          router.replace("/login");
-        } else {
-          router.push("/dashboard");
-        }
-    } catch (error) {
-        console.error("Error checking auth:", error);
+      const supabase = createClient();
+      const { data } = await supabase.auth.getClaims();
+      const user = data?.claims;
+      if (!user) {
         router.replace("/login");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error checking auth:", error);
+      router.replace("/login");
     }
   };
-  
+
   return (
     <Button onClick={handleClick} disabled={isLoading}>
       {isLoading ? <ButtonSpinner /> : "Get Started"}

@@ -23,9 +23,7 @@ export default function ProtectedLayout({
         (bc i have main as min-w-screen), whether it's loading or showing a calendar. 
         NOrmally this would push content off the screen to  the right, but max-w-5xl 
         makes it so that it sits nicely with padding  */}
-        <div className="flex-1 flex flex-col max-w-5xl w-full">
-          {children}
-        </div>
+        <div className="flex-1 flex flex-col max-w-5xl w-full">{children}</div>
 
         {/* <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
           <p>Powered by Seth Sullivan</p>

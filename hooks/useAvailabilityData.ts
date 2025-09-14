@@ -35,14 +35,18 @@ export default function useAvailabilityData(
         }
         // Modify color of each persons availability
         if (availabilityResponse && availabilityResponse.length > 0) {
-          const modifiedAvailability = availabilityResponse.map((participant, index) => ({
-            ...participant,
-            availability: participant.availability.map((slot:AvailabilitySlot) => ({
-              ...slot,
-              backgroundColor: colors[index % colors.length],
-            })),
-          }));
-          
+          const modifiedAvailability = availabilityResponse.map(
+            (participant, index) => ({
+              ...participant,
+              availability: participant.availability.map(
+                (slot: AvailabilitySlot) => ({
+                  ...slot,
+                  backgroundColor: colors[index % colors.length],
+                })
+              ),
+            })
+          );
+
           setAvailabilityData(modifiedAvailability);
         }
       } catch (error) {

@@ -28,7 +28,6 @@ export const initializeGoogleServices = async () => {
       });
     }
 
-    
     // Initialize Google API client
     await new Promise<void>((resolve, reject) => {
       window.gapi.load("client", async () => {
@@ -62,9 +61,7 @@ export function waitForGapi(): Promise<void> {
 
       // Timeout check
       if (attempts > maxAttempts) {
-        reject(
-          new Error("Timeout: Google API failed to load after 5 seconds")
-        );
+        reject(new Error("Timeout: Google API failed to load after 5 seconds"));
         return;
       }
 

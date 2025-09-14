@@ -22,11 +22,11 @@ export default function DashBoard() {
     setLoadingText(`Loading ${event.name}...`);
     router.push(`/${event.id}`);
   };
-  
+
   if (isLoading) {
     return <LoadingSpinner specificText={loadingText} />;
   }
-  
+
   return (
     <div className="min-h-screen p-6">
       <div className="max-w-6xl mx-auto">

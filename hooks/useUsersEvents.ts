@@ -6,10 +6,10 @@ export default function useUsersEvents(
   router: { replace: (url: string) => void },
   setIsLoading: Dispatch<React.SetStateAction<boolean>>,
   setEventsData: Dispatch<React.SetStateAction<EventsData[] | null>>
-) {  
-    const [error, setError] = useState<string | null>(null);
-    
-    useEffect(() => {
+) {
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
     const getUsersEvents = async () => {
       try {
         const supabase = createClient();
@@ -38,5 +38,5 @@ export default function useUsersEvents(
     };
     getUsersEvents();
   }, [router, setIsLoading, setEventsData]);
-  return { error }
+  return { error };
 }

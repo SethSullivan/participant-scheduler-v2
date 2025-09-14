@@ -62,7 +62,7 @@ export default function SubmitAvailabilityPopup({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    
+
     // Validate inputs
     const newErrors: {
       name?: string;
@@ -208,10 +208,10 @@ export default function SubmitAvailabilityPopup({
               type="submit"
               disabled={isLoading}
               className={`flex-1 px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 ${
-                isLoading 
-                  ? "bg-blue-400 opacity-60 cursor-not-allowed" 
+                isLoading
+                  ? "bg-blue-400 opacity-60 cursor-not-allowed"
                   : "bg-blue-600 hover:bg-blue-700"
-              }`}            
+              }`}
             >
               {isLoading ? "Submitting..." : "Submit"}
             </button>

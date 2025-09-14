@@ -39,15 +39,14 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
         <AuthProvider>
-
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
           >
-          {children}
-        </ThemeProvider>
+            {children}
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
