@@ -7,7 +7,7 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
-import { AvailabilitySlot } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 
 export default function ProtectedPage({
@@ -16,7 +16,7 @@ export default function ProtectedPage({
   params: Promise<{ pageID: string }>;
 }) {
   const { pageID: eventID } = use(params);
-  const [availableSlots, setAvailableSlots] = useState<AvailabilitySlot[]>([]);
+  const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp]           = useState(false);
 
   // Get authData, eventData, and participantAvailabilityData
