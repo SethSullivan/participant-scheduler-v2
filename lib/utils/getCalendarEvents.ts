@@ -1,4 +1,3 @@
-import { Calendar } from "@fullcalendar/core/index.js";
 import { initializeGoogleServices } from "./gapiUtils";
 import { CalendarSlot } from "@/types/types";
 
