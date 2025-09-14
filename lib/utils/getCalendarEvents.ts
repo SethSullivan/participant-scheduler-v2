@@ -1,5 +1,6 @@
+import { Calendar } from "@fullcalendar/core/index.js";
 import { initializeGoogleServices } from "./gapiUtils";
-import { CalendarEvent } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 
 function getDatesBetween(startDate: Date, endDate: Date): Date[] {
   const dateArray: Date[] = [];
@@ -46,7 +47,7 @@ async function getCalendarEventsFromAPI(
   startDate: Date,
   endDate: Date,
   accessToken: string
-): Promise<CalendarEvent[]> {
+): Promise<CalendarSlot[]> {
   try {
     // Must reinitialize google services
     await initializeGoogleServices();
@@ -61,7 +62,7 @@ async function getCalendarEventsFromAPI(
     const calendarsResponse =
       await window.gapi.client.calendar.calendarList.list();
     const calendarIDs = calendarsResponse.result.items?.map((e) => e.id);
-    const allEvents: CalendarEvent[] = [];
+    const allEvents: CalendarSlot[] = [];
     if (calendarIDs) {
       for (const calendarID of calendarIDs) {
         if (!calendarID) {
@@ -80,7 +81,7 @@ async function getCalendarEventsFromAPI(
           return [];
         }
 
-        const events: CalendarEvent[] = response.result.items
+        const events: CalendarSlot[] = response.result.items
           .filter((item: gapi.client.calendar.Event) => {
             // All-day events only have 'date', timed events have 'dateTime'
             return item.start?.dateTime && item.end?.dateTime;
@@ -95,6 +96,7 @@ async function getCalendarEventsFromAPI(
               end: item.end?.dateTime
                 ? new Date(item.end.dateTime)
                 : new Date(item.end?.date + "T23:59:59"),
+              isGcal: true,
             };
           });
         allEvents.push(...events);
@@ -126,7 +128,7 @@ export async function getEvents(
     const endDate = new Date(tempEndDate.setHours(17, 30, 0));
     const allDates = getDatesBetween(startDate, endDate);
 
-    const events: CalendarEvent[] = await getCalendarEventsFromAPI(
+    const events: CalendarSlot[] = await getCalendarEventsFromAPI(
       startDate,
       endDate,
       accessToken
@@ -141,10 +143,10 @@ export async function getEvents(
 }
 
 function organizeCalendarEventsByDayIndex(
-  events: CalendarEvent[],
+  events: CalendarSlot[],
   dates: Date[]
-): CalendarEvent[][] {
-  const eventsByDate: CalendarEvent[][] = [];
+): CalendarSlot[][] {
+  const eventsByDate: CalendarSlot[][] = [];
   for (let i = 0; i < dates.length; i++) {
     eventsByDate.push(
       events.filter((e) => e.start.getDate() === dates[i].getDate())
