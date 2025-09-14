@@ -1,5 +1,3 @@
-import { AvailabilitySlot } from "@/types/types"
-// TODO 1. Make list of names with color next to them
 export default function CalendarSideBar(
     {
         participantAvailability
