@@ -56,7 +56,7 @@ export function GoogleLoginButton({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Button className="bg-blue-600 hover:bg-blue-800 font-bold" onClick={handleLogin} disabled={isLoading}>
+      <Button className="bg-blue-600 hover:bg-blue-800" onClick={handleLogin} disabled={isLoading}>
         {isLoading ? "Signing in..." : "Sign-In With Google"}
       </Button>
       {error && <p className="text-red-500 text-sm">{error}</p>}
