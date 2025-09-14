@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { AvailabilitySlot } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 
 type Props = {
   setShowPopUp: React.Dispatch<React.SetStateAction<boolean>>;
-  availableSlots: AvailabilitySlot[]; // Change from userInfo to availableSlots
+  availableSlots: CalendarSlot[]; // Change from userInfo to availableSlots
   eventID: string;
 };
 
@@ -38,7 +38,7 @@ export default function SubmitAvailabilityPopup({
   const uploadAvailability = async (
     name: string,
     email: string,
-    availableSlots: AvailabilitySlot[]
+    availableSlots: CalendarSlot[]
   ) => {
     console.log("User submitted info:", { name, email, availableSlots });
     try {
@@ -105,7 +105,7 @@ export default function SubmitAvailabilityPopup({
       JSON.stringify({
         name: sanitizedName,
         email: sanitizedEmail,
-        availabilitySlots: updatedSlots,
+        calendCalendarSlots: updatedSlots,
       })
     );
 

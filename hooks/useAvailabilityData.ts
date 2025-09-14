@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { AvailabilityData, AvailabilitySlot } from "@/types/types";
+import { AvailabilityData, CalendarSlot } from "@/types/types";
 import { colors } from "@/lib/utils/utils";
 
 export default function useAvailabilityData(
@@ -39,7 +39,7 @@ export default function useAvailabilityData(
             (participant, index) => ({
               ...participant,
               availability: participant.availability.map(
-                (slot: AvailabilitySlot) => ({
+                (slot: CalendarSlot) => ({
                   ...slot,
                   backgroundColor: colors[index % colors.length],
                 })
