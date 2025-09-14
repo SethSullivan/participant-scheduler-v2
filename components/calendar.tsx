@@ -38,16 +38,8 @@ export default function Calendar({
           console.log("Calendar component fetching events...");
           const organizedEvents = await getEvents(30, true, accessToken);
           const flatEvents = organizedEvents.flat();
-          // Add in isGcal to every event in the array
-          const fullFlatEvents = flatEvents.map((v) => ({
-            ...v,
-            isGcal: true,
-            backgroundColor: "#3d3c3cff",
-            textColor: "#ffffffff",
-            borderColor: "#3d3c3cff",
-          }));
-          setCalendarEvents(fullFlatEvents);
-          console.log("Calendar events loaded:", fullFlatEvents);
+          setCalendarEvents(flatEvents);
+          console.log("Calendar events loaded:", flatEvents);
         } catch (error) {
           console.error("Error loading calendar events:", error);
         } finally {

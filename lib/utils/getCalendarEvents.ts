@@ -97,6 +97,9 @@ async function getCalendarEventsFromAPI(
                 ? new Date(item.end.dateTime)
                 : new Date(item.end?.date + "T23:59:59"),
               isGcal: true,
+              backgroundColor: "#3d3c3cff",
+              textColor: "#ffffffff",
+              borderColor: "#3d3c3cff",
             };
           });
         allEvents.push(...events);
