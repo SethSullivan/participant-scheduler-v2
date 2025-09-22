@@ -149,8 +149,10 @@ export default function ProtectedPage({
       ),
     ].map((item) => JSON.parse(item));
   }
+
+  let checkedIDs: string[] | undefined = undefined;
   if (uniqueParticipants) {
-    var checkedIDs = uniqueParticipants
+    checkedIDs = uniqueParticipants
       .filter((v) => v.isChecked)
       .map((v) => v.userID);
   }
@@ -212,9 +214,13 @@ export default function ProtectedPage({
             availableSlots={availableSlots}
             setAvailableSlots={setAvailableSlots}
             eventData={eventData}
-            availabilityData={participantAvailabilityData
-              ?.filter((v) => checkedIDs.includes(v.user_id))
-              .map((e) => e.availability)}
+            availabilityData={
+              participantAvailabilityData && checkedIDs
+                ? participantAvailabilityData
+                    .filter((v) => checkedIDs.includes(v.user_id))
+                    .map((e) => e.availability)
+                : participantAvailabilityData?.map((e) => e.availability) || []
+            }
           />
         </div>
         {uniqueParticipants && (
