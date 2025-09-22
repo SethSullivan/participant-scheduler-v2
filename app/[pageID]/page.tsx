@@ -221,9 +221,9 @@ export default function ProtectedPage({
             availableSlots={availableSlots}
             setAvailableSlots={setAvailableSlots}
             eventData={eventData}
-            availabilityData={participantAvailabilityData?.map(
-              (e) => e.availability
-            )}
+            availabilityData={participantAvailabilityData
+              ?.filter((v) => checkedIDs.includes(v.user_id))
+              .map((e) => e.availability)}
           />
         </div>
         {uniqueParticipants && (
