@@ -90,7 +90,13 @@ export default function ProtectedPage({
       window.removeEventListener("storage", getChecked);
     };
   }, [eventID, participantAvailabilityData]);
-  console.log("checked", checked);
+
+  // Save to localStorage when checked (or eventID) is changed
+  useEffect(() => {
+    if (checked.length > 0) {
+      localStorage.setItem(`checked-state-${eventID}`, JSON.stringify(checked));
+    }
+  }, [checked, eventID]);
 
   const handleChange = (userID: string) => {
     setChecked((prev) => {
