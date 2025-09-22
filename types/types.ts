@@ -13,9 +13,10 @@ export type CalendarSlot = {
 
 export type AvailabilityData = {
   id: string;
+  user_id: string;
   created_at: Date;
   availability: CalendarSlot[];
-  eventID: string;
+  event_id: string;
 };
 
 export type EventsData = {
@@ -26,3 +27,8 @@ export type EventsData = {
   created_at: Date;
   id: string;
 };
+
+export type CheckedState = {
+  userID:string;
+  isChecked: boolean;
+}
