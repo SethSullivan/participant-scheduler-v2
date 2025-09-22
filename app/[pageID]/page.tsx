@@ -32,6 +32,23 @@ export default function ProtectedPage({
 
   const [checked, setChecked] = useState<CheckedState[]>([]);
 
+  // Get local Availability data (mainly for anonymous users)
+  useEffect(() => {
+    function getLocalAvailability() {
+      const localAvailability = localStorage.getItem(`availability-${eventID}`);
+      if (localAvailability) {
+        const availabilityInfo = JSON.parse(localAvailability);
+        setAvailableSlots(availabilityInfo.availabilitySlots);
+      }
+    }
+
+    window.addEventListener("storage", getLocalAvailability);
+
+    return () => {
+      window.removeEventListener("storage", getLocalAvailability);
+    };
+  }, [eventID]);
+
   useEffect(() => {
     function getChecked() {
       const checkedState = localStorage.getItem(`checked-state-${eventID}`);
