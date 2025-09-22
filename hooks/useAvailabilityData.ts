@@ -36,8 +36,10 @@ export default function useAvailabilityData(
         // Sort and Modify color of each persons availability
         if (availabilityResponse && availabilityResponse.length > 0) {
           // Sort by created_at ascending so older entries appear first
-          const sortedAvailabilityResponse = availabilityResponse.sort((a, b) =>
-              new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+          const sortedAvailabilityResponse = availabilityResponse.sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime()
           );
           const modifiedAvailability = sortedAvailabilityResponse.map(
             (participant, index) => ({

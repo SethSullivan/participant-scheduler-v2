@@ -29,6 +29,6 @@ export type EventsData = {
 };
 
 export type CheckedState = {
-  userID:string;
+  userID: string;
   isChecked: boolean;
-}
+};

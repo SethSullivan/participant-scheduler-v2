@@ -148,11 +148,11 @@ export default function ProtectedPage({
         )
       ),
     ].map((item) => JSON.parse(item));
-
-    
   }
-  if (uniqueParticipants){
-    var checkedIDs = uniqueParticipants.filter((v)=>v.isChecked).map((v)=>v.userID)
+  if (uniqueParticipants) {
+    var checkedIDs = uniqueParticipants
+      .filter((v) => v.isChecked)
+      .map((v) => v.userID);
   }
 
   // Show loading state while checking auth

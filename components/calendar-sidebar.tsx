@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { CheckedState } from '@/types/types'
+import { CheckedState } from "@/types/types";
 
 export default function CalendarSideBar({
   participantAvailability,
   handleChange,
   checked,
 }: {
-  participantAvailability: { userID: string, name: string; color: string, isChecked:boolean }[];
-  handleChange:any;
-  checked:CheckedState[];
+  participantAvailability: {
+    userID: string;
+    name: string;
+    color: string;
+    isChecked: boolean;
+  }[];
+  handleChange: any;
+  checked: CheckedState[];
 }) {
-
   const listItems = participantAvailability.map((participant, idx) => {
     // Split name and email - assuming format like "John Doe (john@example.com)"
     const nameMatch = participant.name.match(/^(.+?)\s*\((.+?)\)$/);
@@ -21,12 +25,14 @@ export default function CalendarSideBar({
         <div className="flex items-center border border-gray-100 rounded p-2 min-h-[3rem]">
           <div
             className="flex w-6 h-6 rounded mr-3 flex-shrink-0 border-2 items-center justify-center"
-            style={{ 
-              backgroundColor: participant.isChecked ? participant.color : "transparent",
-              borderColor: participant.color
-             }}
+            style={{
+              backgroundColor: participant.isChecked
+                ? participant.color
+                : "transparent",
+              borderColor: participant.color,
+            }}
           >
-              <label className="w-full h-full flex items-center justify-center">
+            <label className="w-full h-full flex items-center justify-center">
               <input
                 type="checkbox"
                 checked={participant.isChecked}
@@ -42,7 +48,11 @@ export default function CalendarSideBar({
                   strokeWidth="3"
                   viewBox="0 0 24 24"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               )}
             </label>
