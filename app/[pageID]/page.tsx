@@ -212,9 +212,6 @@ export default function ProtectedPage({
           </Button>
         )}
       </div>
-      
-      // TODO SEND checked state to calendarSidebar and Calendar 
-      // TODO For Calendar, i can send it in with availabilityData, or separately
       {/* Calendar Container */}
       <div className="flex flex-[10] w-full">
         {/* Calendar Background style */}
