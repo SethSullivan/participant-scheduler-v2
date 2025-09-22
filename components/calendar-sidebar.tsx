@@ -1,18 +1,15 @@
 import { useState } from "react";
+import { CheckedState } from '@/types/types'
 
 export default function CalendarSideBar({
   participantAvailability,
+  handleChange,
+  checked,
 }: {
-  participantAvailability: { name: string; color: string }[];
+  participantAvailability: { userID: string, name: string; color: string, isChecked:boolean }[];
+  handleChange:any;
+  checked:CheckedState[];
 }) {
-  const [checked, setChecked] = useState(new Array(participantAvailability.length).fill(true))
-  const handleChange = (idx: number) => {
-    setChecked(prev => {
-      const updated = [...prev];
-      updated[idx] = !updated[idx];
-      return updated;
-    });
-  };
 
   const listItems = participantAvailability.map((participant, idx) => {
     // Split name and email - assuming format like "John Doe (john@example.com)"
@@ -25,15 +22,15 @@ export default function CalendarSideBar({
           <div
             className="flex w-6 h-6 rounded mr-3 flex-shrink-0 border-2 items-center justify-center"
             style={{ 
-              backgroundColor: checked[idx] ? participant.color : "transparent",
+              backgroundColor: participant.isChecked ? participant.color : "transparent",
               borderColor: participant.color
              }}
           >
               <label className="w-full h-full flex items-center justify-center">
               <input
                 type="checkbox"
-                checked={checked[idx]}
-                onChange={() => handleChange(idx)}
+                checked={participant.isChecked}
+                onChange={() => handleChange(participant.userID)}
                 className="cursor-pointer appearance-none w-full h-full bg-transparent border-none"
               />
               {/* Custom checkmark - only visible when checked */}
