@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { CheckedState } from "@/types/types";
 
 export default function CalendarSideBar({
@@ -12,7 +11,7 @@ export default function CalendarSideBar({
     color: string;
     isChecked: boolean;
   }[];
-  handleChange: any;
+  handleChange: (userID:string) => void;
   checked: CheckedState[];
 }) {
   const listItems = participantAvailability.map((participant, idx) => {
