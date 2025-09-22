@@ -129,16 +129,19 @@ export default function ProtectedPage({
   }, [eventID]);
 
   // Get list of participant names and colors
-  let uniqueParticipants: { userID:string, name: string; color: string, isChecked:boolean }[] | undefined =
-    undefined;
+  let uniqueParticipants:
+    | { userID: string; name: string; color: string; isChecked: boolean }[]
+    | undefined = undefined;
+
   if (participantAvailabilityData) {
     // Create an array where each element contains both the availability item and user_id
-    const availabilityWithUserIds = participantAvailabilityData.flatMap(item => 
-      item.availability.map(subitem => ({
+    const availabilityWithUserIds = participantAvailabilityData.flatMap(
+      (item) =>
+        item.availability.map((subitem) => ({
           availability: subitem,
-          userID: item.user_id
+          userID: item.user_id,
         }))
-      );
+    );
     // Now map this combined data
     uniqueParticipants = [
       ...new Set(
@@ -146,13 +149,19 @@ export default function ProtectedPage({
           JSON.stringify({
             userID: userID,
             name: availability.title.replace("Available: ", ""),
-            isChecked: checked.filter((v) => v.userID == userID).map((v)=>v.isChecked),
+            isChecked: checked
+              .filter((v) => v.userID == userID)
+              .map((v) => v.isChecked)[0],
             color: availability.backgroundColor,
           })
         )
       ),
     ].map((item) => JSON.parse(item));
-    console.log(uniqueParticipants);
+
+    
+  }
+  if (uniqueParticipants){
+    var checkedIDs = uniqueParticipants.filter((v)=>v.isChecked).map((v)=>v.userID)
   }
 
   // Show loading state while checking auth
