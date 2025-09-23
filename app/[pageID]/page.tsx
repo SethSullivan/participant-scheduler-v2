@@ -18,6 +18,7 @@ export default function ProtectedPage({
   const { pageID: eventID } = use(params);
   const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp] = useState(false);
+  const [showInstructionalPopUp, setShowInstructionalPopUp] = useState(true);
 
   // Get authData, eventData, and participantAvailabilityData
   const authData = useAuth();
@@ -107,10 +108,10 @@ export default function ProtectedPage({
     }
   }, [checked, eventID]);
 
-  const handleChange = (userID: string) => {
+  const handleChange = (participantID: string) => {
     setChecked((prev) => {
       return prev.map((v) => {
-        if (v.userID === userID) {
+        if (v.userID === participantID) {
           return { ...v, isChecked: !v.isChecked };
         }
         return v;
@@ -158,6 +159,17 @@ export default function ProtectedPage({
   }
 
   // Show loading state while checking auth
+  const handleSubmitAvailability = () => {
+    if (availableSlots.length == 0) {
+      alert("Please select availability");
+    } else {
+      setShowPopUp(true);
+    }
+  };
+  const handleCloseInstructionalPopUp = () => {
+    setShowInstructionalPopUp(false);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -182,13 +194,23 @@ export default function ProtectedPage({
       </div>
     );
   }
-  const handleSubmitAvailability = () => {
-    if (availableSlots.length == 0) {
-      alert("Please select availability");
-    } else {
-      setShowPopUp(true);
-    }
-  };
+
+  if (!isLoading && showInstructionalPopUp && !userID) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+          <h2 className="text-2xl font-bold mb-4">How to Use the Calendar</h2>
+          <ul className="list-disc list-inside mb-4 text-left">
+            <li>Click and Drag inside the calendar to select availability.</li>
+            <li>Click on Availability Block to remove it if necessary.</li>
+            <li>Click "Submit Availability" to submit your availability.</li>
+          </ul>
+          <Button onClick={handleCloseInstructionalPopUp}>Got it!</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col w-full h-screen pb-10">
       {/* Header Container */}
