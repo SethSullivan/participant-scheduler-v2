@@ -1,12 +1,20 @@
 import { AuthButton } from "@/components/auth-button";
 // import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
+import {isMobile} from 'react-device-detect';
 
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  if (isMobile) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-5 text-center">
+        Not available on mobile devices, please use a desktop or laptop to fill out availability
+      </div>
+    )
+  } 
   return (
     <main className="min-h-screen min-w-screen flex flex-col items-center">
       <div className="flex-1 w-full flex flex-col items-center">
