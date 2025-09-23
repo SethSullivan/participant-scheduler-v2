@@ -7,7 +7,7 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
-import { CalendarSlot } from "@/types/types";
+import { CalendarSlot, CheckedState } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 
 export default function ProtectedPage({
@@ -30,8 +30,9 @@ export default function ProtectedPage({
   );
   const accessToken = useGoogleAccessToken(eventID);
 
-  // TODO allow routing back to dashboard if user is organizer
+  const [checked, setChecked] = useState<CheckedState[]>([]);
 
+  // Get local Availability data (mainly for anonymous users)
   useEffect(() => {
     function getLocalAvailability() {
       const localAvailability = localStorage.getItem(`availability-${eventID}`);
@@ -48,23 +49,112 @@ export default function ProtectedPage({
     };
   }, [eventID]);
 
+  useEffect(() => {
+    function getChecked() {
+      const checkedState = localStorage.getItem(`checked-state-${eventID}`);
+      // Get from local storage
+      if (checkedState && checkedState.length > 0) {
+        const checkedStateData: CheckedState[] = JSON.parse(checkedState);
+
+        // If localStorage hasn't been updated for new availability, then add a True to it
+        if (participantAvailabilityData) {
+          const participantIDs = participantAvailabilityData.map(
+            (e) => e.user_id
+          );
+          const checkedIDs = checkedStateData.map((e) => e.userID);
+          participantIDs.forEach((id) => {
+            if (!checkedIDs.includes(id)) {
+              checkedStateData.push({ userID: id, isChecked: true });
+            }
+          });
+          localStorage.setItem(
+            `checked-state-${eventID}`,
+            JSON.stringify(checkedStateData)
+          );
+        }
+        setChecked(checkedStateData);
+
+        // Handle case where localStorage hasn't been set
+      } else {
+        if (participantAvailabilityData) {
+          const initialCheckedState = participantAvailabilityData.map(
+            (item) => ({
+              userID: item.user_id,
+              isChecked: true,
+            })
+          );
+          setChecked(initialCheckedState);
+          localStorage.setItem(
+            `checked-state-${eventID}`,
+            JSON.stringify(initialCheckedState)
+          );
+        }
+      }
+    }
+    getChecked();
+
+    window.addEventListener("storage", getChecked);
+
+    return () => {
+      window.removeEventListener("storage", getChecked);
+    };
+  }, [eventID, participantAvailabilityData]);
+
+  // Save to localStorage when checked (or eventID) is changed
+  useEffect(() => {
+    if (checked.length > 0) {
+      localStorage.setItem(`checked-state-${eventID}`, JSON.stringify(checked));
+    }
+  }, [checked, eventID]);
+
+  const handleChange = (userID: string) => {
+    setChecked((prev) => {
+      return prev.map((v) => {
+        if (v.userID === userID) {
+          return { ...v, isChecked: !v.isChecked };
+        }
+        return v;
+      });
+    });
+  };
+  // TODO allow routing back to dashboard if user is organizer
+
   // Get list of participant names and colors
-  let uniqueParticipants: { name: string; color: string }[] | undefined =
-    undefined;
+  let uniqueParticipants:
+    | { userID: string; name: string; color: string; isChecked: boolean }[]
+    | undefined = undefined;
+
   if (participantAvailabilityData) {
+    // Create an array where each element contains both the availability item and user_id
+    const availabilityWithUserIds = participantAvailabilityData.flatMap(
+      (item) =>
+        item.availability.map((subitem) => ({
+          availability: subitem,
+          userID: item.user_id,
+        }))
+    );
+    // Now map this combined data
     uniqueParticipants = [
       ...new Set(
-        participantAvailabilityData
-          .flatMap((item) => item.availability)
-          .map((subitem) =>
-            JSON.stringify({
-              name: subitem.title.replace("Available: ", ""),
-              color: subitem.backgroundColor,
-            })
-          )
+        availabilityWithUserIds.map(({ availability, userID }) =>
+          JSON.stringify({
+            userID: userID,
+            name: availability.title.replace("Available: ", ""),
+            isChecked: checked
+              .filter((v) => v.userID == userID)
+              .map((v) => v.isChecked)[0],
+            color: availability.backgroundColor,
+          })
+        )
       ),
-    ].map((item) => JSON.parse(item) as { name: string; color: string });
-    console.log(uniqueParticipants);
+    ].map((item) => JSON.parse(item));
+  }
+
+  let checkedIDs: string[] | undefined = undefined;
+  if (uniqueParticipants) {
+    checkedIDs = uniqueParticipants
+      .filter((v) => v.isChecked)
+      .map((v) => v.userID);
   }
 
   // Show loading state while checking auth
@@ -115,7 +205,6 @@ export default function ProtectedPage({
           </Button>
         )}
       </div>
-
       {/* Calendar Container */}
       <div className="flex flex-[10] w-full">
         {/* Calendar Background style */}
@@ -125,14 +214,22 @@ export default function ProtectedPage({
             availableSlots={availableSlots}
             setAvailableSlots={setAvailableSlots}
             eventData={eventData}
-            availabilityData={participantAvailabilityData?.map(
-              (e) => e.availability
-            )}
+            availabilityData={
+              participantAvailabilityData && checkedIDs
+                ? participantAvailabilityData
+                    .filter((v) => checkedIDs.includes(v.user_id))
+                    .map((e) => e.availability)
+                : participantAvailabilityData?.map((e) => e.availability) || []
+            }
           />
         </div>
         {uniqueParticipants && (
           <div className="flex">
-            <CalendarSideBar participantAvailability={uniqueParticipants} />
+            <CalendarSideBar
+              participantAvailability={uniqueParticipants}
+              checked={checked}
+              handleChange={handleChange}
+            />
           </div>
         )}
       </div>
