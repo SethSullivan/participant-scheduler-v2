@@ -3,9 +3,9 @@
 import { cn } from "@/lib/utils/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
 
 import {
@@ -34,14 +34,20 @@ export default function CreateEvent({
 }: CreateEventProps) {
   const router = useRouter();
   const [eventName, setEventName] = useState("");
-  const [startTime, setStartTime] = useState(dayjs("2022-04-17T08:00"));
-  const [endTime, setEndTime] = useState(dayjs("2022-04-17T18:00"));
+  const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(
+    dayjs("2022-04-17T08:00")
+  );
+  const [endTime, setEndTime] = useState<dayjs.Dayjs | null>(
+    dayjs("2022-04-17T18:00")
+  );
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
   const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
     try {
       const supabase = createClient();
       const { data } = await supabase.auth.getClaims();
@@ -52,9 +58,17 @@ export default function CreateEvent({
         router.push("/sign-up");
         return;
       }
+
       if (user?.is_anonymous) {
         setError("You must have an account to create an event");
         router.push("/sign-up");
+        return;
+      }
+
+      // Check if times are selected
+      if (!startTime || !endTime) {
+        setError("Please select both start and end times");
+        setIsLoading(false);
         return;
       }
 
@@ -83,10 +97,11 @@ export default function CreateEvent({
       setEventsData((prev: EventsData[] | null) =>
         prev ? [...prev, newEvent] : [newEvent]
       );
+
       // Clear form on success
       setEventName("");
-      setStartTime(dayjs(""));
-      setEndTime(dayjs(""));
+      setStartTime(dayjs("2022-04-17T08:00"));
+      setEndTime(dayjs("2022-04-17T18:00"));
       setShowPopup(false);
     } catch (error) {
       console.error("Error creating event:", error);
@@ -95,6 +110,7 @@ export default function CreateEvent({
       setIsLoading(false);
     }
   };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -126,7 +142,7 @@ export default function CreateEvent({
                   <TimePicker
                     label="Start Time"
                     value={startTime}
-                    onChange={(e) => setStartTime(e)}
+                    onChange={(newValue) => setStartTime(newValue)}
                     minTime={dayjs().set("hour", 6).startOf("hour")}
                     maxTime={dayjs().set("hour", 22).startOf("hour")}
                     minutesStep={15}
@@ -139,7 +155,7 @@ export default function CreateEvent({
                   <TimePicker
                     label="End Time"
                     value={endTime}
-                    onChange={(e) => setEndTime(e)}
+                    onChange={(newValue) => setEndTime(newValue)}
                     minTime={dayjs().set("hour", 6).startOf("hour")}
                     maxTime={dayjs().set("hour", 22).startOf("hour")}
                     minutesStep={15}
