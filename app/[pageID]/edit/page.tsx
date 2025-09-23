@@ -37,6 +37,7 @@ export default function EditEventPage({
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionSuccessful, setSubmissionSuccessful] = useState(false);
+  const [deleteSuccessful, setDeleteSuccessful] = useState(false);
 
   // Update state values when eventData is loaded
   useEffect(() => {
@@ -113,6 +114,49 @@ export default function EditEventPage({
       setIsSubmitting(false);
     }
   };
+
+  const handleDeleteEvent = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this event? This action cannot be undone."
+    );
+
+    if (confirmDelete) {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase.auth.getClaims();
+        const user = data?.claims;
+
+        if (!user) {
+          setError("You must be signed in to delete an event");
+          router.push("/sign-up");
+          return;
+        }
+
+        if (user.sub !== eventData?.organizer) {
+          setError("You must be the organizer to delete an event");
+          //wait 3 seconds
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+          router.back();
+          return;
+        }
+
+        const { error: deleteError } = await supabase
+          .from("events")
+          .delete()
+          .eq("id", eventID);
+
+        if (deleteError) {
+          throw deleteError;
+        } else {
+          setDeleteSuccessful(true);
+        }
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        setError((error as Error).message || "Failed to delete event");
+      }
+    }
+  };
+
   if (submissionSuccessful) {
     return (
       <div className="min-h-screen p-6 flex flex-col items-center justify-start space-y-4 pt-40">
@@ -126,10 +170,20 @@ export default function EditEventPage({
       </div>
     );
   }
+  if (deleteSuccessful) {
+    return (
+      <div className="min-h-screen p-6 flex flex-col items-center justify-start space-y-4 pt-40">
+        <h1>Successfully deleted event</h1>
+        <Button onClick={() => router.push(`/dashboard`)}>
+          Back to Dashboard
+        </Button>
+      </div>
+    );
+  }
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-xl mx-auto">
-        {isLoading && <LoadingSpinner />}
+    <div className="flex flex-col w-full self-center items-center justify-center min-h-screen p-6">
+      <div className="flex flex-col max-w-md w-full">
+        {isLoading && <LoadingSpinner specificText="Loading event editor" />}
         {!isLoading && eventData && (
           // Edit EventName
           <div className="space-y-6">
@@ -142,7 +196,7 @@ export default function EditEventPage({
                 type="text"
                 defaultValue={eventName}
                 required
-                className="border border-gray-300 rounded-md p-2"
+                className="border border-gray-300 rounded-sm p-2 h-14"
                 onChange={(e) => setEventName(e.target.value)}
               />
             </div>
@@ -158,6 +212,7 @@ export default function EditEventPage({
                   minTime={dayjs().set("hour", 6).startOf("hour")}
                   maxTime={dayjs().set("hour", 22).startOf("hour")}
                   minutesStep={15}
+                  className="border-gray-300"
                 />
               </LocalizationProvider>
             </div>
@@ -173,6 +228,7 @@ export default function EditEventPage({
                   minTime={dayjs().set("hour", 6).startOf("hour")}
                   maxTime={dayjs().set("hour", 22).startOf("hour")}
                   minutesStep={15}
+                  className="border-gray-300"
                 />
               </LocalizationProvider>
             </div>
@@ -183,6 +239,11 @@ export default function EditEventPage({
             </div>
           </div>
         )}
+      </div>
+      <div className="flex flex-grow justify-center items-end pb-10 mt-auto">
+        <Button variant="destructive" className="mt-10" onClick={() => handleDeleteEvent()}>
+          Delete Event
+        </Button>
       </div>
     </div>
     );
