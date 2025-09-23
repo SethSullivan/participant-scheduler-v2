@@ -8,8 +8,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, User } from "lucide-react";
+import { Clock, Edit, User } from "lucide-react";
 import { EventsData } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 interface EventCardProps {
   event: EventsData;
@@ -17,6 +18,8 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event, onEventClick }: EventCardProps) {
+  const router = useRouter();
+  
   const formatTime = (dateString: Date) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString("en-US", {
@@ -38,9 +41,18 @@ export default function EventCard({ event, onEventClick }: EventCardProps) {
   return (
     <Card className="w-full max-w-md hover:shadow-lg transition-shadow cursor-pointer border border-gray-200">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-gray-900">
-          {event.name}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-semibold text-gray-900">
+            {event.name}
+          </CardTitle>
+          {/* Add edit icon */}
+          <div>
+            <Button variant="ghost" size="icon" onClick={() => {router.push(`/${event.id}/edit`)}}>
+              <Edit className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
         <CardDescription className="text-sm text-gray-500">
           Created {formatDate(event.created_at)}
         </CardDescription>
