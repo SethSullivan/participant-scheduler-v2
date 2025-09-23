@@ -127,23 +127,23 @@ export default function CreateEvent({
                     label="Start Time"
                     value={startTime}
                     onChange={(e) => setStartTime(e)}
-                    minTime={dayjs().set('hour', 6).startOf('hour')}
-                    maxTime={dayjs().set('hour', 22).startOf('hour')}
+                    minTime={dayjs().set("hour", 6).startOf("hour")}
+                    maxTime={dayjs().set("hour", 22).startOf("hour")}
                     minutesStep={15}
                   />
                 </LocalizationProvider>
               </div>
 
               <div className="grid gap-2">
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <TimePicker
-                  label="End Time"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e)}
-                  minTime={dayjs().set('hour', 6).startOf('hour')}
-                  maxTime={dayjs().set('hour', 22).startOf('hour')}
-                  minutesStep={15}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker
+                    label="End Time"
+                    value={endTime}
+                    onChange={(e) => setEndTime(e)}
+                    minTime={dayjs().set("hour", 6).startOf("hour")}
+                    maxTime={dayjs().set("hour", 22).startOf("hour")}
+                    minutesStep={15}
+                  />
                 </LocalizationProvider>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
