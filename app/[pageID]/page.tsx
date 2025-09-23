@@ -203,7 +203,7 @@ export default function ProtectedPage({
           <ul className="list-disc list-inside mb-4 text-left">
             <li>Click and Drag inside the calendar to select availability.</li>
             <li>Click on Availability Block to remove it if necessary.</li>
-            <li>Click "Submit Availability" to submit your availability.</li>
+            <li>Click &quot;Submit Availability&quot; to submit your availability.</li>
           </ul>
           <Button onClick={handleCloseInstructionalPopUp}>Got it!</Button>
         </div>
