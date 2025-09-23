@@ -3,7 +3,6 @@ import { use, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-import { EventsData } from "@/types/types";
 import LoadingSpinner from "@/components/ui/loading-screen";
 import useEventData from "@/hooks/useEventData";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -27,7 +26,6 @@ export default function EditEventPage({
 }) {
   const { pageID: eventID } = use(params);
   const router = useRouter();
-  const supabase = createClient();
   const { eventData, isLoading } = useEventData(eventID);
   
   // Initialize with empty/default values
@@ -128,6 +126,7 @@ export default function EditEventPage({
 
         if (!user) {
           setError("You must be signed in to delete an event");
+          await new Promise((resolve) => setTimeout(resolve, 3000));
           router.push("/sign-up");
           return;
         }
@@ -156,6 +155,14 @@ export default function EditEventPage({
       }
     }
   };
+
+  if(error) {
+    return (
+      <div className="min-h-screen p-6 flex flex-col items-center justify-start space-y-4 pt-40">
+        <h1 className="text-red-500">Error: {error}</h1>
+      </div>
+    );
+  }
 
   if (submissionSuccessful) {
     return (
