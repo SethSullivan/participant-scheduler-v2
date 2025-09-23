@@ -3,6 +3,11 @@
 import { cn } from "@/lib/utils/utils";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
 import {
   Card,
   CardContent,
@@ -29,8 +34,8 @@ export default function CreateEvent({
 }: CreateEventProps) {
   const router = useRouter();
   const [eventName, setEventName] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startTime, setStartTime] = useState(dayjs("2022-04-17T08:00"));
+  const [endTime, setEndTime] = useState(dayjs("2022-04-17T18:00"));
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const handleCreateEvent = async (e: React.FormEvent) => {
@@ -53,22 +58,19 @@ export default function CreateEvent({
         return;
       }
 
-      // Convert time inputs to full datetime objects in user's timezone
-      const today = new Date();
-      const startDateTime = new Date(
-        `${today.toISOString().split("T")[0]}T${startTime}:00`
-      );
-      const endDateTime = new Date(
-        `${today.toISOString().split("T")[0]}T${endTime}:00`
-      );
+      if (startTime.isAfter(endTime) || startTime.isSame(endTime)) {
+        setError("Start time must be before end time");
+        setIsLoading(false);
+        return;
+      }
 
       const { error: eventsError, data: eventsData } = await supabase
         .from("events")
         .insert({
           name: eventName,
           organizer: user.sub,
-          start_time: startDateTime.toISOString(), // Store as full datetime
-          end_time: endDateTime.toISOString(), // Store as full datetime
+          start_time: startTime.toISOString(), // Store as full datetime
+          end_time: endTime.toISOString(), // Store as full datetime
         })
         .select();
 
@@ -83,8 +85,8 @@ export default function CreateEvent({
       );
       // Clear form on success
       setEventName("");
-      setStartTime("");
-      setEndTime("");
+      setStartTime(dayjs(""));
+      setEndTime(dayjs(""));
       setShowPopup(false);
     } catch (error) {
       console.error("Error creating event:", error);
@@ -117,25 +119,32 @@ export default function CreateEvent({
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="start-time">Start Time</Label>
-                <Input
-                  id="start-time"
-                  type="time"
-                  required
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                />
+                <p className="text-sm text-gray-800">
+                  Choose the earliest time to schedule participants
+                </p>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <TimePicker
+                    label="Start Time"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e)}
+                    minTime={dayjs().set('hour', 6).startOf('hour')}
+                    maxTime={dayjs().set('hour', 22).startOf('hour')}
+                    minutesStep={15}
+                  />
+                </LocalizationProvider>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="start-time">End Time</Label>
-                <Input
-                  id="end-time"
-                  type="time"
-                  required
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <TimePicker
+                  label="End Time"
                   value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
+                  onChange={(e) => setEndTime(e)}
+                  minTime={dayjs().set('hour', 6).startOf('hour')}
+                  maxTime={dayjs().set('hour', 22).startOf('hour')}
+                  minutesStep={15}
                 />
+                </LocalizationProvider>
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 <Button type="submit" className="w-full" disabled={isLoading}>
                   {isLoading ? "Creating event..." : "Create Event"}
