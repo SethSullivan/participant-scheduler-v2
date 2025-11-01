@@ -33,9 +33,14 @@ export default function ProtectedPage({
   );
   const accessToken = useGoogleAccessToken(eventID);
 
-  let checked = useChecked(eventID, participantAvailabilityData)
-
-  // Get local Availability data (mainly for anonymous users)
+  // Set checked to value that was set in localStorage from last time
+  const initChecked = useChecked(eventID, participantAvailabilityData)
+  const [checked, setChecked] = useState(initChecked);
+  //! This useEffect must be here bc initChecked is not available on first render, 
+  //! and therefore sets checked = [] and won't be updated without useEffect
+  useEffect(()=>{setChecked(initChecked)}, [initChecked]) 
+  
+  // Get local Availability data, for anonymous users
   useEffect(() => {
     function getLocalAvailability() {
       const localAvailability = localStorage.getItem(`availability-${eventID}`);
@@ -61,13 +66,15 @@ export default function ProtectedPage({
   }, [checked, eventID]);
 
   const handleChange = (participantID: string) => {
-    checked = checked.map((v) => {
-      if (v.userID === participantID) {
-        return { ...v, isChecked: !v.isChecked };
-      }
-      return v;
+    setChecked((prev) => {
+      return prev.map((v) => {
+        if (v.userID === participantID) {
+          return { ...v, isChecked: !v.isChecked };
+        }
+        return v;
+      });
     });
-  };
+  }
   // TODO allow routing back to dashboard if user is organizer
 
   // Get unique participants and checkedIDs for the sidebar
@@ -79,7 +86,7 @@ export default function ProtectedPage({
       .filter((v) => v.isChecked)
       .map((v) => v.userID);
   }
-
+  console.log("uniqueParticipants", uniqueParticipants);
   // Show loading state while checking auth
   const handleSubmitAvailability = () => {
     if (availableSlots.length == 0) {
