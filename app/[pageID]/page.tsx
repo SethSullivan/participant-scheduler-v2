@@ -10,6 +10,7 @@ import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
 import { CalendarSlot, CheckedState } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
+import { getUniqueParticipants } from "@/lib/utils/utils";
 
 export default function ProtectedPage({
   params,
@@ -69,36 +70,8 @@ export default function ProtectedPage({
   };
   // TODO allow routing back to dashboard if user is organizer
 
-  // Get list of participant names and colors
-  let uniqueParticipants:
-    | { userID: string; name: string; color: string; isChecked: boolean }[]
-    | undefined = undefined;
-
-  if (participantAvailabilityData) {
-    // Create an array where each element contains both the availability item and user_id
-    const availabilityWithUserIds = participantAvailabilityData.flatMap(
-      (item) =>
-        item.availability.map((subitem) => ({
-          availability: subitem,
-          userID: item.user_id,
-        }))
-    );
-    // Now map this combined data
-    uniqueParticipants = [
-      ...new Set(
-        availabilityWithUserIds.map(({ availability, userID }) =>
-          JSON.stringify({
-            userID: userID,
-            name: availability.title.replace("Available: ", ""),
-            isChecked: checked
-              .filter((v) => v.userID == userID)
-              .map((v) => v.isChecked)[0],
-            color: availability.backgroundColor,
-          })
-        )
-      ),
-    ].map((item) => JSON.parse(item));
-  }
+  // Get unique participants and checkedIDs for the sidebar
+  const uniqueParticipants = getUniqueParticipants(participantAvailabilityData, checked);
 
   let checkedIDs: string[] | undefined = undefined;
   if (uniqueParticipants) {
