@@ -10,7 +10,7 @@ import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
 import { CalendarSlot, CheckedState } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
-import { getUniqueParticipants } from "@/lib/utils/utils";
+import { getParticipantsWithChecked } from "@/lib/utils/utils";
 
 export default function ProtectedPage({
   params,
@@ -78,15 +78,15 @@ export default function ProtectedPage({
   // TODO allow routing back to dashboard if user is organizer
 
   // Get unique participants and checkedIDs for the sidebar
-  const uniqueParticipants = getUniqueParticipants(participantAvailabilityData, checked);
+  const participantsWithChecked = getParticipantsWithChecked(participantAvailabilityData, checked);
 
   let checkedIDs: string[] | undefined = undefined;
-  if (uniqueParticipants) {
-    checkedIDs = uniqueParticipants
+  if (participantsWithChecked) {
+    checkedIDs = participantsWithChecked
       .filter((v) => v.isChecked)
       .map((v) => v.userID);
   }
-  console.log("uniqueParticipants", uniqueParticipants);
+  console.log("participantsWithChecked", participantsWithChecked);
   // Show loading state while checking auth
   const handleSubmitAvailability = () => {
     if (availableSlots.length == 0) {
@@ -171,10 +171,10 @@ export default function ProtectedPage({
             }
           />
         </div>
-        {uniqueParticipants && (
+        {participantsWithChecked && (
           <div className="flex">
             <CalendarSideBar
-              participantAvailability={uniqueParticipants}
+              participantAvailability={participantsWithChecked}
               checked={checked}
               handleChange={handleChange}
             />

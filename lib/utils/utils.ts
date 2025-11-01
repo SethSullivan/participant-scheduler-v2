@@ -20,32 +20,23 @@ export const colors = [
   "rgb(0, 255, 255, 0.8)", // bg-cyan-500
 ];
 
-export function getUniqueParticipants(participantAvailabilityData:AvailabilityData[] | null, checked:CheckedState[]) {
+export function getParticipantsWithChecked(participantAvailabilityData:AvailabilityData[] | null, checked:CheckedState[]) {
   if (participantAvailabilityData) {
-    // Create an array where each element contains both the availability item and user_id
-    const availabilityWithUserIds = participantAvailabilityData.flatMap(
-      (item) =>
-        item.availability.map((subitem) => ({
-          availability: subitem,
-          userID: item.user_id,
-        }))
-    );
-    // Now map this combined data
-    const uniqueParticipants = [
-      ...new Set(
-        availabilityWithUserIds.map(({ availability, userID }) =>
-          JSON.stringify({
-            userID: userID,
-            name: availability.title.replace("Available: ", ""),
-            isChecked: checked
-              .filter((v) => v.userID == userID)
-              .map((v) => v.isChecked)[0],
-            color: availability.backgroundColor,
-          })
-        )
-      ),
-    ].map((item) => JSON.parse(item));
-    return uniqueParticipants
+
+    // Get userID, name, isChecked, color for each unique participant
+    const ans = participantAvailabilityData.map((item) => {
+      const firstAvailability = item.availability[0]; // All availability items for a user have the same title and color
+      return {
+        userID: item.user_id,
+        name: firstAvailability.title.replace("Available: ", ""),
+        isChecked: checked
+          .filter((v) => v.userID == item.user_id) // Filter to get the matching userID
+          .map((v) => v.isChecked)[0], // Get the isChecked value, returns array of 1 so take first element
+        color: firstAvailability.backgroundColor as string, // Color should be defined here, from useAvailabilityData.ts
+      };
+    });
+
+    return ans;
   } else {
     return undefined
   }
