@@ -201,9 +201,9 @@ export default function ProtectedPage({
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
           <h2 className="text-2xl font-bold mb-4">How to Use the Calendar</h2>
           <ul className="list-disc list-inside mb-4 text-left">
-            <li>Click and Drag inside the calendar to select availability.</li>
-            <li>Click on Availability Block to remove it if necessary.</li>
-            <li>Click &quot;Submit Availability&quot; to submit your availability.</li>
+            <li>To select availability, click and drag inside the calendar.</li>
+            <li>To remove availability, click on Availability Block.</li>
+            <li>To submit availability, click &quot;Submit Availability&quot;.</li>
           </ul>
           <Button onClick={handleCloseInstructionalPopUp}>Got it!</Button>
         </div>
