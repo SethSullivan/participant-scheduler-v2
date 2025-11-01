@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, use, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "@/components/calendar";
 import CalendarSideBar from "@/components/calendar-sidebar";
 import { Button } from "@/components/ui/button";
@@ -11,18 +11,15 @@ import { CalendarSlot, CheckedState } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
+import { useParams } from "next/navigation";
 
-export default function ProtectedPage({
-  params,
-}: {
-  params: Promise<{ pageID: string }>;
-}) {
-  const { pageID: eventID } = use(params);
+export default function CalendarPage() {
+  const { pageID: eventID } = useParams<{ pageID: string }>();
   const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp] = useState(false);
   const [showInstructionalPopUp, setShowInstructionalPopUp] = useState(true);
 
-  // Get authData, eventData, and participantAvailabilityData
+  //* Get authData, eventData, and participantAvailabilityData
   const authData = useAuth();
   const userID = authData?.claims.sub;
   const { eventData, isLoading } = useEventData(eventID);
@@ -33,14 +30,14 @@ export default function ProtectedPage({
   );
   const accessToken = useGoogleAccessToken(eventID);
 
-  // Set checked to value that was set in localStorage from last time
+  //* Set checked to value that was set in localStorage from last time
   const initChecked = useChecked(eventID, participantAvailabilityData)
   const [checked, setChecked] = useState(initChecked);
   //! This useEffect must be here bc initChecked is not available on first render, 
   //! and therefore sets checked = [] and won't be updated without useEffect
   useEffect(()=>{setChecked(initChecked)}, [initChecked]) 
   
-  // Save to localStorage when checked (or eventID) is changed
+  //* Save to localStorage when checked (or eventID) is changed
   useEffect(() => {
     if (checked.length > 0) {
       localStorage.setItem(`checked-state-${eventID}`, JSON.stringify(checked));
@@ -57,19 +54,19 @@ export default function ProtectedPage({
       });
     });
   }
-
+  
   // TODO allow routing back to dashboard if user is organizer
 
-  // Get unique participants and checkedIDs for the sidebar
+  //* Get unique participants and checkedIDs for the sidebar
   const participantsWithChecked = getParticipantsWithChecked(participantAvailabilityData, checked);
-  let checkedIDs: string[] | undefined = undefined;
+  let checkedIDs: string[] = [];
   if (participantsWithChecked) {
     checkedIDs = participantsWithChecked
       .filter((v) => v.isChecked)
       .map((v) => v.userID);
   }
 
-  // Get local Availability data, for anonymous users
+  //* Get local Availability data, for anonymous users
   useEffect(() => {
     function getLocalAvailability() {
       const localAvailability = localStorage.getItem(`availability-${eventID}`);
@@ -96,6 +93,7 @@ export default function ProtectedPage({
   }
   // Handle case when event is not found
   if (!eventData) {
+    console.log("HERE");
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -171,7 +169,7 @@ export default function ProtectedPage({
         {participantsWithChecked && (
           <div className="flex">
             <CalendarSideBar
-              participantAvailability={participantsWithChecked}
+              participantInformation={participantsWithChecked}
               checked={checked}
               handleChange={handleCheckUpdate}
             />
