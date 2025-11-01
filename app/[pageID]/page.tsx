@@ -9,6 +9,7 @@ import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
 import { CalendarSlot, CheckedState } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
+import useChecked from "@/hooks/useChecked";
 
 export default function ProtectedPage({
   params,
@@ -31,7 +32,7 @@ export default function ProtectedPage({
   );
   const accessToken = useGoogleAccessToken(eventID);
 
-  const [checked, setChecked] = useState<CheckedState[]>([]);
+  let checked = useChecked(eventID, participantAvailabilityData)
 
   // Get local Availability data (mainly for anonymous users)
   useEffect(() => {
@@ -50,56 +51,6 @@ export default function ProtectedPage({
     };
   }, [eventID]);
 
-  useEffect(() => {
-    function getChecked() {
-      const checkedState = localStorage.getItem(`checked-state-${eventID}`);
-      // Get from local storage
-      if (checkedState && checkedState.length > 0) {
-        const checkedStateData: CheckedState[] = JSON.parse(checkedState);
-
-        // If localStorage hasn't been updated for new availability, then add a True to it
-        if (participantAvailabilityData) {
-          const participantIDs = participantAvailabilityData.map(
-            (e) => e.user_id
-          );
-          const checkedIDs = checkedStateData.map((e) => e.userID);
-          participantIDs.forEach((id) => {
-            if (!checkedIDs.includes(id)) {
-              checkedStateData.push({ userID: id, isChecked: true });
-            }
-          });
-          localStorage.setItem(
-            `checked-state-${eventID}`,
-            JSON.stringify(checkedStateData)
-          );
-        }
-        setChecked(checkedStateData);
-
-        // Handle case where localStorage hasn't been set
-      } else {
-        if (participantAvailabilityData) {
-          const initialCheckedState = participantAvailabilityData.map(
-            (item) => ({
-              userID: item.user_id,
-              isChecked: true,
-            })
-          );
-          setChecked(initialCheckedState);
-          localStorage.setItem(
-            `checked-state-${eventID}`,
-            JSON.stringify(initialCheckedState)
-          );
-        }
-      }
-    }
-    getChecked();
-
-    window.addEventListener("storage", getChecked);
-
-    return () => {
-      window.removeEventListener("storage", getChecked);
-    };
-  }, [eventID, participantAvailabilityData]);
 
   // Save to localStorage when checked (or eventID) is changed
   useEffect(() => {
@@ -109,13 +60,11 @@ export default function ProtectedPage({
   }, [checked, eventID]);
 
   const handleChange = (participantID: string) => {
-    setChecked((prev) => {
-      return prev.map((v) => {
-        if (v.userID === participantID) {
-          return { ...v, isChecked: !v.isChecked };
-        }
-        return v;
-      });
+    checked = checked.map((v) => {
+      if (v.userID === participantID) {
+        return { ...v, isChecked: !v.isChecked };
+      }
+      return v;
     });
   };
   // TODO allow routing back to dashboard if user is organizer
