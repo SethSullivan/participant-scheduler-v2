@@ -65,7 +65,7 @@ export default function ProtectedPage({
     }
   }, [checked, eventID]);
 
-  const handleChange = (participantID: string) => {
+  const handleCheckUpdate = (participantID: string) => {
     setChecked((prev) => {
       return prev.map((v) => {
         if (v.userID === participantID) {
@@ -86,7 +86,7 @@ export default function ProtectedPage({
       .filter((v) => v.isChecked)
       .map((v) => v.userID);
   }
-  console.log("participantsWithChecked", participantsWithChecked);
+
   // Show loading state while checking auth
   const handleSubmitAvailability = () => {
     if (availableSlots.length == 0) {
@@ -176,7 +176,7 @@ export default function ProtectedPage({
             <CalendarSideBar
               participantAvailability={participantsWithChecked}
               checked={checked}
-              handleChange={handleChange}
+              handleChange={handleCheckUpdate}
             />
           </div>
         )}
