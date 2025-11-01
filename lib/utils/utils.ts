@@ -21,10 +21,6 @@ export const colors = [
 ];
 
 export function getUniqueParticipants(participantAvailabilityData:AvailabilityData[] | null, checked:CheckedState[]) {
-  // Get list of participant names and colors
-  // const uniqueParticipants:
-    // | { userID: string; name: string; color: string; isChecked: boolean }[]
-    // | undefined = undefined;
   if (participantAvailabilityData) {
     // Create an array where each element contains both the availability item and user_id
     const availabilityWithUserIds = participantAvailabilityData.flatMap(
