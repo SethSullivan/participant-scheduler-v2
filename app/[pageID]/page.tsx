@@ -40,24 +40,6 @@ export default function ProtectedPage({
   //! and therefore sets checked = [] and won't be updated without useEffect
   useEffect(()=>{setChecked(initChecked)}, [initChecked]) 
   
-  // Get local Availability data, for anonymous users
-  useEffect(() => {
-    function getLocalAvailability() {
-      const localAvailability = localStorage.getItem(`availability-${eventID}`);
-      if (localAvailability) {
-        const availabilityInfo = JSON.parse(localAvailability);
-        setAvailableSlots(availabilityInfo.availabilitySlots);
-      }
-    }
-
-    window.addEventListener("storage", getLocalAvailability);
-
-    return () => {
-      window.removeEventListener("storage", getLocalAvailability);
-    };
-  }, [eventID]);
-
-
   // Save to localStorage when checked (or eventID) is changed
   useEffect(() => {
     if (checked.length > 0) {
@@ -75,11 +57,11 @@ export default function ProtectedPage({
       });
     });
   }
+
   // TODO allow routing back to dashboard if user is organizer
 
   // Get unique participants and checkedIDs for the sidebar
   const participantsWithChecked = getParticipantsWithChecked(participantAvailabilityData, checked);
-
   let checkedIDs: string[] | undefined = undefined;
   if (participantsWithChecked) {
     checkedIDs = participantsWithChecked
@@ -87,15 +69,24 @@ export default function ProtectedPage({
       .map((v) => v.userID);
   }
 
-  // Show loading state while checking auth
-  const handleSubmitAvailability = () => {
-    if (availableSlots.length == 0) {
-      alert("Please select availability");
-    } else {
-      setShowPopUp(true);
+  // Get local Availability data, for anonymous users
+  useEffect(() => {
+    function getLocalAvailability() {
+      const localAvailability = localStorage.getItem(`availability-${eventID}`);
+      if (localAvailability) {
+        const availabilityInfo = JSON.parse(localAvailability);
+        setAvailableSlots(availabilityInfo.availabilitySlots);
+      }
     }
-  };
 
+    window.addEventListener("storage", getLocalAvailability);
+
+    return () => {
+      window.removeEventListener("storage", getLocalAvailability);
+    };
+  }, [eventID]);
+
+  // Show loading state while checking auth
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -146,7 +137,13 @@ export default function ProtectedPage({
         </h1>
         {!userID && (
           <Button
-            onClick={handleSubmitAvailability}
+            onClick={() => {
+              if (availableSlots.length == 0) {
+                alert("Please select availability");
+              } else {
+                setShowPopUp(true);
+              }
+            }}
             className="hover:bg-lime-800 "
           >
             Submit Availability
