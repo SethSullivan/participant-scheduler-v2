@@ -88,9 +88,6 @@ export default function ProtectedPage({
       setShowPopUp(true);
     }
   };
-  const handleCloseInstructionalPopUp = () => {
-    setShowInstructionalPopUp(false);
-  };
 
   if (isLoading) {
     return (
@@ -127,7 +124,7 @@ export default function ProtectedPage({
             <li>To remove availability, click on Availability Block.</li>
             <li>To submit availability, click &quot;Submit Availability&quot;.</li>
           </ul>
-          <Button onClick={handleCloseInstructionalPopUp}>Got it!</Button>
+          <Button onClick={() => {setShowInstructionalPopUp(false)}}>Got it!</Button>
         </div>
       </div>
     );
