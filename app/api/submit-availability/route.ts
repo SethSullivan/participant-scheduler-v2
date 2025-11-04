@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       .from("participants")
       .upsert(
         { name: name.trim(), email: email.trim().toLowerCase() },
-        { onConflict: "email" }
+        { onConflict: "email, event_id" }
       )
       .select("id") // Get the ID in the same query
       .single();
