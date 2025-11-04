@@ -1,17 +1,82 @@
 import { CheckedState } from "@/types/types";
 
+type ParticipantInfo = {
+  userID: string;
+  name: string;
+  color: string;
+  isChecked?: boolean;
+};
+
+function ParticipantItem({
+  idx,
+  participant,
+  displayName,
+  email,
+  isChecked,
+  handleChange,
+  checked,
+}: {
+  idx: number;
+  participant: ParticipantInfo;
+  displayName: string;
+  email: string;
+  isChecked: boolean;
+  handleChange: (userID: string) => void;
+  checked: CheckedState[];
+}) {
+  return (
+    <li key={idx} className="mb-1">
+      <div className="flex items-center border border-gray-100 rounded p-2 min-h-[3rem]">
+        <div
+          className="flex w-6 h-6 rounded mr-3 flex-shrink-0 border-2 items-center justify-center"
+          style={{
+            backgroundColor: isChecked ? participant.color : "transparent",
+            borderColor: participant.color,
+          }}
+        >
+          <label className="w-full h-full flex items-center justify-center">
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={() => handleChange(participant.userID)}
+              className="cursor-pointer appearance-none w-full h-full bg-transparent border-none"
+            />
+            {/* Custom checkmark - only visible when checked */}
+            {checked[idx] && (
+              <svg
+                className="absolute w-4 h-4 text-white pointer-events-none"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            )}
+          </label>
+        </div>
+        <div className="flex-1 text-sm">
+          <div className="font-medium truncate">{displayName}</div>
+          {email && (
+            <div className="text-xs text-gray-500 truncate">{email}</div>
+          )}
+        </div>
+      </div>
+    </li>
+  );
+}
+
 export default function CalendarSideBar({
   participantInformation,
   handleChange,
   checked,
 }: {
-  participantInformation: {
-    userID: string;
-    name: string;
-    color: string;
-    isChecked: boolean;
-  }[];
-  handleChange: (userID:string) => void;
+  participantInformation: ParticipantInfo[];
+  handleChange: (userID: string) => void;
   checked: CheckedState[];
 }) {
   const listItems = participantInformation.map((participant, idx) => {
@@ -19,57 +84,27 @@ export default function CalendarSideBar({
     const nameMatch = participant.name.match(/^(.+?)\s*\((.+?)\)$/);
     const displayName = nameMatch ? nameMatch[1] : participant.name;
     const email = nameMatch ? nameMatch[2] : "";
-    const isChecked = participant.isChecked !== undefined ? participant.isChecked : true;
+    const isChecked =
+      participant.isChecked !== undefined ? participant.isChecked : true;
     return (
-      <li key={idx} className="mb-1">
-        <div className="flex items-center border border-gray-100 rounded p-2 min-h-[3rem]">
-          <div
-            className="flex w-6 h-6 rounded mr-3 flex-shrink-0 border-2 items-center justify-center"
-            style={{
-              backgroundColor: isChecked
-                ? participant.color
-                : "transparent",
-              borderColor: participant.color,
-            }}
-          >
-            <label className="w-full h-full flex items-center justify-center">
-              <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={() => handleChange(participant.userID)}
-                className="cursor-pointer appearance-none w-full h-full bg-transparent border-none"
-              />
-              {/* Custom checkmark - only visible when checked */}
-              {checked[idx] && (
-                <svg
-                  className="absolute w-4 h-4 text-white pointer-events-none"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              )}
-            </label>
-          </div>
-          <div className="flex-1 text-sm">
-            <div className="font-medium truncate">{displayName}</div>
-            {email && (
-              <div className="text-xs text-gray-500 truncate">{email}</div>
-            )}
-          </div>
-        </div>
-      </li>
+      <ParticipantItem
+        key={participant.userID}
+        idx={idx}
+        participant={participant}
+        displayName={displayName}
+        email={email}
+        isChecked={isChecked}
+        handleChange={handleChange}
+        checked={checked}
+      />
     );
   });
 
   return (
-    <div data-testid="calendar-sidebar" className="flex-col w-full items-start justify-center">
+    <div
+      data-testid="calendar-sidebar"
+      className="flex-col w-full items-start justify-center"
+    >
       {/* <div className="flex justify-items-center text-center items-center border-2 border-blue">
                 Availability Legend
             </div> */}
