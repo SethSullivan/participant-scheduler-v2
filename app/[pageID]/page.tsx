@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, use, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "@/components/calendar";
 import CalendarSideBar from "@/components/calendar-sidebar";
 import { Button } from "@/components/ui/button";
@@ -9,18 +9,17 @@ import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
 import { CalendarSlot, CheckedState } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
+import useChecked from "@/hooks/useChecked";
+import { getParticipantsWithChecked } from "@/lib/utils/utils";
+import { useParams } from "next/navigation";
 
-export default function ProtectedPage({
-  params,
-}: {
-  params: Promise<{ pageID: string }>;
-}) {
-  const { pageID: eventID } = use(params);
+export default function CalendarPage() {
+  const { pageID: eventID } = useParams<{ pageID: string }>();
   const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp] = useState(false);
   const [showInstructionalPopUp, setShowInstructionalPopUp] = useState(true);
 
-  // Get authData, eventData, and participantAvailabilityData
+  //* Get authData, eventData, and participantAvailabilityData
   const authData = useAuth();
   const userID = authData?.claims.sub;
   const { eventData, isLoading } = useEventData(eventID);
@@ -31,9 +30,43 @@ export default function ProtectedPage({
   );
   const accessToken = useGoogleAccessToken(eventID);
 
-  const [checked, setChecked] = useState<CheckedState[]>([]);
+  //* Set checked to value that was set in localStorage from last time
+  const initChecked = useChecked(eventID, participantAvailabilityData)
+  const [checked, setChecked] = useState(initChecked);
+  //! This useEffect must be here bc initChecked is not available on first render, 
+  //! and therefore sets checked = [] and won't be updated without useEffect
+  useEffect(()=>{setChecked(initChecked)}, [initChecked]) 
+  
+  //* Save to localStorage when checked (or eventID) is changed
+  useEffect(() => {
+    if (checked.length > 0) {
+      localStorage.setItem(`checked-state-${eventID}`, JSON.stringify(checked));
+    }
+  }, [checked, eventID]);
 
-  // Get local Availability data (mainly for anonymous users)
+  const handleCheckUpdate = (participantID: string) => {
+    setChecked((prev) => {
+      return prev.map((v) => {
+        if (v.userID === participantID) {
+          return { ...v, isChecked: !v.isChecked };
+        }
+        return v;
+      });
+    });
+  }
+  
+  // TODO allow routing back to dashboard if user is organizer
+
+  //* Get unique participants and checkedIDs for the sidebar
+  const participantsWithChecked = getParticipantsWithChecked(participantAvailabilityData, checked);
+  let checkedIDs: string[] = [];
+  if (participantsWithChecked) {
+    checkedIDs = participantsWithChecked
+      .filter((v) => v.isChecked)
+      .map((v) => v.userID);
+  }
+
+  //* Get local Availability data, for anonymous users
   useEffect(() => {
     function getLocalAvailability() {
       const localAvailability = localStorage.getItem(`availability-${eventID}`);
@@ -50,126 +83,7 @@ export default function ProtectedPage({
     };
   }, [eventID]);
 
-  useEffect(() => {
-    function getChecked() {
-      const checkedState = localStorage.getItem(`checked-state-${eventID}`);
-      // Get from local storage
-      if (checkedState && checkedState.length > 0) {
-        const checkedStateData: CheckedState[] = JSON.parse(checkedState);
-
-        // If localStorage hasn't been updated for new availability, then add a True to it
-        if (participantAvailabilityData) {
-          const participantIDs = participantAvailabilityData.map(
-            (e) => e.user_id
-          );
-          const checkedIDs = checkedStateData.map((e) => e.userID);
-          participantIDs.forEach((id) => {
-            if (!checkedIDs.includes(id)) {
-              checkedStateData.push({ userID: id, isChecked: true });
-            }
-          });
-          localStorage.setItem(
-            `checked-state-${eventID}`,
-            JSON.stringify(checkedStateData)
-          );
-        }
-        setChecked(checkedStateData);
-
-        // Handle case where localStorage hasn't been set
-      } else {
-        if (participantAvailabilityData) {
-          const initialCheckedState = participantAvailabilityData.map(
-            (item) => ({
-              userID: item.user_id,
-              isChecked: true,
-            })
-          );
-          setChecked(initialCheckedState);
-          localStorage.setItem(
-            `checked-state-${eventID}`,
-            JSON.stringify(initialCheckedState)
-          );
-        }
-      }
-    }
-    getChecked();
-
-    window.addEventListener("storage", getChecked);
-
-    return () => {
-      window.removeEventListener("storage", getChecked);
-    };
-  }, [eventID, participantAvailabilityData]);
-
-  // Save to localStorage when checked (or eventID) is changed
-  useEffect(() => {
-    if (checked.length > 0) {
-      localStorage.setItem(`checked-state-${eventID}`, JSON.stringify(checked));
-    }
-  }, [checked, eventID]);
-
-  const handleChange = (participantID: string) => {
-    setChecked((prev) => {
-      return prev.map((v) => {
-        if (v.userID === participantID) {
-          return { ...v, isChecked: !v.isChecked };
-        }
-        return v;
-      });
-    });
-  };
-  // TODO allow routing back to dashboard if user is organizer
-
-  // Get list of participant names and colors
-  let uniqueParticipants:
-    | { userID: string; name: string; color: string; isChecked: boolean }[]
-    | undefined = undefined;
-
-  if (participantAvailabilityData) {
-    // Create an array where each element contains both the availability item and user_id
-    const availabilityWithUserIds = participantAvailabilityData.flatMap(
-      (item) =>
-        item.availability.map((subitem) => ({
-          availability: subitem,
-          userID: item.user_id,
-        }))
-    );
-    // Now map this combined data
-    uniqueParticipants = [
-      ...new Set(
-        availabilityWithUserIds.map(({ availability, userID }) =>
-          JSON.stringify({
-            userID: userID,
-            name: availability.title.replace("Available: ", ""),
-            isChecked: checked
-              .filter((v) => v.userID == userID)
-              .map((v) => v.isChecked)[0],
-            color: availability.backgroundColor,
-          })
-        )
-      ),
-    ].map((item) => JSON.parse(item));
-  }
-
-  let checkedIDs: string[] | undefined = undefined;
-  if (uniqueParticipants) {
-    checkedIDs = uniqueParticipants
-      .filter((v) => v.isChecked)
-      .map((v) => v.userID);
-  }
-
   // Show loading state while checking auth
-  const handleSubmitAvailability = () => {
-    if (availableSlots.length == 0) {
-      alert("Please select availability");
-    } else {
-      setShowPopUp(true);
-    }
-  };
-  const handleCloseInstructionalPopUp = () => {
-    setShowInstructionalPopUp(false);
-  };
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -205,7 +119,7 @@ export default function ProtectedPage({
             <li>To remove availability, click on Availability Block.</li>
             <li>To submit availability, click &quot;Submit Availability&quot;.</li>
           </ul>
-          <Button onClick={handleCloseInstructionalPopUp}>Got it!</Button>
+          <Button onClick={() => {setShowInstructionalPopUp(false)}}>Got it!</Button>
         </div>
       </div>
     );
@@ -220,7 +134,13 @@ export default function ProtectedPage({
         </h1>
         {!userID && (
           <Button
-            onClick={handleSubmitAvailability}
+            onClick={() => {
+              if (availableSlots.length == 0) {
+                alert("Please select availability");
+              } else {
+                setShowPopUp(true);
+              }
+            }}
             className="hover:bg-lime-800 "
           >
             Submit Availability
@@ -245,12 +165,12 @@ export default function ProtectedPage({
             }
           />
         </div>
-        {uniqueParticipants && (
+        {participantsWithChecked && participantsWithChecked.length > 0 && (
           <div className="flex">
             <CalendarSideBar
-              participantAvailability={uniqueParticipants}
+              participantInformation={participantsWithChecked}
               checked={checked}
-              handleChange={handleChange}
+              handleChange={handleCheckUpdate}
             />
           </div>
         )}

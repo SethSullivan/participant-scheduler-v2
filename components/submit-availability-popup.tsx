@@ -128,6 +128,7 @@ export default function SubmitAvailabilityPopup({
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
       onClick={handleCancel}
+      data-testid="submit-popup"
     >
       <div
         className="bg-white rounded-lg shadow-xl max-w-md w-full max-h-screen overflow-y-auto"

@@ -1,11 +1,11 @@
 import { CheckedState } from "@/types/types";
 
 export default function CalendarSideBar({
-  participantAvailability,
+  participantInformation,
   handleChange,
   checked,
 }: {
-  participantAvailability: {
+  participantInformation: {
     userID: string;
     name: string;
     color: string;
@@ -14,18 +14,19 @@ export default function CalendarSideBar({
   handleChange: (userID:string) => void;
   checked: CheckedState[];
 }) {
-  const listItems = participantAvailability.map((participant, idx) => {
+  const listItems = participantInformation.map((participant, idx) => {
     // Split name and email - assuming format like "John Doe (john@example.com)"
     const nameMatch = participant.name.match(/^(.+?)\s*\((.+?)\)$/);
     const displayName = nameMatch ? nameMatch[1] : participant.name;
     const email = nameMatch ? nameMatch[2] : "";
+    const isChecked = participant.isChecked !== undefined ? participant.isChecked : true;
     return (
       <li key={idx} className="mb-1">
         <div className="flex items-center border border-gray-100 rounded p-2 min-h-[3rem]">
           <div
             className="flex w-6 h-6 rounded mr-3 flex-shrink-0 border-2 items-center justify-center"
             style={{
-              backgroundColor: participant.isChecked
+              backgroundColor: isChecked
                 ? participant.color
                 : "transparent",
               borderColor: participant.color,
@@ -34,7 +35,7 @@ export default function CalendarSideBar({
             <label className="w-full h-full flex items-center justify-center">
               <input
                 type="checkbox"
-                checked={participant.isChecked}
+                checked={isChecked}
                 onChange={() => handleChange(participant.userID)}
                 className="cursor-pointer appearance-none w-full h-full bg-transparent border-none"
               />
@@ -68,7 +69,7 @@ export default function CalendarSideBar({
   });
 
   return (
-    <div className="flex-col w-full items-start justify-center">
+    <div data-testid="calendar-sidebar" className="flex-col w-full items-start justify-center">
       {/* <div className="flex justify-items-center text-center items-center border-2 border-blue">
                 Availability Legend
             </div> */}
