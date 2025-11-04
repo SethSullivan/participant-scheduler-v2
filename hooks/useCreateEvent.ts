@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import dayjs from "dayjs";
 import { createClient } from "@/lib/supabase/client";
-export async function useCreateEvent(
+export default async function useCreateEvent(
     eventName: string,
     startTime: dayjs.Dayjs | null,
     endTime: dayjs.Dayjs | null,
