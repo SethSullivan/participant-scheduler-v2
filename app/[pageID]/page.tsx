@@ -125,6 +125,7 @@ export default function CalendarPage() {
       </div>
     );
   }
+  console.log(participantsWithChecked);
 
   return (
     <div className="flex flex-col w-full h-screen pb-10">
@@ -166,7 +167,7 @@ export default function CalendarPage() {
             }
           />
         </div>
-        {participantsWithChecked && (
+        {participantsWithChecked && participantsWithChecked.length > 0 && (
           <div className="flex">
             <CalendarSideBar
               participantInformation={participantsWithChecked}
