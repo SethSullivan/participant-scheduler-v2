@@ -61,5 +61,5 @@ export default function useAvailabilityData(
     };
     getParticipantAvailability();
   }, [eventID, organizerID, userID]);
-  return availabilityData;
+  return { availabilityData, setAvailabilityData };
 }
