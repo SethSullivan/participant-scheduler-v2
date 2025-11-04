@@ -20,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { EventsData } from "@/types/types";
+import { useCreateEvent } from "@/hooks/useCreateEvent";
 
 interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
   setShowPopup: (show: boolean) => void;
@@ -49,53 +50,14 @@ export default function CreateEvent({
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getClaims();
-      const user = data?.claims;
-
-      if (!user) {
-        setError("You must have an account to create an event");
-        router.push("/sign-up");
-        return;
+      const { data, error } = await useCreateEvent(eventName, startTime, endTime);
+      if (error) {
+        throw error;
       }
 
-      if (user?.is_anonymous) {
-        setError("You must have an account to create an event");
-        router.push("/sign-up");
-        return;
-      }
-
-      // Check if times are selected
-      if (!startTime || !endTime) {
-        setError("Please select both start and end times");
-        setIsLoading(false);
-        return;
-      }
-
-      if (startTime.isAfter(endTime) || startTime.isSame(endTime)) {
-        setError("Start time must be before end time");
-        setIsLoading(false);
-        return;
-      }
-
-      const { error: eventsError, data: eventsData } = await supabase
-        .from("events")
-        .insert({
-          name: eventName,
-          organizer: user.sub,
-          start_time: startTime.toISOString(), // Store as full datetime
-          end_time: endTime.toISOString(), // Store as full datetime
-        })
-        .select();
-
-      if (eventsError) {
-        throw eventsError;
-      }
-
-      console.log("Event created successfully:", eventsData);
-      const newEvent: EventsData = eventsData[0];
+      console.log("Event created successfully:", data);
       setEventsData((prev: EventsData[] | null) =>
-        prev ? [...prev, newEvent] : [newEvent]
+        prev ? [...prev, data] : [data]
       );
 
       // Clear form on success
@@ -112,7 +74,7 @@ export default function CreateEvent({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div data-testid="create-event-popup" className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Event</CardTitle>
@@ -125,6 +87,7 @@ export default function CreateEvent({
               <div className="grid gap-2">
                 <Label htmlFor="email">Event Name</Label>
                 <Input
+                  data-testid="event-name-input"
                   id="event-name"
                   type="name"
                   placeholder=""
@@ -151,6 +114,9 @@ export default function CreateEvent({
               </div>
 
               <div className="grid gap-2">
+                <p className="text-sm text-gray-800">
+                    Choose the latest time to schedule participants
+                </p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
                     label="End Time"
