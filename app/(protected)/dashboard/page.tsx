@@ -15,13 +15,7 @@ export default function DashBoard() {
   // Returning setEventsData from here so i can pass it down to CreateEvent component
   const { eventsData, isLoading:isLoadingEvents, error, setEventsData } = useUsersEvents();
   
-  // Loading state initially set to false, used for handling event click
-  const [loadingText, setLoadingText] = useState("Loading your events ...");
-  const [isLoading, setIsLoading] = useState(false);
-  
   const handleEventClick = (event: EventsData) => {
-    setIsLoading(true);
-    setLoadingText(`Loading ${event.name}...`);
     router.push(`/${event.id}`);
   };
 
@@ -41,8 +35,8 @@ export default function DashBoard() {
     );
   }
 
-  if (isLoading || isLoadingEvents) {
-    return <LoadingSpinner specificText={loadingText} />;
+  if (isLoadingEvents) {
+    return <LoadingSpinner specificText={`Loading your events ...`} />;
   }
 
   return (
@@ -54,12 +48,6 @@ export default function DashBoard() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Your Events
             </h2>
-
-            {error && (
-              <div className="text-center py-8">
-                <p className="text-red-500">Error: {error}</p>
-              </div>
-            )}
 
             {eventsData && eventsData.length === 0 && (
               <div className="text-center py-8">
