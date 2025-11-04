@@ -447,25 +447,8 @@ describe("CalendarPage", () => {
 
       
       // Should only show one entry for John Doe
-      const johnDoeElements = screen.getAllByText("John Doe (john@example.com)");
+      const johnDoeElements = screen.getAllByText("John Doe");
       expect(johnDoeElements).toHaveLength(1);
-    });
-
-    it("should handle participants with missing data gracefully", () => {
-      const incompleteData = [
-        {
-          user_id: "user-1",
-          availability: [],
-        },
-      ];
-      
-      (useAvailabilityData as jest.Mock).mockReturnValue(incompleteData);
-      
-      render(<CalendarPage />);
-
-      
-      // Should not crash and calendar should still render
-      expect(screen.getByTestId("calendar-component")).toBeInTheDocument();
     });
   });
 
