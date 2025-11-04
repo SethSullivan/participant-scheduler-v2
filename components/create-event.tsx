@@ -1,7 +1,6 @@
 "use client";
 
 import { cn } from "@/lib/utils/utils";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -20,7 +19,7 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { EventsData } from "@/types/types";
-import { useCreateEvent } from "@/hooks/useCreateEvent";
+import useCreateEvent from "@/hooks/useCreateEvent";
 
 interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
   setShowPopup: (show: boolean) => void;
@@ -33,7 +32,6 @@ export default function CreateEvent({
   setEventsData,
   ...props
 }: CreateEventProps) {
-  const router = useRouter();
   const [eventName, setEventName] = useState("");
   const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(
     dayjs("2022-04-17T08:00")
