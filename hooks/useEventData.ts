@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 type EventData = {
   id: string;
-  organizer: string;
+  organizer_id: string;
   name: string;
   start_time: Date;
   end_time: Date;

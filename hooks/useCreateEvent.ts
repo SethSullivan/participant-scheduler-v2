@@ -34,7 +34,7 @@ export default async function useCreateEvent(
     .from("events")
     .insert({
         name: eventName,
-        organizer: user.sub,
+        organizer_id: user.sub,
         start_time: startTime.toISOString(), // Store as full datetime
         end_time: endTime.toISOString(), // Store as full datetime
     })

@@ -73,7 +73,7 @@ export default function EditEventPage({
         return;
       }
 
-      if (user.sub !== eventData?.organizer) {
+      if (user.sub !== eventData?.organizer_id) {
         setError("You must be the organizer to edit an event");
         router.back();
         return;
@@ -131,7 +131,7 @@ export default function EditEventPage({
           return;
         }
 
-        if (user.sub !== eventData?.organizer) {
+        if (user.sub !== eventData?.organizer_id) {
           setError("You must be the organizer to delete an event");
           //wait 3 seconds
           await new Promise((resolve) => setTimeout(resolve, 3000));
