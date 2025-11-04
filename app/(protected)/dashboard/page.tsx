@@ -10,20 +10,38 @@ import useUsersEvents from "@/hooks/useUsersEvents";
 
 export default function DashBoard() {
   const [showPopup, setShowPopup] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
-
-  const [loadingText, setLoadingText] = useState("Loading your events ...");
   const router = useRouter();
-  const { error } = useUsersEvents(router, setIsLoading, setEventsData);
 
+  // Returning setEventsData from here so i can pass it down to CreateEvent component
+  const { eventsData, isLoading:isLoadingEvents, error, setEventsData } = useUsersEvents();
+  
+  // Loading state initially set to false, used for handling event click
+  const [loadingText, setLoadingText] = useState("Loading your events ...");
+  const [isLoading, setIsLoading] = useState(false);
+  
   const handleEventClick = (event: EventsData) => {
     setIsLoading(true);
     setLoadingText(`Loading ${event.name}...`);
     router.push(`/${event.id}`);
   };
 
-  if (isLoading) {
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center p-6">
+        <h1 className="text-2xl font-bold mb-4 text-red-600">Error</h1>
+        <p className="text-center text-gray-700">{error}</p>
+        <Button
+          variant="default"
+          className="mt-6"
+          onClick={() => router.refresh()}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  if (isLoading || isLoadingEvents) {
     return <LoadingSpinner specificText={loadingText} />;
   }
 
