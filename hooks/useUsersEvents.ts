@@ -1,14 +1,13 @@
 import { Dispatch, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { EventsData } from "@/types/types";
+import { useRouter } from "next/navigation";
 
-export default function useUsersEvents(
-  router: { replace: (url: string) => void },
-  setIsLoading: Dispatch<React.SetStateAction<boolean>>,
-  setEventsData: Dispatch<React.SetStateAction<EventsData[] | null>>
-) {
+export default function useUsersEvents() {
+  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-
+  const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const getUsersEvents = async () => {
       try {
@@ -37,6 +36,6 @@ export default function useUsersEvents(
       }
     };
     getUsersEvents();
-  }, [router, setIsLoading, setEventsData]);
-  return { error };
+  }, []);
+  return { eventsData, isLoading, error, setEventsData };
 }
