@@ -10,21 +10,33 @@ import useUsersEvents from "@/hooks/useUsersEvents";
 
 export default function DashBoard() {
   const [showPopup, setShowPopup] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
-
-  const [loadingText, setLoadingText] = useState("Loading your events ...");
   const router = useRouter();
-  const { error } = useUsersEvents(router, setIsLoading, setEventsData);
 
+  // Returning setEventsData from here so i can pass it down to CreateEvent component
+  const { eventsData, isLoading:isLoadingEvents, error, setEventsData } = useUsersEvents();
+  
   const handleEventClick = (event: EventsData) => {
-    setIsLoading(true);
-    setLoadingText(`Loading ${event.name}...`);
     router.push(`/${event.id}`);
   };
 
-  if (isLoading) {
-    return <LoadingSpinner specificText={loadingText} />;
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center p-6">
+        <h1 className="text-2xl font-bold mb-4 text-red-600">Error</h1>
+        <p className="text-center text-gray-700">{error}</p>
+        <Button
+          variant="default"
+          className="mt-6"
+          onClick={() => router.refresh()}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  if (isLoadingEvents) {
+    return <LoadingSpinner specificText={`Loading your events ...`} />;
   }
 
   return (
@@ -36,12 +48,6 @@ export default function DashBoard() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               Your Events
             </h2>
-
-            {error && (
-              <div className="text-center py-8">
-                <p className="text-red-500">Error: {error}</p>
-              </div>
-            )}
 
             {eventsData && eventsData.length === 0 && (
               <div className="text-center py-8">

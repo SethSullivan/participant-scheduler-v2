@@ -3,7 +3,7 @@ import { Geist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import Script from "next/script";
-import { AuthProvider } from "@/components/auth-provider";
+import { AuthProvider } from "@/lib/contexts/auth-provider";
 
 const defaultUrl = process.env.WEBSITE_URL
   ? `https://${process.env.WEBSITE_URL}`
