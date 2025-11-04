@@ -337,7 +337,7 @@ describe("CalendarPage", () => {
       });
     });
 
-    it("should close submit popup when close button is clicked", async () => {
+    it("should close submit popup when cancel button is clicked", async () => {
       (useAuth as jest.Mock).mockReturnValue(null);
 
       render(<CalendarPage />);
@@ -353,9 +353,9 @@ describe("CalendarPage", () => {
       await waitFor(() => {
         expect(screen.getByTestId("submit-popup")).toBeInTheDocument();
       });
-      
-      // Close popup
-      fireEvent.click(screen.getByText("Close"));
+
+      // Cancel submission
+      fireEvent.click(screen.getByText("Cancel"));
       
       await waitFor(() => {
         expect(screen.queryByTestId("submit-popup")).not.toBeInTheDocument();
@@ -389,10 +389,10 @@ describe("CalendarPage", () => {
       
       render(<CalendarPage />);
 
-      
-      const checkbox1 = screen.getByTestId("checkbox-user-1") as HTMLInputElement;
-      const checkbox2 = screen.getByTestId("checkbox-user-2") as HTMLInputElement;
-      
+      const checkboxes = screen.getAllByRole("checkbox");
+      const checkbox1 = checkboxes[0] as HTMLInputElement;
+      const checkbox2 = checkboxes[1] as HTMLInputElement;
+
       expect(checkbox1.checked).toBe(false);
       expect(checkbox2.checked).toBe(true);
     });
