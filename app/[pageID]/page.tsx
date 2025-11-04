@@ -93,7 +93,6 @@ export default function CalendarPage() {
   }
   // Handle case when event is not found
   if (!eventData) {
-    console.log("HERE");
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
@@ -125,7 +124,6 @@ export default function CalendarPage() {
       </div>
     );
   }
-  console.log(participantsWithChecked);
 
   return (
     <div className="flex flex-col w-full h-screen pb-10">
