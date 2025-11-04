@@ -94,7 +94,7 @@ export default function EditEventPage({
       const { error: eventsError } = await supabase.from("events").upsert({
         id: eventID,
         name: eventName,
-        organizer: user.sub,
+        organizer_id: user.sub,
         start_time: startTime.toISOString(), // Store as full datetime
         end_time: endTime.toISOString(), // Store as full datetime
       });
