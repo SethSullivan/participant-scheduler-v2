@@ -43,7 +43,7 @@ export default function CreateEvent({
 
   const router = useRouter();
 
-  const HandleCreateEvent = async (e: React.FormEvent) => {
+  const handleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
@@ -119,7 +119,7 @@ export default function CreateEvent({
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={HandleCreateEvent}>
+          <form onSubmit={handleCreateEvent}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Event Name</Label>
