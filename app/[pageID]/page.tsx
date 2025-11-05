@@ -68,7 +68,7 @@ export default function CalendarPage() {
       console.log(newAvailabilityData);
       // Delete participant from database
       // Make API request
-      const response = await fetch("/api/create-event", {
+      const response = await fetch("/api/delete-participant", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
