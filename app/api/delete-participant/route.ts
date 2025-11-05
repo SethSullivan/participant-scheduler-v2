@@ -32,16 +32,17 @@ export async function POST(request: NextRequest) {
     }
 
     const { error } = await supabase
-      .from("availability")
+      .from("participants")
       .delete()
-      .eq("user_id", participantID);
+      .eq("id", participantID);
 
     if (error) {
       console.error("Error deleting participant:", error);
       throw error;
     }
 
-    return { success: true };
+    return  NextResponse.json({ success: true });
+    
   } catch (error) {
     console.error("Unexpected error:", error);
     return NextResponse.json(
