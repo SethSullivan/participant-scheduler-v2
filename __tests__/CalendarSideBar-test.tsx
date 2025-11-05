@@ -1,5 +1,5 @@
 import { screen, render } from "@testing-library/react";
-import CalendarSideBar, {
+import {
   ParticipantItem,
 } from "@/components/calendar-sidebar";
 
@@ -20,7 +20,7 @@ const mockParticipantInfo = [
 
 describe("CalendarSideBar", () => {
   it("renders correctly", () => {
-    test.todo;
+    test.todo("Write tests for CalendarSideBar component");
   });
 });
 

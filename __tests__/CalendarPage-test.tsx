@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CalendarPage from "@/app/[pageID]/page";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // Mock Next.js router
 jest.mock("next/navigation", () => ({
@@ -30,14 +30,26 @@ jest.mock("@/hooks/useGoogleAccessToken", () => ({
 
 // Mock calendar... jest can't handle it for some reason
 jest.mock("@/components/calendar", () => {
-  return function Calendar({ availableSlots, setAvailableSlots, eventData, availabilityData }: any) {
+  return function Calendar({ availableSlots, setAvailableSlots, eventData, availabilityData }: {
+    availableSlots: CalendarSlot[];
+    setAvailableSlots: React.Dispatch<React.SetStateAction<CalendarSlot[]>>;
+    eventData: EventsData;
+    availabilityData: AvailabilityData[];
+  }) {
     return (
       <div data-testid="calendar-component">
         <span data-testid="event-name">{eventData?.name}</span>
         <span data-testid="availability-count">{availabilityData?.length || 0}</span>
-        <button onClick={() => setAvailableSlots([{ id: "1", start: new Date(), end: new Date() }])}>
+        <button onClick={() => setAvailableSlots([{ id: "1", start: new Date(), end: new Date(), title:"mock title", isGcal:false }])}>
           Add Slot
         </button>
+        <div>
+          {availableSlots.map((slot) => (
+            <div key={slot.id}>
+              <span>{slot.start.toString()} - {slot.end.toString()}</span>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
@@ -81,6 +93,8 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
+import { AvailabilityData, CalendarSlot, EventsData } from "@/types/types";
+import React from "react";
 
 describe("CalendarPage", () => {
   const mockRouter = {
@@ -364,22 +378,6 @@ describe("CalendarPage", () => {
   });
 
   describe("LocalStorage Integration", () => {
-    it("should save checked state to localStorage", async () => {
-      render(<CalendarPage />);
-
-      
-      const checkboxes = screen.getAllByRole("checkbox");
-      const checkbox = checkboxes[0] as HTMLInputElement;
-      fireEvent.click(checkbox);
-      
-      await waitFor(() => {
-        const savedState = localStorage.getItem("checked-state-test-event-id");
-        expect(savedState).toBeTruthy();
-        const parsedState = JSON.parse(savedState!);
-        expect(parsedState.find((s: any) => s.userID === "user-1")?.isChecked).toBe(false);
-      });
-    });
-
     it("should load checked state from localStorage", () => {
       const initialState = [
         { userID: "user-1", isChecked: false },

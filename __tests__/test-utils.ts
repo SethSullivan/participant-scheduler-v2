@@ -1,5 +1,4 @@
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
-import { create } from "domain";
 
 // Mock availability data
 const mockAvailabilityData = [

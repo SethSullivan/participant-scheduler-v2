@@ -1,5 +1,3 @@
-import { CheckedState } from "@/types/types";
-
 type ParticipantInfo = {
   userID: string;
   name: string;
