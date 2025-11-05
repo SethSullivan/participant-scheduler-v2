@@ -171,7 +171,10 @@ describe("CalendarPage", () => {
       claims: { sub: "current-user-id" },
     });
 
-    (useAvailabilityData as jest.Mock).mockReturnValue(mockParticipantData);
+    (useAvailabilityData as jest.Mock).mockReturnValue({
+      availabilityData: mockParticipantData,
+      setAvailabilityData: jest.fn(),
+    });
     (useGoogleAccessToken as jest.Mock).mockReturnValue("mock-access-token");
   });
 
@@ -472,9 +475,10 @@ describe("CalendarPage", () => {
         },
       ];
 
-      (useAvailabilityData as jest.Mock).mockReturnValue(
-        duplicateParticipantData
-      );
+      (useAvailabilityData as jest.Mock).mockReturnValue({
+        availabilityData: duplicateParticipantData,
+        setAvailabilityData: jest.fn(),
+      });
 
       render(<CalendarPage />);
 
@@ -486,7 +490,10 @@ describe("CalendarPage", () => {
 
   describe("Edge Cases", () => {
     it("should handle undefined participantAvailabilityData", () => {
-      (useAvailabilityData as jest.Mock).mockReturnValue(undefined);
+      (useAvailabilityData as jest.Mock).mockReturnValue({
+        availabilityData: undefined,
+        setAvailabilityData: jest.fn(),
+      });
 
       render(<CalendarPage />);
 
