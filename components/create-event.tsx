@@ -19,7 +19,6 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { EventsData } from "@/types/types";
-import useCreateEvent from "@/hooks/useCreateEvent";
 
 interface CreateEventProps extends React.ComponentPropsWithoutRef<"div"> {
   setShowPopup: (show: boolean) => void;

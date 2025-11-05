@@ -12,16 +12,12 @@ import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
 import { useParams } from "next/navigation";
-import useDeleteParticipant from "@/hooks/useDeleteParticipant";
 
 export default function CalendarPage() {
   const { pageID: eventID } = useParams<{ pageID: string }>();
   const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp] = useState(false);
   const [showInstructionalPopUp, setShowInstructionalPopUp] = useState(true);
-
-  const deleteParticipant = useDeleteParticipant();
-
 
   //* Get authData, eventData, and availabilityData
   const authData = useAuth();
@@ -85,7 +81,7 @@ export default function CalendarPage() {
       if (!response.ok) {
         console.error("Error deleting participant:", result.error || "Failed to delete participant");
       }
-      
+
     }
   }
   
