@@ -19,7 +19,7 @@ interface EventCardProps {
 
 export default function EventCard({ event, onEventClick }: EventCardProps) {
   const router = useRouter();
-  
+
   const formatTime = (dateString: Date) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString("en-US", {
@@ -47,7 +47,13 @@ export default function EventCard({ event, onEventClick }: EventCardProps) {
           </CardTitle>
           {/* Add edit icon */}
           <div>
-            <Button variant="ghost" size="icon" onClick={() => {router.push(`/${event.id}/edit`)}}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                router.push(`/${event.id}/edit`);
+              }}
+            >
               <Edit className="h-4 w-4" />
             </Button>
           </div>

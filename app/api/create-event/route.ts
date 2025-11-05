@@ -17,9 +17,12 @@ export async function POST(request: NextRequest) {
 
     // Create Supabase client
     const supabase = await createClient();
-    
+
     // Get authenticated user
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
 
     if (authError || !user) {
       return NextResponse.json(
@@ -67,11 +70,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(
-      { data: eventsData },
-      { status: 201 }
-    );
-
+    return NextResponse.json({ data: eventsData }, { status: 201 });
   } catch (error) {
     console.error("Unexpected error:", error);
     return NextResponse.json(

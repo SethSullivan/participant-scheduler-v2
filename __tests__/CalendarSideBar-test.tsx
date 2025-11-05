@@ -1,7 +1,5 @@
 import { screen, render } from "@testing-library/react";
-import {
-  ParticipantItem,
-} from "@/components/calendar-sidebar";
+import { ParticipantItem } from "@/components/calendar-sidebar";
 
 const mockParticipantInfo = [
   {

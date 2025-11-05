@@ -2,9 +2,8 @@ import { CheckedState, AvailabilityData } from "@/types/types";
 import { useEffect, useState } from "react";
 export default function useChecked(
   eventID: string,
-  participantAvailabilityData:AvailabilityData[] | null
+  participantAvailabilityData: AvailabilityData[] | null
 ) {
-
   const [checked, setChecked] = useState<CheckedState[]>([]);
 
   useEffect(() => {
@@ -57,5 +56,5 @@ export default function useChecked(
       window.removeEventListener("storage", getChecked);
     };
   }, [eventID, participantAvailabilityData]);
-  return checked
+  return checked;
 }

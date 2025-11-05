@@ -156,7 +156,9 @@ describe("DashBoard", () => {
       render(<DashBoard />);
 
       await waitFor(() => {
-        expect(screen.getByText("No events found. Create your first event!")).toBeInTheDocument();
+        expect(
+          screen.getByText("No events found. Create your first event!")
+        ).toBeInTheDocument();
       });
     });
   });
@@ -164,7 +166,7 @@ describe("DashBoard", () => {
   describe("Error Handling", () => {
     it("should display error message when there is an error", async () => {
       const errorMessage = "An unexpected error occurred";
-      
+
       (useUsersEvents as jest.Mock).mockReturnValueOnce({
         eventsData: [],
         isLoading: false,
@@ -178,7 +180,9 @@ describe("DashBoard", () => {
         expect(screen.getByText(`Error`)).toBeInTheDocument();
         expect(screen.getByText(`${errorMessage}`)).toBeInTheDocument();
       });
-      expect(screen.getByRole("button", { name: /retry/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /retry/i })
+      ).toBeInTheDocument();
       expect(screen.queryByText("Team Meeting")).toBeNull();
     });
   });
@@ -204,7 +208,9 @@ describe("DashBoard", () => {
       render(<DashBoard />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /create new event/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /create new event/i })
+        ).toBeInTheDocument();
       });
     });
 
@@ -212,22 +218,30 @@ describe("DashBoard", () => {
       render(<DashBoard />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /create new event/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /create new event/i })
+        ).toBeInTheDocument();
       });
 
-      const createButton = screen.getByRole("button", { name: /create new event/i });
+      const createButton = screen.getByRole("button", {
+        name: /create new event/i,
+      });
       fireEvent.click(createButton);
 
       expect(screen.getByTestId("create-event-popup")).toBeInTheDocument();
-      
+
       // Close popup
       fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
       await waitFor(() => {
-        expect(screen.queryByTestId("create-event-popup")).not.toBeInTheDocument();
+        expect(
+          screen.queryByTestId("create-event-popup")
+        ).not.toBeInTheDocument();
       });
-  
-      expect(screen.getByRole("button", { name: /create new event/i })).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("button", { name: /create new event/i })
+      ).toBeInTheDocument();
       expect(screen.getByText("Create New Event")).toBeInTheDocument();
     });
 
@@ -247,30 +261,36 @@ describe("DashBoard", () => {
       render(<DashBoard />);
 
       await waitFor(() => {
-        expect(screen.getByRole("button", { name: /create new event/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /create new event/i })
+        ).toBeInTheDocument();
       });
 
       // Initial count
       expect(screen.getAllByText(/view availability/i)).toHaveLength(3);
 
       // Open create event form
-      fireEvent.click(screen.getByRole("button", { name: /create new event/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /create new event/i })
+      );
 
       // Type input for event name
       const eventNameInput = screen.getByTestId("event-name-input");
       fireEvent.change(eventNameInput, { target: { value: "New Test Event" } });
-      
+
       // Submit new event
       fireEvent.click(screen.getByRole("button", { name: /create event/i }));
 
       await waitFor(() => {
-        expect(screen.queryByTestId("create-event-popup")).not.toBeInTheDocument();
+        expect(
+          screen.queryByTestId("create-event-popup")
+        ).not.toBeInTheDocument();
       });
     });
   });
 
   describe("Edge Cases", () => {
-    // TODO 
+    // TODO
     // it("should handle rapid event card clicks", async () => {
     //   render(<DashBoard />);
 
@@ -291,7 +311,9 @@ describe("DashBoard", () => {
       });
 
       // Open and close popup
-      fireEvent.click(screen.getByRole("button", { name: /create new event/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /create new event/i })
+      );
       fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
 
       // Events should still be displayed

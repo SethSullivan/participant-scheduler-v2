@@ -20,9 +20,11 @@ export const colors = [
   "rgb(0, 255, 255, 0.8)", // bg-cyan-500
 ];
 
-export function getParticipantsWithChecked(participantAvailabilityData:AvailabilityData[] | null, checked:CheckedState[]) {
+export function getParticipantsWithChecked(
+  participantAvailabilityData: AvailabilityData[] | null,
+  checked: CheckedState[]
+) {
   if (participantAvailabilityData) {
-
     // Get userID, name, isChecked, color for each unique participant
     const ans = participantAvailabilityData.map((item) => {
       const firstAvailability = item.availability[0]; // All availability items for a user have the same title and color
@@ -38,6 +40,6 @@ export function getParticipantsWithChecked(participantAvailabilityData:Availabil
 
     return ans;
   } else {
-    return undefined
+    return undefined;
   }
 }

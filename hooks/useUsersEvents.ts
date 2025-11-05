@@ -24,7 +24,7 @@ export default function useUsersEvents() {
           .eq("organizer_id", user.sub);
 
         if (eventsError) throw eventsError;
-        
+
         if (eventsData) {
           setEventsData(eventsData);
         }
