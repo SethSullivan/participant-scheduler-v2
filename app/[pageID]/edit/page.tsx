@@ -27,7 +27,7 @@ export default function EditEventPage({
   const { pageID: eventID } = use(params);
   const router = useRouter();
   const { eventData, isLoading } = useEventData(eventID);
-  
+
   // Initialize with empty/default values
   const [eventName, setEventName] = useState("");
   const [startTime, setStartTime] = useState<dayjs.Dayjs | null>(null);
@@ -41,14 +41,14 @@ export default function EditEventPage({
   useEffect(() => {
     if (eventData && !isLoading) {
       setEventName(eventData.name);
-      console.log(eventData)
+      console.log(eventData);
       // Handle possible invalid dates safely
       try {
         if (eventData.start_time) {
           const startDayjs = dayjs(eventData.start_time);
           setStartTime(startDayjs.isValid() ? startDayjs : null);
         }
-        
+
         if (eventData.end_time) {
           const endDayjs = dayjs(eventData.end_time);
           setEndTime(endDayjs.isValid() ? endDayjs : null);
@@ -156,7 +156,7 @@ export default function EditEventPage({
     }
   };
 
-  if(error) {
+  if (error) {
     return (
       <div className="min-h-screen p-6 flex flex-col items-center justify-start space-y-4 pt-40">
         <h1 className="text-red-500">Error: {error}</h1>
@@ -171,7 +171,10 @@ export default function EditEventPage({
         <Button onClick={() => router.push(`/dashboard`)}>
           Back to Dashboard
         </Button>
-        <Button onClick={() => setSubmissionSuccessful(false)} variant="outline">
+        <Button
+          onClick={() => setSubmissionSuccessful(false)}
+          variant="outline"
+        >
           Continue Editing
         </Button>
       </div>
@@ -248,10 +251,14 @@ export default function EditEventPage({
         )}
       </div>
       <div className="flex flex-grow justify-center items-end pb-10 mt-auto">
-        <Button variant="destructive" className="mt-10" onClick={() => handleDeleteEvent()}>
+        <Button
+          variant="destructive"
+          className="mt-10"
+          onClick={() => handleDeleteEvent()}
+        >
           Delete Event
         </Button>
       </div>
     </div>
-    );
+  );
 }

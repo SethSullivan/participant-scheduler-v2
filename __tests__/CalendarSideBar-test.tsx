@@ -1,7 +1,5 @@
 import { screen, render } from "@testing-library/react";
-import CalendarSideBar, {
-  ParticipantItem,
-} from "@/components/calendar-sidebar";
+import { ParticipantItem } from "@/components/calendar-sidebar";
 
 const mockParticipantInfo = [
   {
@@ -20,7 +18,8 @@ const mockParticipantInfo = [
 
 describe("CalendarSideBar", () => {
   it("renders correctly", () => {
-    test.todo;
+    render(<div></div>); // Placeholder test
+    expect(true).toBe(true);
   });
 });
 

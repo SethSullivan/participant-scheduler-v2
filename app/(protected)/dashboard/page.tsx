@@ -13,8 +13,13 @@ export default function DashBoard() {
   const router = useRouter();
 
   // Returning setEventsData from here so i can pass it down to CreateEvent component
-  const { eventsData, isLoading:isLoadingEvents, error, setEventsData } = useUsersEvents();
-  
+  const {
+    eventsData,
+    isLoading: isLoadingEvents,
+    error,
+    setEventsData,
+  } = useUsersEvents();
+
   const handleEventClick = (event: EventsData) => {
     router.push(`/${event.id}`);
   };

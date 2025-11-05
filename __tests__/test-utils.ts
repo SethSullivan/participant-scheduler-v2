@@ -1,5 +1,4 @@
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
-import { create } from "domain";
 
 // Mock availability data
 const mockAvailabilityData = [
@@ -66,8 +65,18 @@ describe("test utils", () => {
         mockChecked
       );
       expect(result).toEqual([
-        { userID: "user1", name: "User1 Doe", isChecked: true, color: "#ff0000" },
-        { userID: "user2", name: "User2 Smith", isChecked: true, color: "#5e3c3cff" },
+        {
+          userID: "user1",
+          name: "User1 Doe",
+          isChecked: true,
+          color: "#ff0000",
+        },
+        {
+          userID: "user2",
+          name: "User2 Smith",
+          isChecked: true,
+          color: "#5e3c3cff",
+        },
       ]);
     });
   });

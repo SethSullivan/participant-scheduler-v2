@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { EventsData } from "@/types/types";
 import { useRouter } from "next/navigation";
@@ -24,7 +24,7 @@ export default function useUsersEvents() {
           .eq("organizer_id", user.sub);
 
         if (eventsError) throw eventsError;
-        
+
         if (eventsData) {
           setEventsData(eventsData);
         }
@@ -36,6 +36,6 @@ export default function useUsersEvents() {
       }
     };
     getUsersEvents();
-  }, []);
+  }, [router]);
   return { eventsData, isLoading, error, setEventsData };
 }

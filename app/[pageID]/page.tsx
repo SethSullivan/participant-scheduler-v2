@@ -7,12 +7,11 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
-import { CalendarSlot, CheckedState } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
 import { useParams } from "next/navigation";
-import useDeleteParticipant from "@/hooks/useDeleteParticipant";
 
 export default function CalendarPage() {
   const { pageID: eventID } = useParams<{ pageID: string }>();
@@ -33,12 +32,14 @@ export default function CalendarPage() {
   const accessToken = useGoogleAccessToken(eventID);
 
   //* Set checked to value that was set in localStorage from last time
-  const initChecked = useChecked(eventID, availabilityData)
+  const initChecked = useChecked(eventID, availabilityData);
   const [checked, setChecked] = useState(initChecked);
-  //! This useEffect must be here bc initChecked is not available on first render, 
+  //! This useEffect must be here bc initChecked is not available on first render,
   //! and therefore sets checked = [] and won't be updated without useEffect
-  useEffect(()=>{setChecked(initChecked)}, [initChecked]) 
-  
+  useEffect(() => {
+    setChecked(initChecked);
+  }, [initChecked]);
+
   //* Save to localStorage when checked (or eventID) is changed
   useEffect(() => {
     if (checked.length > 0) {
@@ -55,26 +56,45 @@ export default function CalendarPage() {
         return v;
       });
     });
-  }
-  const handleDeleteParticipant = (participantID: string) => {
+  };
+  const HandleDeleteParticipant = async (participantID: string) => {
     // Remove participant availability from availabilityData
     if (availabilityData) {
-      const newAvailabilityData =
-        availabilityData.filter(
-          (v) => v.user_id !== participantID
-        );
+      const newAvailabilityData = availabilityData.filter(
+        (v) => v.user_id !== participantID
+      );
       setAvailabilityData(newAvailabilityData);
       console.log("HERE");
       console.log(newAvailabilityData);
       // Delete participant from database
-      useDeleteParticipant(participantID);
+      // Make API request
+      const response = await fetch("/api/delete-participant", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          participantID,
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error(
+          "Error deleting participant:",
+          result.error || "Failed to delete participant"
+        );
+      }
     }
-  }
-  
+  };
+
   // TODO allow routing back to dashboard if user is organizer
 
   //* Get unique participants and checkedIDs for the sidebar
-  const participantsWithChecked = getParticipantsWithChecked(availabilityData, checked);
+  const participantsWithChecked = getParticipantsWithChecked(
+    availabilityData,
+    checked
+  );
   let checkedIDs: string[] = [];
   if (participantsWithChecked) {
     checkedIDs = participantsWithChecked
@@ -133,9 +153,17 @@ export default function CalendarPage() {
           <ul className="list-disc list-inside mb-4 text-left">
             <li>To select availability, click and drag inside the calendar.</li>
             <li>To remove availability, click on Availability Block.</li>
-            <li>To submit availability, click &quot;Submit Availability&quot;.</li>
+            <li>
+              To submit availability, click &quot;Submit Availability&quot;.
+            </li>
           </ul>
-          <Button onClick={() => {setShowInstructionalPopUp(false)}}>Got it!</Button>
+          <Button
+            onClick={() => {
+              setShowInstructionalPopUp(false);
+            }}
+          >
+            Got it!
+          </Button>
         </div>
       </div>
     );
@@ -186,7 +214,7 @@ export default function CalendarPage() {
             <CalendarSideBar
               participantInformation={participantsWithChecked}
               handleCheckUpdate={handleCheckUpdate}
-              handleDeleteParticipant={handleDeleteParticipant}
+              handleDeleteParticipant={HandleDeleteParticipant}
             />
           </div>
         )}

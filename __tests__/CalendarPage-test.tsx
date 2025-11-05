@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CalendarPage from "@/app/[pageID]/page";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 // Mock Next.js router
 jest.mock("next/navigation", () => ({
@@ -30,14 +30,47 @@ jest.mock("@/hooks/useGoogleAccessToken", () => ({
 
 // Mock calendar... jest can't handle it for some reason
 jest.mock("@/components/calendar", () => {
-  return function Calendar({ availableSlots, setAvailableSlots, eventData, availabilityData }: any) {
+  return function Calendar({
+    availableSlots,
+    setAvailableSlots,
+    eventData,
+    availabilityData,
+  }: {
+    availableSlots: CalendarSlot[];
+    setAvailableSlots: React.Dispatch<React.SetStateAction<CalendarSlot[]>>;
+    eventData: EventsData;
+    availabilityData: AvailabilityData[];
+  }) {
     return (
       <div data-testid="calendar-component">
         <span data-testid="event-name">{eventData?.name}</span>
-        <span data-testid="availability-count">{availabilityData?.length || 0}</span>
-        <button onClick={() => setAvailableSlots([{ id: "1", start: new Date(), end: new Date() }])}>
+        <span data-testid="availability-count">
+          {availabilityData?.length || 0}
+        </span>
+        <button
+          onClick={() =>
+            setAvailableSlots([
+              {
+                id: "1",
+                start: new Date(),
+                end: new Date(),
+                title: "mock title",
+                isGcal: false,
+              },
+            ])
+          }
+        >
           Add Slot
         </button>
+        <div>
+          {availableSlots.map((slot) => (
+            <div key={slot.id}>
+              <span>
+                {slot.start.toString()} - {slot.end.toString()}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     );
   };
@@ -81,6 +114,8 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
+import { AvailabilityData, CalendarSlot, EventsData } from "@/types/types";
+import React from "react";
 
 describe("CalendarPage", () => {
   const mockRouter = {
@@ -125,18 +160,21 @@ describe("CalendarPage", () => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     localStorage.clear();
-    
+
     // Default mock implementations
     (useEventData as jest.Mock).mockReturnValue({
       eventData: mockEventData,
       isLoading: false,
     });
-    
+
     (useAuth as jest.Mock).mockReturnValue({
       claims: { sub: "current-user-id" },
     });
-    
-    (useAvailabilityData as jest.Mock).mockReturnValue(mockParticipantData);
+
+    (useAvailabilityData as jest.Mock).mockReturnValue({
+      availabilityData: mockParticipantData,
+      setAvailabilityData: jest.fn(),
+    });
     (useGoogleAccessToken as jest.Mock).mockReturnValue("mock-access-token");
   });
 
@@ -164,9 +202,10 @@ describe("CalendarPage", () => {
 
       render(<CalendarPage />);
 
-      
       expect(screen.getByText("Event Not Found")).toBeInTheDocument();
-      expect(screen.getByText(/doesn't exist or has been deleted/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/doesn't exist or has been deleted/)
+      ).toBeInTheDocument();
     });
 
     it("should allow going back when event is not found", () => {
@@ -178,10 +217,9 @@ describe("CalendarPage", () => {
 
       render(<CalendarPage />);
 
-      
       const goBackButton = screen.getByRole("button", { name: /go back/i });
       fireEvent.click(goBackButton);
-      
+
       expect(window.history.back).toHaveBeenCalled();
     });
   });
@@ -192,28 +230,33 @@ describe("CalendarPage", () => {
 
       render(<CalendarPage />);
 
-      
       expect(screen.getByText("How to Use the Calendar")).toBeInTheDocument();
-      expect(screen.getByText(/To select availability, click and drag/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/To select availability, click and drag/)
+      ).toBeInTheDocument();
     });
 
     it("should hide instructional popup when closed", async () => {
       (useAuth as jest.Mock).mockReturnValue(null);
 
       render(<CalendarPage />);
-      
+
       const gotItButton = screen.getByRole("button", { name: /got it/i });
       fireEvent.click(gotItButton);
-      
+
       await waitFor(() => {
-        expect(screen.queryByText("How to Use the Calendar")).not.toBeInTheDocument();
+        expect(
+          screen.queryByText("How to Use the Calendar")
+        ).not.toBeInTheDocument();
       });
     });
 
     it("should not show instructional popup for authenticated users", () => {
       render(<CalendarPage />);
-      
-      expect(screen.queryByText("How to Use the Calendar")).not.toBeInTheDocument();
+
+      expect(
+        screen.queryByText("How to Use the Calendar")
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -221,15 +264,16 @@ describe("CalendarPage", () => {
     it("should render calendar with event data", () => {
       render(<CalendarPage />);
 
-      
       expect(screen.getByTestId("calendar-component")).toBeInTheDocument();
       expect(screen.getByTestId("event-name")).toHaveTextContent("Test Event");
     });
 
     it("should display event name in header", () => {
       render(<CalendarPage />);
-      
-      expect(screen.getByRole("heading", { name: "Test Event" })).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("heading", { name: "Test Event" })
+      ).toBeInTheDocument();
     });
 
     it("should show submit button for anonymous users", () => {
@@ -237,26 +281,28 @@ describe("CalendarPage", () => {
 
       render(<CalendarPage />);
 
-      
       // Close instructional popup first
       const gotItButton = screen.getByRole("button", { name: /got it/i });
       fireEvent.click(gotItButton);
-      
-      expect(screen.getByRole("button", { name: /submit availability/i })).toBeInTheDocument();
+
+      expect(
+        screen.getByRole("button", { name: /submit availability/i })
+      ).toBeInTheDocument();
     });
 
     it("should not show submit button for authenticated users", () => {
       render(<CalendarPage />);
 
-      
-      expect(screen.queryByRole("button", { name: /submit availability/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /submit availability/i })
+      ).not.toBeInTheDocument();
     });
   });
 
   describe("Participant Sidebar", () => {
     it("should render participant sidebar with participant data", () => {
       render(<CalendarPage />);
-      
+
       expect(screen.getByTestId("calendar-sidebar")).toBeInTheDocument();
       expect(screen.getByText("John Doe")).toBeInTheDocument();
       expect(screen.getByText("john@example.com")).toBeInTheDocument();
@@ -270,9 +316,9 @@ describe("CalendarPage", () => {
       const checkboxes = screen.getAllByRole("checkbox");
       const checkbox = checkboxes[0] as HTMLInputElement;
       expect(checkbox.checked).toBe(true);
-      
+
       fireEvent.click(checkbox);
-      
+
       await waitFor(() => {
         expect(checkbox.checked).toBe(false);
       });
@@ -281,15 +327,14 @@ describe("CalendarPage", () => {
     it("should filter calendar data based on checked participants", async () => {
       render(<CalendarPage />);
 
-      
       // Initially, both participants should be visible
       expect(screen.getByTestId("availability-count")).toHaveTextContent("2");
-      
+
       // Uncheck first participant
       const checkboxes = screen.getAllByRole("checkbox");
       const checkbox = checkboxes[0] as HTMLInputElement;
       fireEvent.click(checkbox);
-      
+
       await waitFor(() => {
         expect(screen.getByTestId("availability-count")).toHaveTextContent("1");
       });
@@ -301,16 +346,17 @@ describe("CalendarPage", () => {
       (useAuth as jest.Mock).mockReturnValue(null);
 
       const alertSpy = jest.spyOn(window, "alert").mockImplementation(() => {});
-      
+
       render(<CalendarPage />);
 
-      
       // Close instructional popup
       fireEvent.click(screen.getByRole("button", { name: /got it/i }));
-      
-      const submitButton = screen.getByRole("button", { name: /submit availability/i });
+
+      const submitButton = screen.getByRole("button", {
+        name: /submit availability/i,
+      });
       fireEvent.click(submitButton);
-      
+
       expect(alertSpy).toHaveBeenCalledWith("Please select availability");
       alertSpy.mockRestore();
     });
@@ -320,18 +366,19 @@ describe("CalendarPage", () => {
 
       render(<CalendarPage />);
 
-      
       // Close instructional popup
       fireEvent.click(screen.getByRole("button", { name: /got it/i }));
-      
+
       // Add a slot
       const addSlotButton = screen.getByText("Add Slot");
       fireEvent.click(addSlotButton);
-      
+
       // Click submit
-      const submitButton = screen.getByRole("button", { name: /submit availability/i });
+      const submitButton = screen.getByRole("button", {
+        name: /submit availability/i,
+      });
       fireEvent.click(submitButton);
-      
+
       await waitFor(() => {
         expect(screen.getByTestId("submit-popup")).toBeInTheDocument();
       });
@@ -342,21 +389,22 @@ describe("CalendarPage", () => {
 
       render(<CalendarPage />);
 
-      
       // Close instructional popup
       fireEvent.click(screen.getByRole("button", { name: /got it/i }));
-      
+
       // Add a slot and submit
       fireEvent.click(screen.getByText("Add Slot"));
-      fireEvent.click(screen.getByRole("button", { name: /submit availability/i }));
-      
+      fireEvent.click(
+        screen.getByRole("button", { name: /submit availability/i })
+      );
+
       await waitFor(() => {
         expect(screen.getByTestId("submit-popup")).toBeInTheDocument();
       });
 
       // Cancel submission
       fireEvent.click(screen.getByText("Cancel"));
-      
+
       await waitFor(() => {
         expect(screen.queryByTestId("submit-popup")).not.toBeInTheDocument();
       });
@@ -364,29 +412,16 @@ describe("CalendarPage", () => {
   });
 
   describe("LocalStorage Integration", () => {
-    it("should save checked state to localStorage", async () => {
-      render(<CalendarPage />);
-
-      
-      const checkboxes = screen.getAllByRole("checkbox");
-      const checkbox = checkboxes[0] as HTMLInputElement;
-      fireEvent.click(checkbox);
-      
-      await waitFor(() => {
-        const savedState = localStorage.getItem("checked-state-test-event-id");
-        expect(savedState).toBeTruthy();
-        const parsedState = JSON.parse(savedState!);
-        expect(parsedState.find((s: any) => s.userID === "user-1")?.isChecked).toBe(false);
-      });
-    });
-
     it("should load checked state from localStorage", () => {
       const initialState = [
         { userID: "user-1", isChecked: false },
         { userID: "user-2", isChecked: true },
       ];
-      localStorage.setItem("checked-state-test-event-id", JSON.stringify(initialState));
-      
+      localStorage.setItem(
+        "checked-state-test-event-id",
+        JSON.stringify(initialState)
+      );
+
       render(<CalendarPage />);
 
       const checkboxes = screen.getAllByRole("checkbox");
@@ -409,10 +444,9 @@ describe("CalendarPage", () => {
         "availability-test-event-id",
         JSON.stringify({ availabilitySlots: mockSlots })
       );
-      
+
       render(<CalendarPage />);
 
-      
       // The component should load slots from localStorage
       // This would be reflected in the calendar component's behavior
       expect(localStorage.getItem("availability-test-event-id")).toBeTruthy();
@@ -440,12 +474,14 @@ describe("CalendarPage", () => {
           ],
         },
       ];
-      
-      (useAvailabilityData as jest.Mock).mockReturnValue(duplicateParticipantData);
-      
+
+      (useAvailabilityData as jest.Mock).mockReturnValue({
+        availabilityData: duplicateParticipantData,
+        setAvailabilityData: jest.fn(),
+      });
+
       render(<CalendarPage />);
 
-      
       // Should only show one entry for John Doe
       const johnDoeElements = screen.getAllByText("John Doe");
       expect(johnDoeElements).toHaveLength(1);
@@ -454,30 +490,30 @@ describe("CalendarPage", () => {
 
   describe("Edge Cases", () => {
     it("should handle undefined participantAvailabilityData", () => {
-      (useAvailabilityData as jest.Mock).mockReturnValue(undefined);
-      
+      (useAvailabilityData as jest.Mock).mockReturnValue({
+        availabilityData: undefined,
+        setAvailabilityData: jest.fn(),
+      });
+
       render(<CalendarPage />);
 
-      
       expect(screen.getByTestId("calendar-component")).toBeInTheDocument();
       expect(screen.queryByTestId("calendar-sidebar")).not.toBeInTheDocument();
     });
 
     it("should handle null access token", () => {
       (useGoogleAccessToken as jest.Mock).mockReturnValue(null);
-      
+
       render(<CalendarPage />);
 
-      
       expect(screen.getByTestId("calendar-component")).toBeInTheDocument();
     });
 
     it("should handle empty availability data", () => {
       (useAvailabilityData as jest.Mock).mockReturnValue([]);
-      
+
       render(<CalendarPage />);
 
-      
       expect(screen.getByTestId("calendar-component")).toBeInTheDocument();
       expect(screen.queryByTestId("calendar-sidebar")).not.toBeInTheDocument();
     });

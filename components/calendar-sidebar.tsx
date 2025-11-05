@@ -1,5 +1,3 @@
-import { CheckedState } from "@/types/types";
-
 type ParticipantInfo = {
   userID: string;
   name: string;
@@ -26,8 +24,9 @@ export function ParticipantItem({
   handleDeleteParticipant: (userID: string) => void;
 }) {
   // Split name and email - assuming format like "John Doe (john@example.com)"
-  const {displayName, email} = splitNameAndEmail(participant.name);
-  const isChecked = participant.isChecked !== undefined ? participant.isChecked : true;
+  const { displayName, email } = splitNameAndEmail(participant.name);
+  const isChecked =
+    participant.isChecked !== undefined ? participant.isChecked : true;
   return (
     <li key={idx} className="mb-1">
       <div className="flex items-center border border-gray-100 rounded p-2 min-h-[3rem]">
