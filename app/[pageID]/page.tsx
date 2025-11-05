@@ -12,6 +12,7 @@ import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
 import { useParams } from "next/navigation";
+import useDeleteParticipant from "@/hooks/useDeleteParticipant";
 
 export default function CalendarPage() {
   const { pageID: eventID } = useParams<{ pageID: string }>();
@@ -19,19 +20,20 @@ export default function CalendarPage() {
   const [showPopUp, setShowPopUp] = useState(false);
   const [showInstructionalPopUp, setShowInstructionalPopUp] = useState(true);
 
-  //* Get authData, eventData, and participantAvailabilityData
+  //* Get authData, eventData, and availabilityData
   const authData = useAuth();
   const userID = authData?.claims.sub;
   const { eventData, isLoading } = useEventData(eventID);
-  const participantAvailabilityData = useAvailabilityData(
+  // Need to return setAvailabilityData when user deletes a participant's availability
+  const { availabilityData, setAvailabilityData } = useAvailabilityData(
     userID,
-    eventData?.organizer,
+    eventData?.organizer_id,
     eventID
   );
   const accessToken = useGoogleAccessToken(eventID);
 
   //* Set checked to value that was set in localStorage from last time
-  const initChecked = useChecked(eventID, participantAvailabilityData)
+  const initChecked = useChecked(eventID, availabilityData)
   const [checked, setChecked] = useState(initChecked);
   //! This useEffect must be here bc initChecked is not available on first render, 
   //! and therefore sets checked = [] and won't be updated without useEffect
@@ -54,11 +56,25 @@ export default function CalendarPage() {
       });
     });
   }
+  const handleDeleteParticipant = (participantID: string) => {
+    // Remove participant availability from availabilityData
+    if (availabilityData) {
+      const newAvailabilityData =
+        availabilityData.filter(
+          (v) => v.user_id !== participantID
+        );
+      setAvailabilityData(newAvailabilityData);
+      console.log("HERE");
+      console.log(newAvailabilityData);
+      // Delete participant from database
+      useDeleteParticipant(participantID);
+    }
+  }
   
   // TODO allow routing back to dashboard if user is organizer
 
   //* Get unique participants and checkedIDs for the sidebar
-  const participantsWithChecked = getParticipantsWithChecked(participantAvailabilityData, checked);
+  const participantsWithChecked = getParticipantsWithChecked(availabilityData, checked);
   let checkedIDs: string[] = [];
   if (participantsWithChecked) {
     checkedIDs = participantsWithChecked
@@ -157,11 +173,11 @@ export default function CalendarPage() {
             setAvailableSlots={setAvailableSlots}
             eventData={eventData}
             availabilityData={
-              participantAvailabilityData && checkedIDs
-                ? participantAvailabilityData
+              availabilityData && checkedIDs
+                ? availabilityData
                     .filter((v) => checkedIDs.includes(v.user_id))
                     .map((e) => e.availability)
-                : participantAvailabilityData?.map((e) => e.availability) || []
+                : availabilityData?.map((e) => e.availability) || []
             }
           />
         </div>
@@ -169,8 +185,8 @@ export default function CalendarPage() {
           <div className="flex">
             <CalendarSideBar
               participantInformation={participantsWithChecked}
-              checked={checked}
-              handleChange={handleCheckUpdate}
+              handleCheckUpdate={handleCheckUpdate}
+              handleDeleteParticipant={handleDeleteParticipant}
             />
           </div>
         )}

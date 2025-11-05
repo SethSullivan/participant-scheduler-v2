@@ -91,7 +91,7 @@ describe("CalendarPage", () => {
   const mockEventData = {
     id: "test-event-id",
     name: "Test Event",
-    organizer: "organizer-123",
+    organizer_id: "organizer-123",
     start_time: "2024-01-01T08:00:00",
     end_time: "2024-01-01T18:00:00",
   };

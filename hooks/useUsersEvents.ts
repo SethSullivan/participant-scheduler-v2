@@ -21,7 +21,7 @@ export default function useUsersEvents() {
         const { error: eventsError, data: eventsData } = await supabase
           .from("events")
           .select("*")
-          .eq("organizer", user.sub);
+          .eq("organizer_id", user.sub);
 
         if (eventsError) throw eventsError;
         

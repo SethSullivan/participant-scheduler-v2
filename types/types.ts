@@ -20,7 +20,7 @@ export type AvailabilityData = {
 };
 
 export type EventsData = {
-  organizer: string;
+  organizer_id: string;
   start_time: Date;
   end_time: Date;
   name: string;

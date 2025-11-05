@@ -69,7 +69,7 @@ export default function EventCard({ event, onEventClick }: EventCardProps) {
         <div className="flex items-center gap-2 text-sm">
           <User className="h-4 w-4 text-gray-500" />
           <span className="text-gray-700">
-            Organizer: {event.organizer.substring(0, 8)}...
+            Organizer: {event.organizer_id.substring(0, 8)}...
           </span>
         </div>
 
