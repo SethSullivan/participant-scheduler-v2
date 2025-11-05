@@ -42,37 +42,77 @@ export default function CreateEvent({
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateEvent = async (e: React.FormEvent) => {
+  const router = useRouter();
+
+  const HandleCreateEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError(null);
-
     try {
-      const { data, error } = await useCreateEvent(eventName, startTime, endTime);
-      if (error) {
-        throw error;
+      // Validate inputs
+      if (!eventName || !startTime || !endTime) {
+        return {
+          data: null,
+          error: new Error("Please fill in all fields"),
+        };
+      }
+      // Make API request
+      const response = await fetch("/api/create-event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          eventName,
+          startTime: startTime.toISOString(),
+          endTime: endTime.toISOString(),
+        }),
+      });
+
+      const result = await response.json();
+
+      // Handle different response statuses
+      if (response.status === 401 || response.status === 403) {
+        router.push("/sign-up");
+        return {
+          data: null,
+          error: new Error(result.error || "Authentication required"),
+        };
       }
 
-      console.log("Event created successfully:", data);
-      setEventsData((prev: EventsData[] | null) =>
-        prev ? [...prev, data] : [data]
-      );
+      if (!response.ok) {
+        return {
+          data: null,
+          error: new Error(result.error || "Failed to create event"),
+        };
+      }
 
-      // Clear form on success
-      setEventName("");
-      setStartTime(dayjs("2022-04-17T08:00"));
-      setEndTime(dayjs("2022-04-17T18:00"));
-      setShowPopup(false);
-    } catch (error) {
-      console.error("Error creating event:", error);
-      setError((error as Error).message || "Failed to create event");
-    } finally {
+      setEventsData((prev) => (prev ? [...prev, result.data] : [result.data]));
       setIsLoading(false);
+      setShowPopup(false);
+      return {
+        data: result.data,
+        error: null,
+      };
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
+      setIsLoading(false);
+      console.error("Error creating event:", error);
+      return {
+        data: null,
+        error:
+          error instanceof Error ? error : new Error("Unknown error occurred"),
+      };
     }
   };
 
   return (
-    <div data-testid="create-event-popup" className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      data-testid="create-event-popup"
+      className={cn("flex flex-col gap-6", className)}
+      {...props}
+    >
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Event</CardTitle>
@@ -80,7 +120,7 @@ export default function CreateEvent({
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleCreateEvent}>
+          <form onSubmit={HandleCreateEvent}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Event Name</Label>
@@ -113,7 +153,7 @@ export default function CreateEvent({
 
               <div className="grid gap-2">
                 <p className="text-sm text-gray-800">
-                    Choose the latest time to schedule participants
+                  Choose the latest time to schedule participants
                 </p>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <TimePicker
