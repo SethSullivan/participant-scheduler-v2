@@ -7,7 +7,7 @@ import useEventData from "@/hooks/useEventData";
 import { useAuth } from "@/hooks/useAuth";
 import useAvailabilityData from "@/hooks/useAvailabilityData";
 import SubmitAvailabilityPopup from "@/components/submit-availability-popup";
-import { CalendarSlot, CheckedState } from "@/types/types";
+import { CalendarSlot } from "@/types/types";
 import useGoogleAccessToken from "@/hooks/useGoogleAccessToken";
 import useChecked from "@/hooks/useChecked";
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
@@ -19,6 +19,9 @@ export default function CalendarPage() {
   const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp] = useState(false);
   const [showInstructionalPopUp, setShowInstructionalPopUp] = useState(true);
+
+  const deleteParticipant = useDeleteParticipant();
+
 
   //* Get authData, eventData, and availabilityData
   const authData = useAuth();
@@ -56,7 +59,7 @@ export default function CalendarPage() {
       });
     });
   }
-  const handleDeleteParticipant = (participantID: string) => {
+  const HandleDeleteParticipant = async (participantID: string) => {
     // Remove participant availability from availabilityData
     if (availabilityData) {
       const newAvailabilityData =
@@ -67,7 +70,22 @@ export default function CalendarPage() {
       console.log("HERE");
       console.log(newAvailabilityData);
       // Delete participant from database
-      useDeleteParticipant(participantID);
+      // Make API request
+      const response = await fetch("/api/create-event", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          participantID
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        console.error("Error deleting participant:", result.error || "Failed to delete participant");
+      }
+      
     }
   }
   
@@ -186,7 +204,7 @@ export default function CalendarPage() {
             <CalendarSideBar
               participantInformation={participantsWithChecked}
               handleCheckUpdate={handleCheckUpdate}
-              handleDeleteParticipant={handleDeleteParticipant}
+              handleDeleteParticipant={HandleDeleteParticipant}
             />
           </div>
         )}
