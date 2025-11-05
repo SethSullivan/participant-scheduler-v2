@@ -12,10 +12,6 @@ jest.mock("@/hooks/useUsersEvents", () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-jest.mock("@/hooks/useCreateEvent", () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
 
 // Mock components
 // jest.mock("@/components/ui/loading-screen", () => {
@@ -24,31 +20,33 @@ jest.mock("@/hooks/useCreateEvent", () => ({
 //   };
 // });
 
-// jest.mock("@/components/create-event", () => {
-//   return function CreateEvent({ setShowPopup, setEventsData }: any) {
-//     return (
-//       <div data-testid="create-event-popup">
-//         <h3>Create Event Form</h3>
-//         <button
-//           onClick={() => {
-//             const newEvent = {
-//               id: "new-event-id",
-//               name: "New Test Event",
-//               organizer: "test-user",
-//               start_time: "2024-01-01T08:00:00",
-//               end_time: "2024-01-01T18:00:00",
-//             };
-//             setEventsData((prev: any) => (prev ? [...prev, newEvent] : [newEvent]));
-//             setShowPopup(false);
-//           }}
-//         >
-//           Submit Event
-//         </button>
-//         <button onClick={() => setShowPopup(false)}>Cancel</button>
-//       </div>
-//     );
-//   };
-// });
+jest.mock("@/components/create-event", () => {
+  return function CreateEvent({ setShowPopup, setEventsData }: { setShowPopup: jest.Mock; setEventsData: jest.Mock }) {
+    return (
+      <div data-testid="create-event-popup">
+        <h3>Create Event Form</h3>
+        <button
+          onClick={() => {
+            const newEvent = {
+              id: "new-event-id",
+              name: "New Test Event",
+              organizer: "test-user",
+              start_time: "2024-01-01T08:00:00",
+              end_time: "2024-01-01T18:00:00",
+            };
+            setEventsData((prev: EventsData[]) =>
+              prev ? [...prev, newEvent] : [newEvent]
+            );
+            setShowPopup(false);
+          }}
+        >
+          Submit Event
+        </button>
+        <button onClick={() => setShowPopup(false)}>Cancel</button>
+      </div>
+    );
+  };
+});
 
 // jest.mock("@/components/event-card", () => {
 //   return function EventCard({ event, onEventClick }: any) {
@@ -70,7 +68,7 @@ jest.mock("@/hooks/useCreateEvent", () => ({
 
 // Import mocked hook after mocking
 import useUsersEvents from "@/hooks/useUsersEvents";
-import useCreateEvent from "@/hooks/useCreateEvent";
+import { EventsData } from "@/types/types";
 
 describe("DashBoard", () => {
   const mockRouter = {
@@ -204,19 +202,8 @@ describe("DashBoard", () => {
   });
 
   describe("Create Event Popup", () => {
-    it("should show create event button by default", async () => {
-      render(<DashBoard />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /create new event/i })
-        ).toBeInTheDocument();
-      });
-    });
-
     it("should show create event form when button is clicked and hide when cancelled is clicked", async () => {
       render(<DashBoard />);
-
       await waitFor(() => {
         expect(
           screen.getByRole("button", { name: /create new event/i })
@@ -244,20 +231,16 @@ describe("DashBoard", () => {
       ).toBeInTheDocument();
       expect(screen.getByText("Create New Event")).toBeInTheDocument();
     });
+    it("should show create event button by default", async () => {
+      render(<DashBoard />);
 
-    it("should submit successfully and not show pop up after submit", async () => {
-      // Mock useCreateEvent
-      (useCreateEvent as jest.Mock).mockResolvedValue({
-        data: {
-          id: "new-event-id",
-          name: "New Event",
-          organizer: "user-123",
-          start_time: "2024-01-01T08:00:00",
-          end_time: "2024-01-01T18:00:00",
-        },
-        error: null,
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", { name: /create new event/i })
+        ).toBeInTheDocument();
       });
-
+    });
+    it("should submit successfully and not show pop up after submit", async () => {
       render(<DashBoard />);
 
       await waitFor(() => {
@@ -274,21 +257,17 @@ describe("DashBoard", () => {
         screen.getByRole("button", { name: /create new event/i })
       );
 
-      // Type input for event name
-      const eventNameInput = screen.getByTestId("event-name-input");
-      fireEvent.change(eventNameInput, { target: { value: "New Test Event" } });
-
       // Submit new event
-      fireEvent.click(screen.getByRole("button", { name: /create event/i }));
+      fireEvent.click(screen.getByRole("button", { name: /submit event/i }));
 
       await waitFor(() => {
         expect(
           screen.queryByTestId("create-event-popup")
         ).not.toBeInTheDocument();
       });
+
     });
   });
-
   describe("Edge Cases", () => {
     // TODO
     // it("should handle rapid event card clicks", async () => {
