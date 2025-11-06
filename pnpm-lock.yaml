@@ -143,6 +143,9 @@ importers:
       eslint-config-next:
         specifier: 15.3.1
         version: 15.3.1(eslint@9.34.0(jiti@2.5.1))(typescript@5.9.2)
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       jest:
         specifier: ^30.2.0
         version: 30.2.0(@types/node@20.19.11)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.19.11)(typescript@5.9.2))
@@ -1639,10 +1642,10 @@ packages:
     engines: { node: ">=18" }
     hasBin: true
 
-  "@maxim_mazurok/gapi.client.calendar-v3@0.1.20251028":
+  "@maxim_mazurok/gapi.client.calendar-v3@0.1.20251030":
     resolution:
       {
-        integrity: sha512-vb9RHKfrn+nWWvwdowkGrOOo3/DL1jH305dnvHzwlHLoqzyfigkztmKh+hrbzMdzjPKO/zt4lkFnB+Z4f2NVqw==,
+        integrity: sha512-nSawfxznpZp+CZGn6QrWbc63jZGUOCGd8QvxErN8GWDXUd2dINItXSHvd+joVbe0NJwwYhepCv9doKW1wxUMOw==,
       }
 
   "@maxim_mazurok/gapi.client.discovery-v1@0.4.20200806":
@@ -6722,6 +6725,14 @@ packages:
         integrity: sha512-AXcZb6vzzrFAUE61HnN4mpLqd/cSIwNQjtNWR0euPm6y0iqx3G4gOXaIDdtdDwZmhwe82LA6+zinmW4UBWVePQ==,
       }
     engines: { node: ">=16.17.0" }
+
+  husky@9.1.7:
+    resolution:
+      {
+        integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==,
+      }
+    engines: { node: ">=18" }
+    hasBin: true
 
   iconv-lite@0.4.24:
     resolution:
@@ -12442,7 +12453,7 @@ snapshots:
       - encoding
       - supports-color
 
-  "@maxim_mazurok/gapi.client.calendar-v3@0.1.20251028":
+  "@maxim_mazurok/gapi.client.calendar-v3@0.1.20251030":
     dependencies:
       "@types/gapi.client": 1.0.8
       "@types/gapi.client.discovery-v1": 0.0.4
@@ -13579,7 +13590,7 @@ snapshots:
 
   "@types/gapi.client.calendar-v3@0.0.4":
     dependencies:
-      "@maxim_mazurok/gapi.client.calendar-v3": 0.1.20251028
+      "@maxim_mazurok/gapi.client.calendar-v3": 0.1.20251030
 
   "@types/gapi.client.discovery-v1@0.0.4":
     dependencies:
@@ -15937,6 +15948,8 @@ snapshots:
   human-signals@2.1.0: {}
 
   human-signals@5.0.0: {}
+
+  husky@9.1.7: {}
 
   iconv-lite@0.4.24:
     dependencies:

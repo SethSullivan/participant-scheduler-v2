@@ -21,7 +21,13 @@ jest.mock("@/hooks/useUsersEvents", () => ({
 // });
 
 jest.mock("@/components/create-event", () => {
-  return function CreateEvent({ setShowPopup, setEventsData }: { setShowPopup: jest.Mock; setEventsData: jest.Mock }) {
+  return function CreateEvent({
+    setShowPopup,
+    setEventsData,
+  }: {
+    setShowPopup: jest.Mock;
+    setEventsData: jest.Mock;
+  }) {
     return (
       <div data-testid="create-event-popup">
         <h3>Create Event Form</h3>
@@ -265,7 +271,6 @@ describe("DashBoard", () => {
           screen.queryByTestId("create-event-popup")
         ).not.toBeInTheDocument();
       });
-
     });
   });
   describe("Edge Cases", () => {

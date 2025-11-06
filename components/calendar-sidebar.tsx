@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 type ParticipantInfo = {
   userID: string;
   name: string;
@@ -23,13 +27,14 @@ export function ParticipantItem({
   handleCheckUpdate: (userID: string) => void;
   handleDeleteParticipant: (userID: string) => void;
 }) {
-  // Split name and email - assuming format like "John Doe (john@example.com)"
+  const [showPopup, setShowPopup] = useState(false);
   const { displayName, email } = splitNameAndEmail(participant.name);
   const isChecked =
     participant.isChecked !== undefined ? participant.isChecked : true;
+
   return (
-    <li key={idx} className="mb-1">
-      <div className="flex items-center border border-gray-100 rounded p-2 min-h-[3rem]">
+    <li key={idx} className="mb-1 relative">
+      <div className="flex items-start border border-gray-100 rounded p-2 min-h-[3rem]">
         {/* Checkbox with color indicator */}
         <div
           className="flex w-6 h-6 rounded mr-3 flex-shrink-0 border-2 items-center justify-center"
@@ -70,12 +75,13 @@ export function ParticipantItem({
             <div className="text-xs text-gray-500 truncate">{email}</div>
           )}
         </div>
-        {/* Delete button (garbage can icon) */}
-        <div>
+
+        {/* Delete button */}
+        <div className="ml-2 flex-shrink-0">
           <button
-            onClick={() => handleDeleteParticipant(participant.userID)}
+            onClick={() => setShowPopup(true)}
             aria-label="Delete Participant"
-            className="text-gray-400 hover:text-red-600"
+            className="text-gray-400 hover:text-red-600 transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -94,6 +100,51 @@ export function ParticipantItem({
           </button>
         </div>
       </div>
+
+      {/* Delete Confirmation Popup - positioned near delete button */}
+      {showPopup && (
+        <>
+          {/* Backdrop to close popup when clicking outside */}
+          <div
+            className="fixed inset-0 z-40"
+            onClick={() => setShowPopup(false)}
+          />
+
+          <div className="absolute top-0 right-0 z-50 w-72">
+            <Card className="shadow-lg">
+              <CardHeader className="pb-1">
+                <CardTitle className="text-xs">
+                  Delete {displayName}&apos;s availability?
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pb-3">
+                <p className="text-xs text-gray-600 mb-3">
+                  This action cannot be undone.
+                </p>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowPopup(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => {
+                      handleDeleteParticipant(participant.userID);
+                      setShowPopup(false);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </li>
   );
 }
@@ -107,7 +158,6 @@ export default function CalendarSideBar({
   handleCheckUpdate: (userID: string) => void;
   handleDeleteParticipant: (userID: string) => void;
 }) {
-  // Create list of ParticipantItems
   const listItems = participantInformation.map((participant, idx) => {
     return (
       <ParticipantItem
@@ -125,9 +175,6 @@ export default function CalendarSideBar({
       data-testid="calendar-sidebar"
       className="flex-col w-full items-start justify-center"
     >
-      {/* <div className="flex justify-items-center text-center items-center border-2 border-blue">
-                Availability Legend
-            </div> */}
       <ul className="">{listItems}</ul>
     </div>
   );

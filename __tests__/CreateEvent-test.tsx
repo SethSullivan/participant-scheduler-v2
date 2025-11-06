@@ -12,7 +12,7 @@ describe("Create Event Popup", () => {
 
   it("should submit successfully and not show pop up after submit", async () => {
     render(
-        <CreateEvent setShowPopup={setShowPopup} setEventsData={setEventsData} />
+      <CreateEvent setShowPopup={setShowPopup} setEventsData={setEventsData} />
     );
     expect(true).toBe(true);
     // // Type input for event name
