@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { error: participantsError, data: participantData } = await supabase
       .from("participants")
       .upsert(
-        { name: name.trim(), email: email.trim().toLowerCase() },
+        { name: name.trim(), email: email.trim().toLowerCase(), event_id: eventID },
         { onConflict: "email, event_id" }
       )
       .select("id") // Get the ID in the same query
