@@ -6,7 +6,8 @@
     "start": "next start",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "husky"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
