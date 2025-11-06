@@ -1,13 +1,18 @@
 import { AuthButton } from "@/components/auth-button";
 // import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
-import { isMobile } from "react-device-detect";
+import { headers } from "next/headers";
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const headersList = await headers();
+  const userAgent = headersList.get("user-agent");
+  const isMobile = userAgent?.match(/(iPhone|iPod|iPad|Android|BlackBerry)/);
+  console.log("USER AGENT", userAgent);
+  console.log("USER AGENT MOBILE", isMobile);
   if (isMobile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-5 text-center">
