@@ -8,6 +8,7 @@ import { getEvents } from "@/lib/utils/getCalendarEvents";
 import DeleteSlotPopup from "./ui/delete-slot-popup";
 import { useDeleteSlot } from "@/hooks/useDeleteSlot";
 import { CalendarSlot, EventsData } from "@/types/types";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 interface CalendarProps {
   accessToken?: string | undefined;
@@ -26,6 +27,10 @@ export default function Calendar({
 }: CalendarProps) {
   const [calendarEvents, setCalendarEvents] = useState<CalendarSlot[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
   const [isLoading, setIsLoading] = useState(true);
+  const { width, height } = useWindowSize();
+  const isSmallScreen = width < 750;
+  console.log(`Screen size: ${width}x${height}`);
+
   const { eventToDelete, initiateDelete, confirmDelete, cancelDelete } =
     useDeleteSlot(setAvailableSlots);
 
@@ -121,12 +126,21 @@ export default function Calendar({
           center: "title",
           right: "timeGridWeek,timeGridDay",
         }}
-        titleFormat={{ year: "numeric", month: "long" }}
-        dayHeaderFormat={{
-          weekday: "long",
-          month: "numeric",
-          day: "numeric",
-          omitCommas: true,
+        titleFormat={{
+          year: !isSmallScreen ? "numeric" : "2-digit",
+          month: !isSmallScreen ? "long" : "short",
+        }}
+        dayHeaderContent={(args) => {
+          const weekday = args.date
+            .toLocaleDateString("en-US", { weekday: "short" })
+            .toUpperCase();
+          const day = args.date.getDate();
+          return (
+            <div className="custom-day-header">
+              <div className="weekday-text">{weekday}</div>
+              <div className="day-number">{day}</div>
+            </div>
+          );
         }}
         buttonText={{
           today: "Today",
@@ -167,6 +181,7 @@ export default function Calendar({
         eventDurationEditable={true}
         eventResizableFromStart={true}
         nowIndicator={true}
+        longPressDelay={250} // 250ms hold on the calendar before they can select times
       />
       {eventToDelete && DeleteSlotPopup({ confirmDelete, cancelDelete })}
       {availableSlots.length > 0 && (

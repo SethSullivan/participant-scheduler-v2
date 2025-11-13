@@ -130,6 +130,8 @@
 .fc-toolbar-title {
   color: hsl(var(--foreground)) !important;
   font-weight: 600;
+  align-items: center;
+  justify-content: center;
 }
 
 .fc-button {
@@ -156,6 +158,38 @@
 .fc .fc-toolbar .fc-button:last-child {
   margin-right: 0 !important;
 }
+/* Make toolbar wrap on small screens */
+@media (max-width: 768px) {
+  .fc-toolbar {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  .fc-toolbar-chunk {
+    flex: 1 1 auto !important;
+    min-width: fit-content !important;
+  }
+
+  /* Make left chunk (prev, next, today) take full width on smallest screens */
+  .fc-toolbar-chunk:first-child {
+    flex-basis: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+
+  /* Center the title */
+  .fc-toolbar-chunk:nth-child(2) {
+    flex-basis: 100% !important;
+    text-align: center !important;
+  }
+
+  /* Make right chunk (view buttons) take full width */
+  .fc-toolbar-chunk:last-child {
+    flex-basis: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+  }
+}
 
 /* This is the top left empty box */
 .fc-timegrid-axis {
@@ -181,6 +215,26 @@
   text-transform: uppercase !important;
   font-size: 0.75rem !important;
   letter-spacing: 0.05em !important;
+}
+
+.custom-day-header {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 0.125rem !important;
+}
+
+.day-number {
+  font-size: 1.25rem !important; /* Larger for weekday */
+  font-weight: 500 !important;
+  letter-spacing: 0.025em !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.weekday-text {
+  font-size: 0.65rem !important; /* Smaller for day number */
+  font-weight: 500 !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 td {
