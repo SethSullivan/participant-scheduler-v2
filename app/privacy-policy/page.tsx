@@ -178,16 +178,16 @@ export default function PrivacyPolicyPage() {
           Usage Data is collected automatically when using the Service.
         </p>
         <p className="mb-4">
-          Usage Data may include information such as Your Device`&apos;`s
-          Internet Protocol address (e.g. IP address), browser type, browser
-          version, the pages of our Service that You visit, the time and date of
-          Your visit, the time spent on those pages, unique device identifiers
-          and other diagnostic data.
+          Usage Data may include information such as Your Device&apos;s Internet
+          Protocol address (e.g. IP address), browser type, browser version, the
+          pages of our Service that You visit, the time and date of Your visit,
+          the time spent on those pages, unique device identifiers and other
+          diagnostic data.
         </p>
         <p className="mb-4">
           When You access the Service by or through a mobile device, We may
           collect certain information automatically, including, but not limited
-          to, the type of mobile device You use, Your mobile device`&apos;`s
+          to, the type of mobile device You use, Your mobile device&apos;s
           unique ID, the IP address of Your mobile device, Your mobile operating
           system, the type of mobile Internet browser You use, unique device
           identifiers and other diagnostic data.
@@ -339,7 +339,7 @@ export default function PrivacyPolicyPage() {
               <strong className="font-semibold">To contact You:</strong> To
               contact You by email, telephone calls, SMS, or other equivalent
               forms of electronic communication, such as a mobile
-              application`&apos;`s push notifications regarding updates or
+              application&apos;s push notifications regarding updates or
               informative communications related to the functionalities,
               products or contracted services, including the security updates,
               when necessary or reasonable for their implementation.
@@ -450,7 +450,7 @@ export default function PrivacyPolicyPage() {
         </h3>
         <p className="mb-4">
           Your information, including Personal Data, is processed at the
-          Company`&apos;`s operating offices and in any other places where the
+          Company&apos;s operating offices and in any other places where the
           parties involved in the processing are located. It means that this
           information may be transferred to — and maintained on — computers
           located outside of Your state, province, country or other governmental
@@ -544,7 +544,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <h2 className="text-3xl font-semibold mt-8 mb-4">
-          Children`&apos;`s Privacy
+          Children&apos;s Privacy
         </h2>
         <p className="mb-4">
           Our Service does not address anyone under the age of 13. We do not
@@ -558,7 +558,7 @@ export default function PrivacyPolicyPage() {
         <p className="mb-4">
           If We need to rely on consent as a legal basis for processing Your
           information and Your country requires consent from a parent, We may
-          require Your parent`&apos;`s consent before We collect and use that
+          require Your parent&apos;s consent before We collect and use that
           information.
         </p>
 
@@ -568,7 +568,7 @@ export default function PrivacyPolicyPage() {
         <p className="mb-4">
           Our Service may contain links to other websites that are not operated
           by Us. If You click on a third party link, You will be directed to
-          that third party`&apos;`s site. We strongly advise You to review the
+          that third party&apos;s site. We strongly advise You to review the
           Privacy Policy of every site You visit.
         </p>
         <p className="mb-4">
@@ -580,7 +580,7 @@ export default function PrivacyPolicyPage() {
           Limited Use Disclosure
         </h2>
         <p className="mb-4">
-          Our Service`&apos;`s use and transfer to any other app of information
+          Our Service&apos;s use and transfer to any other app of information
           received from Google APIs will adhere to{" "}
           <a
             href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes"
