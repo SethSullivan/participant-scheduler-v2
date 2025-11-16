@@ -26,6 +26,7 @@ export default function Home() {
 
         <footer className="w-full flex items-center justify-center border-t mx-auto text-center text-xs gap-8 py-16">
           <p>By Seth Sullivan</p>
+          <Link href={"/privacy-policy"}>Privacy Policy</Link>
           {/* <ThemeSwitcher /> */}
         </footer>
       </div>
