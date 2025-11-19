@@ -231,9 +231,7 @@ describe("CalendarPage", () => {
       render(<CalendarPage />);
 
       expect(screen.getByText("How to Use the Calendar")).toBeInTheDocument();
-      expect(
-        screen.getByText(/To select availability, click and drag/)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/To select, click and drag/)).toBeInTheDocument();
     });
 
     it("should hide instructional popup when closed", async () => {
