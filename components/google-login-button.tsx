@@ -21,9 +21,9 @@ export function GoogleLoginButton({
 
     const redirectURL =
       process.env.NODE_ENV === "development"
-        ? // ? "http://localhost:3000/dashboard"
-          "http://192.168.1.152:3000"
-        : "https://participantscheduler.com/dashboard";
+        ? "http://localhost:3000/dashboard"
+        : // "http://192.168.1.152:3000/dashboard"
+          "https://participantscheduler.com/dashboard";
 
     try {
       const scopes = [
