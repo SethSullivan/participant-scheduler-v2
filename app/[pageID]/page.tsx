@@ -151,11 +151,9 @@ export default function CalendarPage() {
         <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
           <h2 className="text-2xl font-bold mb-4">How to Use the Calendar</h2>
           <ul className="list-disc list-inside mb-4 text-left">
-            <li>To select availability, click and drag inside the calendar.</li>
-            <li>To remove availability, click on Availability Block.</li>
-            <li>
-              To submit availability, click &quot;Submit Availability&quot;.
-            </li>
+            <li>To select, click and drag inside the calendar.</li>
+            <li>To delete, click on Availability Block.</li>
+            <li>To submit, click &quot;Submit Availability&quot;.</li>
           </ul>
           <Button
             onClick={() => {

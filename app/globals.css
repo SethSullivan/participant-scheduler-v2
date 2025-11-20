@@ -107,17 +107,20 @@
   border-bottom: 1px dotted hsl(var(--border) / 0.5) !important;
 }
 
+/*! Must come before the .fc-timegrid-slot-label so */
+/*! touch-action gets re-enabled on the label column */
+.fc-timegrid-slot {
+  border-bottom: none !important;
+  border-top: none !important;
+  touch-action: none !important; /* Enable no touch action on timeslots  */
+}
 .fc-timegrid-slot-label {
   color: hsl(var(--muted-foreground)) !important;
   font-size: 0.875rem !important;
   font-weight: 500 !important;
   border-top: none !important; /* Get's rid of the lines in the left time label column */
   border-bottom: none !important;
-}
-
-.fc-timegrid-slot .fc-timegrid-slot-label .fc-timegrid-slot-minor {
-  border-bottom: none !important;
-  border-top: none !important;
+  touch-action: auto !important; /*Enable touch action on timeslots*/
 }
 
 .fc-toolbar {
