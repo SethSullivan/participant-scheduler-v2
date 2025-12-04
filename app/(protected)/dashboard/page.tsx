@@ -19,10 +19,14 @@ export default function DashBoard() {
     error,
     setEventsData,
   } = useUsersEvents();
-  const eventType = "select_availability"; // TODO use eventsData to implement this
+
   const handleEventClick = (event: EventData) => {
-    if (eventType === "select_availability") {
+    if (event.event_type === "select_availability") {
       router.push(`/${event.id}/select-availability`);
+    } else if (event.event_type === "select_timeslot") {
+      router.push(`/${event.id}/select-timeslot`);
+    } else {
+      console.error("event.event_type is invalid. Check database");
     }
   };
 

@@ -112,7 +112,7 @@ describe("DashBoard", () => {
       organizer_id: "user-123",
       start_time: "2024-01-20T10:00:00",
       end_time: "2024-01-20T12:00:00",
-      event_type: "select_availability",
+      event_type: "select_timeslot",
     },
   ];
 
@@ -198,19 +198,32 @@ describe("DashBoard", () => {
   });
 
   describe("Event Navigation", () => {
-    it("should navigate to event page when event card is clicked", async () => {
+    it("should navigate to select-availability event page when first event card is clicked", async () => {
       render(<DashBoard />);
 
       await waitFor(() => {
         expect(screen.getByText("Your Events")).toBeInTheDocument();
       });
 
-      const viewAvailability = screen.getAllByText("View Availability");
+      const viewAvailability = screen.getAllByText("View Calendar");
       fireEvent.click(viewAvailability[0]);
 
       expect(mockRouter.push).toHaveBeenCalledWith(
         "/event-1/select-availability"
       );
+      expect(mockRouter.push).toHaveBeenCalledTimes(1);
+    });
+    it("should navigate to select-timeslot event page when first event card is clicked", async () => {
+      render(<DashBoard />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Your Events")).toBeInTheDocument();
+      });
+
+      const viewAvailability = screen.getAllByText("View Calendar");
+      fireEvent.click(viewAvailability[2]);
+
+      expect(mockRouter.push).toHaveBeenCalledWith("/event-3/select-timeslot");
       expect(mockRouter.push).toHaveBeenCalledTimes(1);
     });
   });
@@ -260,7 +273,7 @@ describe("DashBoard", () => {
     // it("should handle rapid event card clicks", async () => {
     //   render(<DashBoard />);
 
-    //   const viewAvailability = screen.getAllByText("View Availability");
+    //   const viewAvailability = screen.getAllByText("View Calendar");
     //   fireEvent.click(viewAvailability[0]);
     //   fireEvent.click(viewAvailability[0]);
     //   fireEvent.click(viewAvailability[0]);

@@ -85,7 +85,7 @@ export default function EventCard({ event, onEventClick }: EventCardProps) {
             className="w-full"
             variant="outline"
           >
-            View Availability
+            View Calendar
           </Button>
         </div>
       </CardContent>
