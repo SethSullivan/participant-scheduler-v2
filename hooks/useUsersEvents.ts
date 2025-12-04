@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { EventsData } from "@/types/types";
+import { EventData } from "@/types/types";
 import { useRouter } from "next/navigation";
 
 export default function useUsersEvents() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [eventsData, setEventsData] = useState<EventsData[] | null>(null);
+  const [eventsData, setEventsData] = useState<EventData[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const getUsersEvents = async () => {

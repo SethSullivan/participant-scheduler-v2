@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import CreateEvent from "@/components/create-event";
 import EventCard from "@/components/event-card";
 import { useRouter } from "next/navigation";
-import { EventsData } from "@/types/types";
+import { EventData } from "@/types/types";
 import LoadingSpinner from "@/components/ui/loading-screen";
 import useUsersEvents from "@/hooks/useUsersEvents";
 
@@ -19,9 +19,11 @@ export default function DashBoard() {
     error,
     setEventsData,
   } = useUsersEvents();
-
-  const handleEventClick = (event: EventsData) => {
-    router.push(`/${event.id}`);
+  const eventType = "select_availability"; // TODO use eventsData to implement this
+  const handleEventClick = (event: EventData) => {
+    if (eventType === "select_availability") {
+      router.push(`/${event.id}/select-availability`);
+    }
   };
 
   if (error) {

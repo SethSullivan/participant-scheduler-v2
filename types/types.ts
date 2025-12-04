@@ -19,12 +19,13 @@ export type AvailabilityData = {
   event_id: string;
 };
 
-export type EventsData = {
+export type EventData = {
   organizer_id: string;
-  start_time: Date;
-  end_time: Date;
+  event_type: "select_availability" | "select_timeslot";
+  start_time: string;
+  end_time: string;
   name: string;
-  created_at: Date;
+  created_at: string;
   id: string;
 };
 

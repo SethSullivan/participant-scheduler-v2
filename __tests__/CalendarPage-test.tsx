@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import CalendarPage from "@/app/[pageID]/page";
+import CalendarPage from "@/app/[pageID]/select-availability/page";
 import { useRouter } from "next/navigation";
 
 // Mock Next.js router

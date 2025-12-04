@@ -40,7 +40,7 @@ jest.mock("@/components/create-event", () => {
               start_time: "2024-01-01T08:00:00",
               end_time: "2024-01-01T18:00:00",
             };
-            setEventsData((prev: EventsData[]) =>
+            setEventsData((prev: EventData[]) =>
               prev ? [...prev, newEvent] : [newEvent]
             );
             setShowPopup(false);
@@ -74,7 +74,7 @@ jest.mock("@/components/create-event", () => {
 
 // Import mocked hook after mocking
 import useUsersEvents from "@/hooks/useUsersEvents";
-import { EventsData } from "@/types/types";
+import { EventData } from "@/types/types";
 
 describe("DashBoard", () => {
   const mockRouter = {
@@ -86,27 +86,33 @@ describe("DashBoard", () => {
     prefetch: jest.fn(),
   };
 
-  const mockEventsData = [
+  const mockEventData: EventData[] = [
     {
       id: "event-1",
       name: "Team Meeting",
       organizer_id: "user-123",
+      created_at: "2024-01-15T09:00:00",
       start_time: "2024-01-15T09:00:00",
       end_time: "2024-01-15T10:00:00",
+      event_type: "select_availability",
     },
     {
       id: "event-2",
       name: "Client Presentation",
+      created_at: "2024-01-15T09:00:00",
       organizer_id: "user-123",
       start_time: "2024-01-16T14:00:00",
       end_time: "2024-01-16T15:00:00",
+      event_type: "select_availability",
     },
     {
       id: "event-3",
       name: "Workshop",
+      created_at: "2024-01-15T09:00:00",
       organizer_id: "user-123",
       start_time: "2024-01-20T10:00:00",
       end_time: "2024-01-20T12:00:00",
+      event_type: "select_availability",
     },
   ];
 
@@ -114,7 +120,7 @@ describe("DashBoard", () => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue(mockRouter);
     (useUsersEvents as jest.Mock).mockReturnValue({
-      eventsData: mockEventsData,
+      eventsData: mockEventData,
       isLoading: false,
       error: null,
       setEventsData: jest.fn(),
@@ -202,7 +208,9 @@ describe("DashBoard", () => {
       const viewAvailability = screen.getAllByText("View Availability");
       fireEvent.click(viewAvailability[0]);
 
-      expect(mockRouter.push).toHaveBeenCalledWith("/event-1");
+      expect(mockRouter.push).toHaveBeenCalledWith(
+        "/event-1/select-availability"
+      );
       expect(mockRouter.push).toHaveBeenCalledTimes(1);
     });
   });
