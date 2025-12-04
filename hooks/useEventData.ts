@@ -1,14 +1,6 @@
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
-
-type EventData = {
-  id: string;
-  organizer_id: string;
-  name: string;
-  start_time: Date;
-  end_time: Date;
-  created_at: Date;
-};
+import { EventData } from "@/types/types";
 
 export default function useEventData(eventID: string) {
   const [eventData, setEventData] = useState<EventData | null>(null);

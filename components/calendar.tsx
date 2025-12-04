@@ -7,14 +7,14 @@ import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
 import { getEvents } from "@/lib/utils/getCalendarEvents";
 import DeleteSlotPopup from "./ui/delete-slot-popup";
 import { useDeleteSlot } from "@/hooks/useDeleteSlot";
-import { CalendarSlot, EventsData } from "@/types/types";
+import { CalendarSlot, EventData } from "@/types/types";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 interface CalendarProps {
   accessToken?: string | undefined;
   availableSlots: CalendarSlot[];
   setAvailableSlots: React.Dispatch<React.SetStateAction<CalendarSlot[]>>;
-  eventData: EventsData;
+  eventData: EventData;
   availabilityData: CalendarSlot[][] | undefined;
 }
 

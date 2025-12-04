@@ -64,8 +64,6 @@ export default function CalendarPageTimeslot() {
         (v) => v.user_id !== participantID
       );
       setAvailabilityData(newAvailabilityData);
-      console.log("HERE");
-      console.log(newAvailabilityData);
       // Delete participant from database
       // Make API request
       const response = await fetch("/api/delete-participant", {
