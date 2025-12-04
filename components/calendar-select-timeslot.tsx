@@ -18,7 +18,7 @@ interface CalendarProps {
   availabilityData: CalendarSlot[][] | undefined;
 }
 
-export default function CalendarSelectEvent({
+export default function CalendarSelectTimeslot({
   accessToken,
   availableSlots,
   setAvailableSlots,

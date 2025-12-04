@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Calendar from "@/components/calendar";
+import CalendarSelectTimeslot from "@/components/calendar-select-timeslot";
 import CalendarSideBar from "@/components/calendar-sidebar";
 import { Button } from "@/components/ui/button";
 import useEventData from "@/hooks/useEventData";
@@ -191,7 +191,7 @@ export default function CalendarPageTimeslot() {
       <div className="flex flex-[10] w-full">
         {/* Calendar Background style */}
         <div className="flex w-full bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center justify-items-center">
-          <Calendar
+          <CalendarSelectTimeslot
             accessToken={accessToken}
             availableSlots={availableSlots}
             setAvailableSlots={setAvailableSlots}
