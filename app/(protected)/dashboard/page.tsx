@@ -82,7 +82,7 @@ export default function DashBoard() {
             {showPopup ? (
               <CreateEvent
                 setShowPopup={setShowPopup}
-                setEventsData={setEventsData} // Will just add the new event to the list
+                setEventData={setEventsData} // Will just add the new event to the list
               />
             ) : (
               <div className="w-full max-w-md">

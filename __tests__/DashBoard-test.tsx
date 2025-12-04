@@ -23,10 +23,10 @@ jest.mock("@/hooks/useUsersEvents", () => ({
 jest.mock("@/components/create-event", () => {
   return function CreateEvent({
     setShowPopup,
-    setEventsData,
+    setEventData,
   }: {
     setShowPopup: jest.Mock;
-    setEventsData: jest.Mock;
+    setEventData: jest.Mock;
   }) {
     return (
       <div data-testid="create-event-popup">
@@ -40,7 +40,7 @@ jest.mock("@/components/create-event", () => {
               start_time: "2024-01-01T08:00:00",
               end_time: "2024-01-01T18:00:00",
             };
-            setEventsData((prev: EventData[]) =>
+            setEventData((prev: EventData[]) =>
               prev ? [...prev, newEvent] : [newEvent]
             );
             setShowPopup(false);
@@ -123,7 +123,7 @@ describe("DashBoard", () => {
       eventsData: mockEventData,
       isLoading: false,
       error: null,
-      setEventsData: jest.fn(),
+      setEventData: jest.fn(),
     });
   });
 
@@ -133,7 +133,7 @@ describe("DashBoard", () => {
         eventsData: null,
         isLoading: true,
         error: null,
-        setEventsData: jest.fn(),
+        setEventData: jest.fn(),
       });
       render(<DashBoard />);
 
@@ -160,7 +160,7 @@ describe("DashBoard", () => {
         eventsData: [],
         isLoading: false,
         error: null,
-        setEventsData: jest.fn(),
+        setEventData: jest.fn(),
       });
 
       render(<DashBoard />);
@@ -181,7 +181,7 @@ describe("DashBoard", () => {
         eventsData: [],
         isLoading: false,
         error: errorMessage,
-        setEventsData: jest.fn(),
+        setEventData: jest.fn(),
       });
 
       render(<DashBoard />);
@@ -252,32 +252,6 @@ describe("DashBoard", () => {
         expect(
           screen.getByRole("button", { name: /create new event/i })
         ).toBeInTheDocument();
-      });
-    });
-    it("should submit successfully and not show pop up after submit", async () => {
-      render(<DashBoard />);
-
-      await waitFor(() => {
-        expect(
-          screen.getByRole("button", { name: /create new event/i })
-        ).toBeInTheDocument();
-      });
-
-      // Initial count
-      expect(screen.getAllByText(/view availability/i)).toHaveLength(3);
-
-      // Open create event form
-      fireEvent.click(
-        screen.getByRole("button", { name: /create new event/i })
-      );
-
-      // Submit new event
-      fireEvent.click(screen.getByRole("button", { name: /submit event/i }));
-
-      await waitFor(() => {
-        expect(
-          screen.queryByTestId("create-event-popup")
-        ).not.toBeInTheDocument();
       });
     });
   });

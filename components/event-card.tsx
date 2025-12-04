@@ -9,18 +9,18 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Clock, Edit, User } from "lucide-react";
-import { EventsData } from "@/types/types";
+import { EventData } from "@/types/types";
 import { useRouter } from "next/navigation";
 
 interface EventCardProps {
-  event: EventsData;
-  onEventClick: (event: EventsData) => void;
+  event: EventData;
+  onEventClick: (event: EventData) => void;
 }
 
 export default function EventCard({ event, onEventClick }: EventCardProps) {
   const router = useRouter();
 
-  const formatTime = (dateString: Date) => {
+  const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -29,7 +29,7 @@ export default function EventCard({ event, onEventClick }: EventCardProps) {
     });
   };
 
-  const formatDate = (dateString: Date) => {
+  const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
       year: "numeric",

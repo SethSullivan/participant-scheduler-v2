@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     // Parse the request body
     const body = await request.json();
-    const { eventName, startTime, endTime } = body;
+    const { eventName, eventType, startTime, endTime } = body;
 
     // Validate input
     if (!eventName || !startTime || !endTime) {
@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       .insert({
         name: eventName,
         organizer_id: user.id,
+        event_type: eventType,
         start_time: start.toISOString(),
         end_time: end.toISOString(),
       })
