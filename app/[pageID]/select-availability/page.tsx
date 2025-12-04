@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Calendar from "@/components/calendar";
+import CalendarSelectAvailability from "@/components/calendar";
 import CalendarSideBar from "@/components/calendar-sidebar";
 import { Button } from "@/components/ui/button";
 import useEventData from "@/hooks/useEventData";
@@ -13,7 +13,7 @@ import useChecked from "@/hooks/useChecked";
 import { getParticipantsWithChecked } from "@/lib/utils/utils";
 import { useParams } from "next/navigation";
 
-export default function CalendarPage() {
+export default function CalendarPageAvailability() {
   const { pageID: eventID } = useParams<{ pageID: string }>();
   const [availableSlots, setAvailableSlots] = useState<CalendarSlot[]>([]);
   const [showPopUp, setShowPopUp] = useState(false);
@@ -193,7 +193,7 @@ export default function CalendarPage() {
       <div className="flex flex-[10] w-full">
         {/* Calendar Background style */}
         <div className="flex w-full bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center justify-items-center">
-          <Calendar
+          <CalendarSelectAvailability
             accessToken={accessToken}
             availableSlots={availableSlots}
             setAvailableSlots={setAvailableSlots}

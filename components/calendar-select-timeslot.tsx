@@ -27,9 +27,8 @@ export default function CalendarSelectTimeslot({
 }: CalendarProps) {
   const [calendarEvents, setCalendarEvents] = useState<CalendarSlot[]>([]); // THESE ARE GCAL EVENTS FROM MY CALENDAR
   const [isLoading, setIsLoading] = useState(true);
-  const { width, height } = useWindowSize();
+  const { width } = useWindowSize();
   const isSmallScreen = width < 750;
-  console.log(`Screen size: ${width}x${height}`);
   const { eventToDelete, initiateDelete, confirmDelete, cancelDelete } =
     useDeleteSlot(setAvailableSlots);
 
