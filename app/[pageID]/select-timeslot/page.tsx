@@ -188,7 +188,7 @@ export default function CalendarPageTimeslot() {
         )}
       </div>
       {/* Calendar Container */}
-      <div className="flex flex-[10] w-full">
+      <div className="flex flex-[10] w-full calendar-select-timeslot">
         {/* Calendar Background style */}
         <div className="flex w-full bg-accent text-sm p-3 px-5 rounded-md text-foreground flex gap-3 items-center justify-items-center">
           <CalendarSelectTimeslot

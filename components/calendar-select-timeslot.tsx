@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import { DateSelectArg, EventClickArg } from "@fullcalendar/core";
+import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
+import { EventClickArg } from "@fullcalendar/core";
 import { getEvents } from "@/lib/utils/getCalendarEvents";
 import DeleteSlotPopup from "./ui/delete-slot-popup";
 import { useDeleteSlot } from "@/hooks/useDeleteSlot";
@@ -55,13 +55,18 @@ export default function CalendarSelectTimeslot({
     fetchEvents();
   }, [accessToken]);
 
-  const handleDateSelect = (selectInfo: DateSelectArg) => {
+  //TODO eventLength SHOULD COME FROM DATA
+  const eventLength = 60; // minutes
+  const handleDateClick = (clickInfo: DateClickArg) => {
+    console.log(clickInfo);
+    const start = clickInfo.date;
+    const endCalculated = new Date(start.getTime() + eventLength * 60000);
     // Create a new availability slot
     const newSlot: CalendarSlot = {
       id: Date.now().toString(),
       title: "Available",
-      start: selectInfo.start,
-      end: selectInfo.end,
+      start: clickInfo.date,
+      end: endCalculated,
       isGcal: false,
       backgroundColor: "#47b06cff",
       borderColor: "#0d3f1fff",
@@ -69,9 +74,6 @@ export default function CalendarSelectTimeslot({
     };
 
     setAvailableSlots((prev) => [...prev, newSlot]);
-
-    // Clear the selection
-    selectInfo.view.calendar.unselect();
   };
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (!clickInfo.event.extendedProps.isGcal) {
@@ -148,15 +150,15 @@ export default function CalendarSelectTimeslot({
           list: "List",
         }}
         weekends={false}
-        selectable={true}
-        selectMirror={true}
+        selectable={false}
+        selectMirror={false} // No placeholder while selecting
         dayMaxEvents={true}
         slotMinTime={formatTimeForCalendar(eventData.start_time)}
         slotMaxTime={formatTimeForCalendar(eventData.end_time)}
         slotDuration="00:15:00"
         height="auto"
         events={getAllEvents()}
-        select={handleDateSelect}
+        dateClick={handleDateClick}
         eventClick={handleEventClick}
         selectConstraint={{
           start: formatTimeForCalendar(eventData.start_time),
@@ -176,8 +178,9 @@ export default function CalendarSelectTimeslot({
           omitZeroMinute: false,
         }}
         slotLabelInterval={{ hours: 1 }}
-        eventDurationEditable={true}
-        eventResizableFromStart={true}
+        eventDurationEditable={false}
+        eventResizableFromStart={false}
+        editable={false}
         nowIndicator={true}
         longPressDelay={250} // 250ms hold on the calendar before they can select times
       />

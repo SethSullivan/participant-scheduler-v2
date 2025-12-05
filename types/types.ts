@@ -27,6 +27,7 @@ export type EventData = {
   name: string;
   created_at: string;
   id: string;
+  event_length?: number;
 };
 
 export type CheckedState = {
